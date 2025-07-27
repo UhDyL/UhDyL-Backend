@@ -1,4 +1,4 @@
-package com.babzip.backend.uhdylbackend;
+package com.uhdyl.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

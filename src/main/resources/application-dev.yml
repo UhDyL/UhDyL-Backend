@@ -1,0 +1,38 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import:
+      - security/application-database.yml
+      - security/application-security.yml
+
+  datasource:
+    url: ${UhDyL.mysql.url}
+    username: ${UhDyL.mysql.username}
+    password: ${UhDyL.mysql.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  mvc:
+    log-request-details: true
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: false
+        highlight_sql: true
+        default_batch_fetch_size: 100
+
+logging:
+  level:
+    # ---- HTTP 트래픽 흐름을 살펴봅니다.
+    org.springframework.web: debug
+    # ---- Hibernate가 실행할 질의문을 살펴봅니다.
+    org.hibernate.SQL: debug
+    # ---- 질의문에 바인딩되는 파라미터를 살펴봅니다.
+    org.hibernate.orm.jdbc.bind: trace
+    # ---- 질의문 실행 결과를 살펴봅니다.
+    org.hibernate.orm.jdbc.extract: trace

@@ -1,1 +1,12 @@
-spring.application.name=UhDyL-Backend
+spring:
+  application:
+    name: UhDyL-Backend
+  profiles:
+    group:
+      local: local
+      dev: dev
+---
+
+spring:
+  profiles:
+    active: local

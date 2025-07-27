@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.4.0
+    container_name: UhDyLmysql
+    restart: always
+    ports:
+      - "3310:3306"
+    environment:
+      MYSQL_DATABASE: UhDyL
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER_ID}
+      MYSQL_PASSWORD: ${MYSQL_USER_PASSWORD}
+      TZ: Asia/Seoul
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./docker-infra/mysql/data:/var/lib/mysql      # 데이터 파일
+      - ./docker-infra/mysql/config:/etc/mysql/conf.d # 사용자 정의 설정(.cnf)

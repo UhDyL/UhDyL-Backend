@@ -23,7 +23,7 @@ public class JwtHandler {
     private final SecretKey secretKey;
     private final RefreshTokenRepository refreshTokenRepository;
     public static final String USER_ID = "USER_ID";
-    public static final String USER_ROLE = "USER_ROLE";
+    public static final String USER_ROLE = "ROLE_USER";
     private static final String KEY_ROLE = "role";
     private static final long MILLI_SECOND = 1000L;
 

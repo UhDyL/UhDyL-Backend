@@ -51,6 +51,14 @@ dependencies {
 
     // Aop
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
+
+    //Querydsl
+    implementation 'io.github.openfeign.querydsl:querydsl-core:6.11'
+    implementation 'io.github.openfeign.querydsl:querydsl-jpa:6.11'
+    annotationProcessor 'io.github.openfeign.querydsl:querydsl-apt:6.11:jpa'
 }
 
 tasks.named('test') {

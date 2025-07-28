@@ -61,8 +61,8 @@ public class SecurityConfig {
     public RoleHierarchy roleHierarchy() {
         return RoleHierarchyImpl
                 .withDefaultRolePrefix()  // 기본 접두어 "ROLE_" 사용
-                .role("ADMIN")            // ROLE_ADMIN
-                .implies("USER")        // ROLE_USER
+                .role("FARMER")
+                .implies("USER")
                 .build();
     }
 

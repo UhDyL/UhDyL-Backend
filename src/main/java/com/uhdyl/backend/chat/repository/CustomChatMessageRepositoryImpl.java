@@ -1,13 +1,9 @@
 package com.uhdyl.backend.chat.repository;
 
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.uhdyl.backend.chat.domain.ChatMessage;
-import com.uhdyl.backend.chat.domain.ChatRoom;
 import com.uhdyl.backend.chat.domain.QChatMessage;
 import com.uhdyl.backend.chat.dto.response.ChatMessageResponse;
-import com.uhdyl.backend.global.exception.BusinessException;
-import com.uhdyl.backend.global.exception.ExceptionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -19,7 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomChatMessageRepositoryImpl implements CustomChatMessageRepository{
 
-    private final ChatRoomRepository chatRoomRepository;
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override

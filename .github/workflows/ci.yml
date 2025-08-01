@@ -24,7 +24,7 @@ jobs:
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
         ports:
-          - ${{ env.SPRING_DATASOURCE_PORT }}:3306
+          - ${{ vars.SPRING_DATASOURCE_PORT }}:3306
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
@@ -55,7 +55,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build
         env:
-          SPRING_DATASOURCE_URL: jdbc:mysql://${{ env.SPRING_DATASOURCE_HOST }}:${{ env.SPRING_DATASOURCE_PORT }}/${{ vars.MYSQL_DATABASE }}
+          SPRING_DATASOURCE_URL: jdbc:mysql://${{ vars.SPRING_DATASOURCE_HOST }}:${{ vars.SPRING_DATASOURCE_PORT }}/${{ vars.MYSQL_DATABASE }}
           SPRING_DATASOURCE_USERNAME: ${{ secrets.MYSQL_USER_ID }}
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.MYSQL_USER_PASSWORD }}
           SPRING_PROFILES_ACTIVE: ${{ vars.SPRING_PROFILES_ACTIVE }}

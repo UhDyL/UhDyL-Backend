@@ -1,4 +1,4 @@
-package com.uhdyl.backend.token.domain;
+package com.uhdyl.backend.token.entity;
 
 import lombok.Builder;
 import lombok.Getter;

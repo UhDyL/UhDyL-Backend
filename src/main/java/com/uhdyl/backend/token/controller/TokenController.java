@@ -5,7 +5,7 @@ import com.uhdyl.backend.global.response.ResponseBody;
 import com.uhdyl.backend.token.api.TokenApi;
 import com.uhdyl.backend.token.dto.request.TokenRequest;
 import com.uhdyl.backend.token.dto.response.TokenResponse;
-import com.uhdyl.backend.token.domain.Token;
+import com.uhdyl.backend.token.entity.Token;
 import com.uhdyl.backend.token.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

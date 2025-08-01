@@ -1,6 +1,6 @@
 package com.uhdyl.backend.token.repository;
 
-import com.uhdyl.backend.token.entity.RefreshToken;
+import com.uhdyl.backend.token.domain.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

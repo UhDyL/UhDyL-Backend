@@ -6,7 +6,7 @@ import com.uhdyl.backend.global.jwt.JwtUserClaim;
 import com.uhdyl.backend.global.oauth.service.OAuth2UserPrincipal;
 import com.uhdyl.backend.global.oauth.util.RedirectUrlValidator;
 import com.uhdyl.backend.global.oauth.util.StateUtil;
-import com.uhdyl.backend.token.entity.Token;
+import com.uhdyl.backend.token.domain.Token;
 import com.uhdyl.backend.user.domain.UserRole;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

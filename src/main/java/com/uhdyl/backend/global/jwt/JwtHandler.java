@@ -1,8 +1,8 @@
 package com.uhdyl.backend.global.jwt;
 
 
-import com.uhdyl.backend.token.entity.RefreshToken;
-import com.uhdyl.backend.token.entity.Token;
+import com.uhdyl.backend.token.domain.RefreshToken;
+import com.uhdyl.backend.token.domain.Token;
 import com.uhdyl.backend.token.repository.RefreshTokenRepository;
 import com.uhdyl.backend.user.domain.UserRole;
 import io.jsonwebtoken.Claims;

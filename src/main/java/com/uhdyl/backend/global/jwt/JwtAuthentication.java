@@ -52,6 +52,6 @@ public record JwtAuthentication(
 
     @Override
     public String getName() {
-        return null;
+        return String.valueOf(userId);
     }
 }

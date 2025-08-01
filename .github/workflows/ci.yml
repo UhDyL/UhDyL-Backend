@@ -65,7 +65,7 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:mysql://${{ vars.SPRING_DATASOURCE_HOST }}:${{ vars.SPRING_DATASOURCE_PORT }}/${{ vars.MYSQL_DATABASE }}
           SPRING_DATASOURCE_USERNAME: ${{ secrets.MYSQL_USER_ID }}
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.MYSQL_USER_PASSWORD }}
-          SPRING_PROFILES_ACTIVE: ${{ vars.SPRING_PROFILES_ACTIVE }}
+          SPRING_PROFILES_ACTIVE: dev
 
       # 6) JUnit 결과 리포트
       - name: Publish Test Report

@@ -71,9 +71,23 @@ public class StompHandler implements ChannelInterceptor {
 
     public void validateParticipant(String destination, StompHeaderAccessor accessor){
         int last = destination.lastIndexOf('/');
-        Long roomId = Long.parseLong(destination.substring(last + 1));
+
+        if (last == -1 || last == destination.length() - 1) {
+            throw new BusinessException(ExceptionType.WS_INVALID_ROOM_PATH);
+        }
+
+        Long roomId;
+        try {
+            roomId = Long.parseLong(destination.substring(last + 1));
+        } catch (NumberFormatException e) {
+            throw new BusinessException(ExceptionType.WS_INVALID_ROOM_PATH);
+        }
 
         Principal user = accessor.getUser();
+        if (user == null)
+            throw new BusinessException(ExceptionType.WS_TOKEN_MISSING);
+
+
         if(user instanceof JwtAuthentication){
             Long userId = ((JwtAuthentication) user).userId();
             if(!chatRoomService.isParticipant(roomId, userId))

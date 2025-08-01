@@ -32,6 +32,13 @@ jobs:
           --health-retries=5
 
     steps:
+      # 현재 저장소의 소스 코드와 서브 모듈 내려 받기
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          token: ${{ secrets.ACTION_TOKEN }} # 조직이 아닌 개인 사용자 토큰이므로 유의할 것!
+
       # 1) 소스 체크아웃
       - name: Checkout
         uses: actions/checkout@v4

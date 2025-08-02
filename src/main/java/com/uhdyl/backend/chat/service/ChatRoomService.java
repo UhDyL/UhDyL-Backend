@@ -2,18 +2,14 @@ package com.uhdyl.backend.chat.service;
 
 import com.uhdyl.backend.chat.domain.ChatRoom;
 import com.uhdyl.backend.chat.dto.response.ChatRoomResponse;
-import com.uhdyl.backend.chat.repository.ChatMessageRepository;
 import com.uhdyl.backend.chat.repository.ChatRoomRepository;
 import com.uhdyl.backend.global.exception.BusinessException;
 import com.uhdyl.backend.global.exception.ExceptionType;
-import com.uhdyl.backend.user.domain.User;
-import com.uhdyl.backend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Objects;
 
 @Service
@@ -22,7 +18,6 @@ import java.util.Objects;
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
-    private final ChatMessageRepository chatMessageRepository;
 
 
     @Transactional
@@ -43,7 +38,7 @@ public class ChatRoomService {
 
         return chatRoomRepository.findByUser1AndUser2(user1, user2)
                 .map(
-                        room -> ChatRoomResponse.to(room, chatMessageRepository.findMessagesWithUserByChatRoom(room)))
+                        ChatRoomResponse::to)
                 .orElseGet(
                         () -> {
                             return ChatRoomResponse.to(
@@ -52,8 +47,7 @@ public class ChatRoomService {
                                                     .user1(user1)
                                                     .user2(user2)
                                                     .build()
-                                            )
-                                    , Collections.emptyList());
+                                            ));
 
                         }
                 );

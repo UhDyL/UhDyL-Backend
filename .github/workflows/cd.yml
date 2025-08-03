@@ -54,7 +54,7 @@ jobs:
             echo "✅ 사전 실행 성공 → 본 실행"
             pkill -f 'UhDyL-Backend-0.0.1-SNAPSHOT.jar' || true
 
-            nohup java -jar build/libs/babzip-0.0.1-SNAPSHOT.jar \
+            nohup java -jar build/libs/UhDyL-Backend-0.0.1-SNAPSHOT.jar \
                  --spring.profiles.active=dev \
                  > nohup.out 2>&1 &
           EOF

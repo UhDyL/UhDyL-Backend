@@ -1,0 +1,59 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - dev              # 기존 그대로
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) 코드 체크아웃 – 그대로
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2) SSH 키 준비 – 그대로
+      - name: Setup SSH key
+        run: |
+          echo "${{ secrets.EC2_KEY }}" > key.pem
+          chmod 600 key.pem
+
+      # 3) EC2 배포
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem \
+              ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} <<'EOF'
+            set -e
+
+            cd ~/BabZip-Backend
+            git pull origin dev                    
+            ./gradlew clean build -x test          
+
+            # Java 17/21 바이너리에 443 바인딩 권한 부여 ― 최초 1회면 족함
+            sudo setcap 'cap_net_bind_service=+ep' \
+                 $(readlink -f $(which java)) || true
+
+            pkill -f 'UhDyL-Backend-0.0.1-SNAPSHOT.jar' || true
+
+            echo "🔍 서버 사전 실행 테스트..."
+            # 임시 랜덤 포트(0)로 기동해 443 충돌 방지 + 로그 체크
+            java -jar build/libs/UhDyL-Backend-0.0.1-SNAPSHOT.jar \
+                 --spring.profiles.active=dev \
+                 --server.port=0 > /tmp/test.log 2>&1 &
+            sleep 10
+
+            if grep -Ei 'Exception|ERROR' /tmp/test.log; then
+              echo '❌ 서버 실행 중 에러 발생!'
+              cat /tmp/test.log
+              exit 1
+            fi
+
+            echo "✅ 사전 실행 성공 → 본 실행"
+            pkill -f 'UhDyL-Backend-0.0.1-SNAPSHOT.jar' || true
+
+            nohup java -jar build/libs/babzip-0.0.1-SNAPSHOT.jar \
+                 --spring.profiles.active=dev \
+                 > nohup.out 2>&1 &
+          EOF

@@ -1,9 +1,10 @@
 name: Deploy to EC2
 
 on:
-  push:
-    branches:
-      - dev              # 기존 그대로
+  workflow_run:
+    workflows: [ "Java CI with Gradle" ]
+    types: [ completed ]
+    branches: [ "dev" ]
 
 jobs:
   deploy:

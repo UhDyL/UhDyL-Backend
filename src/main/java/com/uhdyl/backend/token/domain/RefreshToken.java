@@ -1,4 +1,4 @@
-package com.uhdyl.backend.token.entity;
+package com.uhdyl.backend.token.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

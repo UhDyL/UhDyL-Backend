@@ -1,3 +1,10 @@
+server:
+  port: 443
+  ssl:
+    enabled: true
+    certificate: /etc/letsencrypt/live/uhdyl.duckdns.org/fullchain.pem
+    certificate-private-key: /etc/letsencrypt/live/uhdyl.duckdns.org/privkey.pem
+
 spring:
   config:
     activate:
@@ -6,6 +13,7 @@ spring:
       - security/application-database.yml
       - security/application-security.yml
       - security/application-swagger.yml
+      - security/application-cloudinary.yml
 
   datasource:
     url: ${UhDyL.mysql.url}

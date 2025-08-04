@@ -5,8 +5,8 @@ import java.util.Set;
 public class RedirectUrlValidator {
 
     private static final Set<String> ALLOWED_PREFIXES = Set.of(
-            "https://babzip.netlify.app",
-            "http://localhost:5173"
+            "http://localhost:5173",
+            "http://localhost:8080"
     );
 
     public static void validate(String uri) {

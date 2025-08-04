@@ -9,6 +9,7 @@ public class ChatMessageRequest {
 
     private String message;
     private String imageUrl;
+    private String publicId;
 
     public void setMessage(String message) {
         this.message = Jsoup.clean(message, Safelist.basic());

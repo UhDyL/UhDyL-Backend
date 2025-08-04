@@ -33,6 +33,8 @@ public class User extends BaseEntity {
 
     private String providerId;
 
+    private String publicId;
+
     @Builder
     public User(String email, UserRole role, String name, String picture, OAuth2Provider provider, String providerId) {
         this.email = email;
@@ -41,5 +43,10 @@ public class User extends BaseEntity {
         this.picture = picture;
         this.provider = provider;
         this.providerId = providerId;
+    }
+
+    public void deleteImage(){
+        this.picture = null;
+        this.publicId = null;
     }
 }

@@ -41,13 +41,15 @@ public class ChatMessageService {
             throw new BusinessException(ExceptionType.WS_ROOM_ACCESS_DENIED);
         }
 
-        request.setMessage(request.getMessage());
+        if(request.getMessage() == null || request.getMessage().isBlank())
+            request.setMessage(request.getMessage());
 
         ChatMessage chatMessage = ChatMessage.builder()
                 .message(request.getMessage())
                 .user(user)
                 .imageUrl(request.getImageUrl())
                 .chatRoom(chatRoom)
+                .publicId(request.getPublicId())
                 .build();
         chatMessageRepository.save(chatMessage);
 

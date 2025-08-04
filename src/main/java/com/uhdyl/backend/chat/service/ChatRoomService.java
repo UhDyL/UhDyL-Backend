@@ -2,14 +2,18 @@ package com.uhdyl.backend.chat.service;
 
 import com.uhdyl.backend.chat.domain.ChatRoom;
 import com.uhdyl.backend.chat.dto.response.ChatRoomResponse;
+import com.uhdyl.backend.chat.repository.ChatMessageRepository;
 import com.uhdyl.backend.chat.repository.ChatRoomRepository;
 import com.uhdyl.backend.global.exception.BusinessException;
 import com.uhdyl.backend.global.exception.ExceptionType;
+import com.uhdyl.backend.user.domain.User;
+import com.uhdyl.backend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Objects;
 
 @Service
@@ -18,6 +22,8 @@ import java.util.Objects;
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final UserRepository userRepository;
 
 
     @Transactional
@@ -36,6 +42,10 @@ public class ChatRoomService {
         if(Objects.equals(user1, user2))
             throw new BusinessException(ExceptionType.CANT_CREATE_CHATROOM);
 
+        // TODO: 채팅방 이름을 어떻게 정할지 프론트와 상의하기
+        User user = userRepository.findById(user2)
+                .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
+
         return chatRoomRepository.findByUser1AndUser2(user1, user2)
                 .map(
                         ChatRoomResponse::to)
@@ -46,6 +56,7 @@ public class ChatRoomService {
                                             ChatRoom.builder()
                                                     .user1(user1)
                                                     .user2(user2)
+                                                    .name(user.getName())
                                                     .build()
                                             ));
 

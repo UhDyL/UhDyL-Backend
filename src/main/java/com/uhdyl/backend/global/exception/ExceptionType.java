@@ -44,6 +44,8 @@ public enum ExceptionType {
     IMAGE_ACCESS_DENIED(FORBIDDEN, "I001", "해당 이미지에 대한 권한이 없습니다."),
     IMAGE_UPLOAD_FAILED(INTERNAL_SERVER_ERROR, "I002", "이미지 업로드에 실패했습니다."),
     IMAGE_DELETE_FAILED(INTERNAL_SERVER_ERROR, "I003", "이미지 삭제에 실패했습니다."),
+    INVALID_IMAGE_FILE(FORBIDDEN, "I004", "허용되지 않은 이미지입니다."),
+    IMAGE_SIZE_EXCEEDED(FORBIDDEN, "I005", "이미지 용량이 초과했습니다."),
 
     ;
 

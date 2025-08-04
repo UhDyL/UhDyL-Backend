@@ -29,11 +29,19 @@ public class ChatMessage extends BaseEntity {
 
     private String imageUrl;
 
+    private String publicId;
+
     @Builder
-    public ChatMessage(ChatRoom chatRoom, User user, String message, String imageUrl) {
+    public ChatMessage(ChatRoom chatRoom, User user, String message, String imageUrl, String publicId) {
         this.chatRoom = chatRoom;
         this.user = user;
         this.message = message;
         this.imageUrl = imageUrl;
+        this.publicId = publicId;
+    }
+
+    public void deleteImage(){
+        this.imageUrl = null;
+        this.publicId = null;
     }
 }

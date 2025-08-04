@@ -48,6 +48,7 @@ public class ChatMessageService {
                 .user(user)
                 .imageUrl(request.getImageUrl())
                 .chatRoom(chatRoom)
+                .publicId(request.getPublicId())
                 .build();
         chatMessageRepository.save(chatMessage);
 

@@ -43,7 +43,7 @@ public class ImageController {
     @PostMapping("/image/chat")
     @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
     public ResponseEntity<ResponseBody<ImageSavedSuccessResponse>> uploadChatMessageImage(
-            Long roomId,
+            @RequestParam Long roomId,
             @RequestParam MultipartFile image
     ){
         return ResponseEntity.ok(createSuccessResponse(
@@ -61,9 +61,9 @@ public class ImageController {
     ){
 
         List<ImageSavedSuccessResponse> response = new ArrayList<>();
-        for(int i = 1; i <= images.size(); i++){
+        for(int i = 0; i < images.size(); i++){
             response.add(
-                    imageService.uploadImage(images.get(i), "product/" + i + "/")
+                    imageService.uploadImage(images.get(i), "product/" + (i + 1) + "/")
             );
         }
 
@@ -82,9 +82,7 @@ public class ImageController {
         @RequestBody List<ImageDeleteRequest> request,
         Long userId
     ){
-        request.forEach(imageDeleteRequest -> {
-            imageService.deleteImage(imageDeleteRequest.imageType(), imageDeleteRequest.publicId(), userId);
-        });
+        imageService.deleteImage(request, userId);
         return ResponseEntity.ok(createSuccessResponse());
     }
 

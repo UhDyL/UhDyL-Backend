@@ -22,9 +22,12 @@ public class ChatRoom extends BaseEntity {
 
     private Long user2;
 
+    private String name;
+
     @Builder
-    public ChatRoom(Long user1, Long user2) {
+    public ChatRoom(Long user1, Long user2, String name) {
         this.user1 = user1;
         this.user2 = user2;
+        this.name = name;
     }
 }

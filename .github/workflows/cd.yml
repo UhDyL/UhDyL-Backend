@@ -45,17 +45,11 @@ jobs:
 
             ./gradlew clean build -x test
 
-            # Java 17/21 바이너리에 443 바인딩 권한 부여 ― 최초 1회면 족함
-            sudo setcap 'cap_net_bind_service=+ep' \
-                 $(readlink -f $(which java)) || true
-
             pkill -f 'UhDyL-Backend-0.0.1-SNAPSHOT.jar' || true
 
             echo "🔍 서버 사전 실행 테스트..."
-            # 임시 랜덤 포트(0)로 기동해 443 충돌 방지 + 로그 체크
             java -jar build/libs/UhDyL-Backend-0.0.1-SNAPSHOT.jar \
-                 --spring.profiles.active=dev \
-                 --server.port=0 > /tmp/test.log 2>&1 &
+                 --spring.profiles.active=dev > /tmp/test.log 2>&1 &
             sleep 10
 
             if grep -Ei 'Exception|ERROR' /tmp/test.log; then
@@ -69,5 +63,5 @@ jobs:
 
             nohup java -jar build/libs/UhDyL-Backend-0.0.1-SNAPSHOT.jar \
                  --spring.profiles.active=dev \
-                 > nohup.out 2>&1 &
+                 > app.log 2>&1 &
           EOF

@@ -66,6 +66,9 @@ dependencies {
     // Jsoup
     implementation 'org.jsoup:jsoup:1.21.1'
 
+    // Cloudinary
+    implementation 'com.cloudinary:cloudinary-http44:1.37.0'
+
 }
 
 tasks.named('test') {

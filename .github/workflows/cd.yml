@@ -33,9 +33,9 @@ jobs:
             set -e
 
             cd ~/UhDyL-Backend
+            git config --global url."https://x-access-token:${SUBMODULE_TOKEN}@github.com/".insteadOf "https://github.com/"
             git pull origin dev                    
           
-            git config --global url."https://x-access-token:${SUBMODULE_TOKEN}@github.com/".insteadOf "https://github.com/"
             git submodule sync
             git submodule update --init --recursive --depth 1
           

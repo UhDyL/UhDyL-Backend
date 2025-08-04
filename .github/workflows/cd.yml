@@ -38,9 +38,9 @@ jobs:
             git pull origin dev
             
             git ls-remote https://x-access-token:\${SUBMODULE_TOKEN}@github.com/UhDyL/UhDyL-Security.git
+            git submodule sync
             git config submodule.src/main/resources/security.url \
               https://x-access-token:\${SUBMODULE_TOKEN}@github.com/UhDyL/UhDyL-Security.git
-            git submodule sync
             git submodule update --init --recursive --depth 1
 
             ./gradlew clean build -x test

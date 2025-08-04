@@ -41,8 +41,7 @@ public class ChatMessageService {
             throw new BusinessException(ExceptionType.WS_ROOM_ACCESS_DENIED);
         }
 
-        if(request.getMessage() == null || request.getMessage().isBlank())
-            request.setMessage(request.getMessage());
+        request.setMessage(request.getMessage());
 
         ChatMessage chatMessage = ChatMessage.builder()
                 .message(request.getMessage())

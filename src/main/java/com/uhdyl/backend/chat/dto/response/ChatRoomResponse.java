@@ -8,13 +8,15 @@ import java.util.List;
 public record ChatRoomResponse(
         Long chatRoomId,
         Long userId,
-        Long sellerId
+        Long sellerId,
+        String name
 ) {
     public static ChatRoomResponse to(ChatRoom chatRoom) {
         return new ChatRoomResponse(
                 chatRoom.getId(),
                 chatRoom.getUser1(),
-                chatRoom.getUser2()
+                chatRoom.getUser2(),
+                chatRoom.getName()
         );
     }
 

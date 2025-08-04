@@ -34,6 +34,10 @@ spring:
         format_sql: false
         highlight_sql: true
         default_batch_fetch_size: 100
+  servlet:
+    multipart:
+      max-file-size: 5MB     # 한 파일 최대 크기
+      max-request-size: 50MB  # 전체 요청 최대 크기 (여러 파일 합산)
 
 logging:
   level:

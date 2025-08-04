@@ -8,4 +8,5 @@ import java.time.LocalDateTime;
 
 public interface CustomChatMessageRepository {
     Page<ChatMessageResponse> findChatMessages(Long roomId, Pageable pageable, LocalDateTime startDateTime);
+    boolean existsByUserIdAndPublicId(Long userId, String publicId);
 }

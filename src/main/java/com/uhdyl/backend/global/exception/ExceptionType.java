@@ -40,6 +40,11 @@ public enum ExceptionType {
     WS_ROOM_ACCESS_DENIED(FORBIDDEN, "WS003", "채팅방에 대한 접근 권한이 없습니다"),
     WS_INVALID_ROOM_PATH(BAD_REQUEST, "WS004", "잘못된 채팅방 경로입니다"),
 
+    // Image
+    IMAGE_ACCESS_DENIED(FORBIDDEN, "I001", "해당 이미지에 대한 권한이 없습니다."),
+    IMAGE_UPLOAD_FAILED(INTERNAL_SERVER_ERROR, "I002", "이미지 업로드에 실패했습니다."),
+    IMAGE_DELETE_FAILED(INTERNAL_SERVER_ERROR, "I003", "이미지 삭제에 실패했습니다."),
+
     ;
 
     private final HttpStatus status;

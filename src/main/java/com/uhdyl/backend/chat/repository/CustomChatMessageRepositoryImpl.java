@@ -46,4 +46,18 @@ public class CustomChatMessageRepositoryImpl implements CustomChatMessageReposit
         List<ChatMessageResponse> response = ChatMessageResponse.to(messages);
         return new PageImpl<>(response, pageable, total);
     }
+
+    @Override
+    public boolean existsByUserIdAndPublicId(Long userId, String publicId) {
+
+        QChatMessage qChatMessage = QChatMessage.chatMessage;
+
+        return jpaQueryFactory
+                .selectFrom(qChatMessage)
+                .where(
+                        qChatMessage.user.id.eq(userId),
+                        qChatMessage.publicId.eq(publicId)
+                )
+                .fetchOne() != null;
+    }
 }

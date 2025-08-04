@@ -11,9 +11,6 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
-    env:
-      SUBMODULE_TOKEN: ${{ secrets.SUBMODULE_TOKEN }}
-
     steps:
       # 1) 코드 체크아웃 – 그대로
       - name: Checkout code
@@ -34,9 +31,12 @@ jobs:
 
             cd ~/UhDyL-Backend
             echo ">>> SUBMODULE_TOKEN is '${SUBMODULE_TOKEN:0:5}...' (masked)"
-            git config --global url."https://x-access-token:${SUBMODULE_TOKEN}@github.com/".insteadOf "https://github.com/"
+            git remote set-url origin \
+              https://${SUBMODULE_TOKEN}@github.com/kon28289/UhDyL-Backend.git
             git pull origin dev                    
-          
+            
+            git config submodule.src/main/resources/security.url \
+              https://${SUBMODULE_TOKEN}@github.com/kon28289/UhDyL-Security.git
             git submodule sync
             git submodule update --init --recursive --depth 1
           

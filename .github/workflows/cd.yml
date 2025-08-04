@@ -36,11 +36,11 @@ jobs:
             cd ~/UhDyL-Backend
             echo ">>> SUBMODULE_TOKEN is '${SUBMODULE_TOKEN:0:5}...' (masked)"
             git remote set-url origin \
-              https://${SUBMODULE_TOKEN}@github.com/kon28289/UhDyL-Backend.git
+              https://${SUBMODULE_TOKEN}@github.com/UhDyL/UhDyL-Backend.git
             git pull origin dev                    
             
             git config submodule.src/main/resources/security.url \
-              https://${SUBMODULE_TOKEN}@github.com/kon28289/UhDyL-Security.git
+              https://${SUBMODULE_TOKEN}@github.com/UhDyL/UhDyL-Security.git
             git submodule sync
             git submodule update --init --recursive --depth 1
           

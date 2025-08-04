@@ -30,7 +30,7 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem \
-            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash -s" -- "${{ secrets.SUBMODULE_TOKEN }}" << 'EOF'
+            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash -s" -- "${{ secrets.SUBMODULE_TOKEN }}" << EOF
             SUBMODULE_TOKEN="$1"
             set -e
         

@@ -29,7 +29,7 @@ jobs:
               ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} <<'EOF'
             set -e
 
-            cd ~/BabZip-Backend
+            cd ~/UhDyL-Backend
             git pull origin dev                    
             ./gradlew clean build -x test          
 

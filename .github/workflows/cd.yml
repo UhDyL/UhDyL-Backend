@@ -26,23 +26,23 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem \
-            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash -s" -- "${{ secrets.SUBMODULE_TOKEN }}" << EOF
-            SUBMODULE_TOKEN="$1"
+            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash -s" -- "${{ secrets.SUBMODULE_TOKEN }}" <<EOF
+            SUBMODULE_TOKEN="\$1"
             set -e
-        
+
             cd ~/UhDyL-Backend
             echo ">>> SUBMODULE_TOKEN is '\${SUBMODULE_TOKEN:0:5}...' (masked)"
+
             git remote set-url origin \
-            https://\${SUBMODULE_TOKEN}@github.com/UhDyL/UhDyL-Backend.git
+              https://\${SUBMODULE_TOKEN}@github.com/UhDyL/UhDyL-Backend.git
             git pull origin dev
-        
+
             git config submodule.src/main/resources/security.url \
-            https://\${SUBMODULE_TOKEN}@github.com/UhDyL/UhDyL-Security.git
+              https://\${SUBMODULE_TOKEN}@github.com/UhDyL/UhDyL-Security.git
             git submodule sync
             git submodule update --init --recursive --depth 1
 
-          
-            ./gradlew clean build -x test          
+            ./gradlew clean build -x test
 
             # Java 17/21 바이너리에 443 바인딩 권한 부여 ― 최초 1회면 족함
             sudo setcap 'cap_net_bind_service=+ep' \

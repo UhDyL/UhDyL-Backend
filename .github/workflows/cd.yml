@@ -11,6 +11,9 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
+    env:
+      SUBMODULE_TOKEN: ${{ secrets.SUBMODULE_TOKEN }}
+
     steps:
       # 1) 코드 체크아웃 – 그대로
       - name: Checkout code
@@ -31,6 +34,12 @@ jobs:
 
             cd ~/UhDyL-Backend
             git pull origin dev                    
+          
+            
+            git config --global url."https://\${SUBMODULE_TOKEN}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+            git submodule sync
+            git submodule update --init --recursive --depth 1
+          
             ./gradlew clean build -x test          
 
             # Java 17/21 바이너리에 443 바인딩 권한 부여 ― 최초 1회면 족함

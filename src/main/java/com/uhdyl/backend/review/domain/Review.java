@@ -1,5 +1,6 @@
 package com.uhdyl.backend.review.domain;
 
+import com.uhdyl.backend.global.base.BaseEntity;
 import com.uhdyl.backend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -9,11 +10,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Review {
+public class Review extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     private String content;
 

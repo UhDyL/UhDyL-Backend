@@ -30,5 +30,16 @@ public class UserService {
         refreshTokenRepository.deleteByUserId(userId);
     }
 
+    @Transactional
+    public void saveLocation(Long userId, Double locationX, Double locationY) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new BusinessException(ExceptionType.USER_NOT_FOUND));
 
+        if (!user.getRole().equals(UserRole.FARMER)){
+            throw new BusinessException(ExceptionType.USER_NOT_FARMER);
+        }
+
+        user.updateLocation(locationX, locationY);
+        userRepository.save(user);
+    }
 }

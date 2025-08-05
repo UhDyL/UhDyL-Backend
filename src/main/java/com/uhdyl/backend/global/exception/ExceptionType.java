@@ -50,6 +50,7 @@ public enum ExceptionType {
     // Review
     REVIEW_NOT_FOUND(NOT_FOUND, "R001", "리뷰가 존재하지 않습니다."),
     CANT_REVIEW_MYSELF(FORBIDDEN, "R002", "자신에게 리뷰를 작성할 수 없습니다."),
+    CANT_DELETE_REVIEW(FORBIDDEN, "R003", "다른 사용자의 리뷰를 삭제할 수 없습니다,"),
     ;
 
     private final HttpStatus status;

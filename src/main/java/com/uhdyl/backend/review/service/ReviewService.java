@@ -54,6 +54,10 @@ public class ReviewService {
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new BusinessException(ExceptionType.REVIEW_NOT_FOUND));
+
+        if (!Objects.equals(review.getUser().getId(), userId)) {
+            throw new BusinessException(ExceptionType.CANT_DELETE_REVIEW);
+        }
         reviewRepository.deleteById(reviewId);
         review.getUser().deleteReview(review);
     }

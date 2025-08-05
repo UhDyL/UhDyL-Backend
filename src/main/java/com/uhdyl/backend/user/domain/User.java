@@ -64,5 +64,6 @@ public class User extends BaseEntity {
 
     public void deleteReview(Review review){
         this.reviews.remove(review);
+        review.setUser(null);
     }
 }

@@ -35,6 +35,12 @@ public class User extends BaseEntity {
 
     private String publicId;
 
+    @Column(precision = 9, scale = 6)
+    private Double location_x;
+
+    @Column(precision = 9, scale = 6)
+    private Double location_y;
+
     @Builder
     public User(String email, UserRole role, String name, String picture, OAuth2Provider provider, String providerId) {
         this.email = email;
@@ -48,5 +54,10 @@ public class User extends BaseEntity {
     public void deleteImage(){
         this.picture = null;
         this.publicId = null;
+    }
+
+    public void updateLocation(Double location_x, Double location_y){
+        this.location_x = location_x;
+        this.location_y = location_y;
     }
 }

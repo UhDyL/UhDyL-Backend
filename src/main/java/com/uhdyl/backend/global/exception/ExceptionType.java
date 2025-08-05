@@ -47,6 +47,9 @@ public enum ExceptionType {
     INVALID_IMAGE_FILE(FORBIDDEN, "I004", "허용되지 않은 이미지입니다."),
     IMAGE_SIZE_EXCEEDED(FORBIDDEN, "I005", "이미지 용량이 초과했습니다."),
 
+    // Review
+    REVIEW_NOT_FOUND(NOT_FOUND, "R001", "리뷰가 존재하지 않습니다."),
+    CANT_REVIEW_MYSELF(FORBIDDEN, "R002", "자신에게 리뷰를 작성할 수 없습니다."),
     ;
 
     private final HttpStatus status;

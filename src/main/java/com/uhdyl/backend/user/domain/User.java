@@ -66,7 +66,7 @@ public class User extends BaseEntity {
     public void updateLocation(Double location_x, Double location_y){
         this.location_x = location_x;
         this.location_y = location_y;
-      
+    }
     public void addReview(Review review){
         this.reviews.add(review);
         review.setUser(this);

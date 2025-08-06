@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.openapitools.jackson.nullable.JsonNullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,9 @@ public class User extends BaseEntity {
     private UserRole role;
 
     private String name;
+
+    @Column(unique = true)
+    private String nickname;
 
     private String picture;
 
@@ -76,5 +80,27 @@ public class User extends BaseEntity {
     public void deleteReview(Review review){
         this.reviews.remove(review);
         review.setUser(null);
+    }
+
+    public void updateNickname(String nickname){
+        this.nickname = nickname;
+    }
+
+    public void updateProfile(JsonNullable<String> picture, JsonNullable<String> nickname){
+
+        if(picture.isPresent())
+            this.picture = picture.get();
+        if(nickname.isPresent())
+            this.nickname = nickname.get();
+    }
+
+    public void updateUserToFarmer(){
+        this.role = UserRole.FARMER;
+    }
+
+    public boolean isBBatRegistered(){
+        if(this.location_x == null || this.location_y == null)
+            return false;
+        return true;
     }
 }

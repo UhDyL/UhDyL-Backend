@@ -2,10 +2,14 @@ package com.uhdyl.backend.user.domain;
 
 import com.uhdyl.backend.global.base.BaseEntity;
 import com.uhdyl.backend.global.oauth.user.OAuth2Provider;
+import com.uhdyl.backend.review.domain.Review;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -40,6 +44,9 @@ public class User extends BaseEntity {
 
     @Column(precision = 9, scale = 6)
     private Double location_y;
+  
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
 
     @Builder
     public User(String email, UserRole role, String name, String picture, OAuth2Provider provider, String providerId) {
@@ -59,5 +66,14 @@ public class User extends BaseEntity {
     public void updateLocation(Double location_x, Double location_y){
         this.location_x = location_x;
         this.location_y = location_y;
+      
+    public void addReview(Review review){
+        this.reviews.add(review);
+        review.setUser(this);
+    }
+
+    public void deleteReview(Review review){
+        this.reviews.remove(review);
+        review.setUser(null);
     }
 }

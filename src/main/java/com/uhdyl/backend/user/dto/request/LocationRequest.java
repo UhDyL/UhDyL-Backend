@@ -1,9 +1,10 @@
 package com.uhdyl.backend.user.dto.request;
 
+import java.math.BigDecimal;
 import lombok.Getter;
 
 @Getter
 public class LocationRequest {
-    private Double location_x;
-    private Double location_y;
+    private BigDecimal location_x;
+    private BigDecimal location_y;
 }

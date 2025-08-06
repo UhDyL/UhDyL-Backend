@@ -42,5 +42,4 @@ public class UserController implements UserApi {
         userService.saveLocation(userId, request.getLocation_x(), request.getLocation_y());
         return ResponseEntity.ok(createSuccessResponse());
     }
-
 }

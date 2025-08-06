@@ -7,6 +7,7 @@ import com.uhdyl.backend.token.repository.RefreshTokenRepository;
 import com.uhdyl.backend.user.domain.User;
 import com.uhdyl.backend.user.domain.UserRole;
 import com.uhdyl.backend.user.repository.UserRepository;
+import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,7 @@ public class UserService {
     }
 
     @Transactional
-    public void saveLocation(Long userId, Double locationX, Double locationY) {
+    public void saveLocation(Long userId, BigDecimal locationX, BigDecimal locationY) {
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new BusinessException(ExceptionType.USER_NOT_FOUND));
 

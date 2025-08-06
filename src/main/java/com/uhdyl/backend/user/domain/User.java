@@ -89,7 +89,7 @@ public class User extends BaseEntity {
     public void updateProfile(JsonNullable<String> picture, JsonNullable<String> nickname){
 
         if(picture.isPresent())
-            this.publicId = picture.get();
+            this.picture = picture.get();
         if(nickname.isPresent())
             this.nickname = nickname.get();
     }

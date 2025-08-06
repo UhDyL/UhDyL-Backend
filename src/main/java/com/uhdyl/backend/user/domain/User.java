@@ -4,6 +4,7 @@ import com.uhdyl.backend.global.base.BaseEntity;
 import com.uhdyl.backend.global.oauth.user.OAuth2Provider;
 import com.uhdyl.backend.review.domain.Review;
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,6 +40,12 @@ public class User extends BaseEntity {
 
     private String publicId;
 
+    @Column(precision = 9, scale = 6)
+    private BigDecimal location_x;
+
+    @Column(precision = 9, scale = 6)
+    private BigDecimal location_y;
+  
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
 
@@ -57,6 +64,10 @@ public class User extends BaseEntity {
         this.publicId = null;
     }
 
+    public void updateLocation(BigDecimal location_x, BigDecimal location_y){
+        this.location_x = location_x;
+        this.location_y = location_y;
+    }
     public void addReview(Review review){
         this.reviews.add(review);
         review.setUser(this);

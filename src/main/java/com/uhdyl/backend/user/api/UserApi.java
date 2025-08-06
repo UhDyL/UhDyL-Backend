@@ -142,6 +142,7 @@ public interface UserApi {
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
                     @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
+                    @SwaggerApiFailedResponse(ExceptionType.USER_NICKNAME_DUPLICATED)
             }
     )
     @AssignUserId

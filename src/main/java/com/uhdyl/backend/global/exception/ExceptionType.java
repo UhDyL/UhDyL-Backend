@@ -30,6 +30,10 @@ public enum ExceptionType {
     // User
     USER_NOT_FOUND(NOT_FOUND, "U001","사용자가 존재하지 않습니다"),
     USER_NOT_FARMER(FORBIDDEN, "U002", "판매자만 가능한 기능입니다."),
+    USER_NICKNAME_DUPLICATED(FORBIDDEN, "U003", "중복된 닉네임을 사용할 수 없습니다."),
+    BBAT_NOT_UPDATED(UNAUTHORIZED, "U004", "판매자 밭 정보가 입력되지 않았습니다."),
+
+
 
     // Chat
     CANT_CREATE_CHATROOM(FORBIDDEN, "CH001", "채팅방을 생성할 수 없습니다."),

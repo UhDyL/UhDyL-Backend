@@ -70,8 +70,7 @@ dependencies {
     implementation 'com.cloudinary:cloudinary-http44:1.37.0'
 
     // JsonNullable
-    implementation 'org.openapitools:jackson-databind-nullable:0.2.4'
-
+    implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
 
 }
 

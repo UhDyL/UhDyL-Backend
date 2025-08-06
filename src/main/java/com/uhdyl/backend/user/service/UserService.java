@@ -35,7 +35,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new BusinessException(ExceptionType.USER_NOT_FOUND));
 
-        if (!user.getRole().equals(UserRole.FARMER)){
+        if (!isFarmer(userId)){
             throw new BusinessException(ExceptionType.USER_NOT_FARMER);
         }
 

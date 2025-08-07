@@ -29,7 +29,7 @@ public class UserController implements UserApi {
 
     @AssignUserId
     @DeleteMapping("/logout")
-    @PreAuthorize(" isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize(" isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Void>> logout(Long userId){
         userService.logout(userId);
         return ResponseEntity.ok(createSuccessResponse());
@@ -37,7 +37,7 @@ public class UserController implements UserApi {
 
     @AssignUserId
     @PostMapping("/location")
-    @PreAuthorize(" isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize(" isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Void>> saveLocation(@RequestBody LocationRequest request,
                                                            @Parameter(hidden = true) Long userId){
         userService.saveLocation(userId, request.getLocation_x(), request.getLocation_y());
@@ -49,7 +49,7 @@ public class UserController implements UserApi {
      */
     @AssignUserId
     @PostMapping("/complete-registration")
-    @PreAuthorize(" isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize(" isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<TokenResponse>> completeRegistration(
             Long userId
     ){
@@ -59,7 +59,7 @@ public class UserController implements UserApi {
 
     @AssignUserId
     @PostMapping("/nickname")
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Void>> updateNickname(
             Long userId,
             @RequestBody UserNicknameUpdateRequest request
@@ -70,14 +70,14 @@ public class UserController implements UserApi {
 
     @AssignUserId
     @GetMapping("/profile")
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<UserProfileResponse>> getProfile(Long userId){
         return ResponseEntity.ok(createSuccessResponse(userService.getProfile(userId)));
     }
 
     @AssignUserId
     @PatchMapping("/profile")
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Void>> updateProfile(
             Long userId,
             @RequestBody UserProfileUpdateRequest request

@@ -22,7 +22,7 @@ public record JwtAuthentication(
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(this.role().name()));
+        return Collections.singleton(new SimpleGrantedAuthority(this.role().getKey()));
     }
 
     @Override

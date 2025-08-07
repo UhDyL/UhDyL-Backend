@@ -41,7 +41,7 @@ public interface UserApi {
     )
     @AssignUserId
     @DeleteMapping("/logout")
-    @PreAuthorize(" isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize(" isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Void>> logout(@Parameter(hidden = true) Long userId);
 
     @Operation(
@@ -57,7 +57,7 @@ public interface UserApi {
             }
     )
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     @PostMapping("/location")
     ResponseEntity<ResponseBody<Void>> saveLocation(@RequestBody LocationRequest request,
                                                              @Parameter(hidden = true) Long userId);
@@ -81,7 +81,7 @@ public interface UserApi {
     )
     @AssignUserId
     @PostMapping("/complete-registration")
-    @PreAuthorize(" isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize(" isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<TokenResponse>> completeRegistration(
             @Parameter(hidden = true) Long userId
     );
@@ -101,7 +101,7 @@ public interface UserApi {
     )
     @AssignUserId
     @PostMapping("/nickname")
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Void>> updateNickname(
             @Parameter(hidden = true) Long userId,
             @RequestBody UserNicknameUpdateRequest request
@@ -125,7 +125,7 @@ public interface UserApi {
     )
     @AssignUserId
     @GetMapping("/profile")
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<UserProfileResponse>> getProfile(
             @Parameter(hidden = true) Long userId
     );
@@ -147,7 +147,7 @@ public interface UserApi {
     )
     @AssignUserId
     @PatchMapping("/profile")
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Void>> updateProfile(
             @Parameter(hidden = true) Long userId,
             @RequestBody UserProfileUpdateRequest request

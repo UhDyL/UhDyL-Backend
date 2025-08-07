@@ -42,7 +42,7 @@ public interface ReviewApi {
     )
     @PostMapping("/review")
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Void>> createReview(
             @Parameter(hidden = true) Long userId,
             @RequestBody ReviewCreateRequest reviewCreateRequest
@@ -66,7 +66,7 @@ public interface ReviewApi {
     )
     @AssignUserId
     @GetMapping("/review/me")
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Page<ReviewResponse>>> getMyReviews(
             @Parameter(hidden = true) Long userId,
             @ParameterObject
@@ -113,7 +113,7 @@ public interface ReviewApi {
     )
     @DeleteMapping("/review/{reviewId}")
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Void>> deleteReview(
             @Parameter(hidden = true) Long userId,
             @PathVariable Long reviewId

@@ -44,7 +44,7 @@ public class ChatMessageController {
     }
 
     @GetMapping("/chat/room/{roomId}/messages")
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Page<ChatMessageResponse>>> findChatMessages(
             @PathVariable Long roomId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC, size = 10) Pageable pageable,

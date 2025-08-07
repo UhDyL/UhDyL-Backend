@@ -89,6 +89,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                                 .picture(oAuth2UserInfo.profile())
                                 .provider(provider)
                                 .providerId(providerId)
+                                .mode("구매자")
                                 .build()
                 );
         return userRepository.save(user);

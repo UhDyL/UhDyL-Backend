@@ -43,10 +43,6 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new BusinessException(ExceptionType.USER_NOT_FOUND));
 
-        if (!isFarmer(userId)){
-            throw new BusinessException(ExceptionType.USER_NOT_FARMER);
-        }
-
         user.updateLocation(locationX, locationY);
         userRepository.save(user);
     }
@@ -65,7 +61,6 @@ public class UserService {
     public UserProfileResponse getProfile(Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
-
         return UserProfileResponse.to(user);
     }
 
@@ -75,10 +70,10 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
 
-        if(userRepository.existsByNickname(request.nickname().get()))
+        if(request.nickname().isPresent() && userRepository.existsByNickname(request.nickname().get()))
             throw new BusinessException(ExceptionType.USER_NICKNAME_DUPLICATED);
 
-        user.updateProfile(request.profileImageUrl(), request.nickname());
+        user.updateProfile(request.profileImageUrl(), request.nickname(), request.mode());
     }
 
     @Transactional
@@ -89,6 +84,7 @@ public class UserService {
         if(!user.isBBatRegistered())
             throw new BusinessException(ExceptionType.BBAT_NOT_UPDATED);
 
+        user.updateMode("판매자");
         user.updateUserToFarmer();
         JwtUserClaim claim = new JwtUserClaim(userId, user.getRole());
         return jwtHandler.createTokens(claim);

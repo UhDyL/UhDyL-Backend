@@ -24,7 +24,7 @@ public class ChatRoomController {
 
     @PostMapping("/chat/room")
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<ChatRoomResponse>> createChatRoom(
             // TODO: 현재는 상대방의 ID를 전달받지만, 프론트 연결 시에는 상품의 PK 또는 상품의 제목과 닉네임을 받아서 채팅방을 만드는 구조로 변경해야됨
             @RequestBody ChatRoomRequest request,

@@ -28,7 +28,7 @@ public class ReviewController implements ReviewApi {
      */
     @PostMapping("/review")
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Void>> createReview(
             Long userId,
             @RequestBody ReviewCreateRequest reviewCreateRequest
@@ -44,7 +44,7 @@ public class ReviewController implements ReviewApi {
      */
     @AssignUserId
     @GetMapping("/review/me")
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Page<ReviewResponse>>> getMyReviews(
             Long userId,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
@@ -58,7 +58,7 @@ public class ReviewController implements ReviewApi {
      */
     @AssignUserId
     @GetMapping("/review")
-    @PreAuthorize("isAuthenticated() and hasAuthority('FARMER')")
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     public ResponseEntity<ResponseBody<Page<ReviewResponse>>> getAllReviews(
             Long userId,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
@@ -71,7 +71,7 @@ public class ReviewController implements ReviewApi {
      */
     @DeleteMapping("/review/{reviewId}")
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Void>> deleteReview(
             Long userId,
             @PathVariable Long reviewId

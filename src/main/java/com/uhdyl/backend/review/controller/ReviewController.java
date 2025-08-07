@@ -53,17 +53,15 @@ public class ReviewController implements ReviewApi {
     }
 
     /**
-     *  자신에게 작성된 리뷰 페이징 조회 api
-     *  판매자가 사용할 api
+     *  특정 판매자에게 작성된 리뷰 페이징 조회 api
      */
-    @AssignUserId
-    @GetMapping("/review")
-    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
+    @GetMapping("/review/{nickname}")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Page<ReviewResponse>>> getAllReviews(
-            Long userId,
+            @PathVariable String nickname,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ){
-        return ResponseEntity.ok(createSuccessResponse(reviewService.getAllReviews(userId, pageable)));
+        return ResponseEntity.ok(createSuccessResponse(reviewService.getAllReviews(nickname, pageable)));
     }
 
     /**

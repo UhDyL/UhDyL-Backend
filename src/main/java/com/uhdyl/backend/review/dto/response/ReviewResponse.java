@@ -2,18 +2,25 @@ package com.uhdyl.backend.review.dto.response;
 
 import com.uhdyl.backend.review.domain.Review;
 
+import java.time.LocalDateTime;
+
+// TODO: 상품 도메인 개발 후 상품의 제목도 함께 전달하기
 public record ReviewResponse(
         Long Id,
         String content,
         Long rating,
-        String imageUrl
+        String nickName,
+        String imageUrl,
+        LocalDateTime createdAt
 ){
     public static ReviewResponse to(Review review){
         return new ReviewResponse(
                 review.getId(),
                 review.getContent(),
                 review.getRating(),
-                review.getImageUrl()
+                review.getUser().getNickname(),
+                review.getImageUrl(),
+                review.getCreatedAt()
         );
     }
 }

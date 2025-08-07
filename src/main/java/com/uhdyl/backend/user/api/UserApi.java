@@ -45,8 +45,8 @@ public interface UserApi {
     public ResponseEntity<ResponseBody<Void>> logout(@Parameter(hidden = true) Long userId);
 
     @Operation(
-            summary =  "판매자 밭 위치 저장",
-            description = "FARMER 권한을 가진 사용자의 위치를 저장합니다."
+            summary =  "사용자 밭 위치 저장",
+            description = "USER 권한을 가진 사용자의 밭 위치를 저장합니다."
     )
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(description = "위치 저장 성공"),

@@ -75,8 +75,8 @@ public interface ReviewApi {
 
 
     @Operation(
-            summary = "구매자가 판매자에게 작성한 리뷰 페이징 조회",
-            description = "판매자는 페이지로 작성된 리뷰를 조회할 수 있습니다."
+            summary = "판매자 상점 페이지의 리뷰 페이징 조회",
+            description = "구매자는 판매자에게 작성된 리뷰를 조회할 수 있습니다."
     )
     @ApiResponse(content = @Content(schema = @Schema(implementation = ReviewResponse.class)))
     @SwaggerApiResponses(
@@ -89,12 +89,10 @@ public interface ReviewApi {
                     @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
             }
     )
-    @AssignUserId
-    @GetMapping("/review")
-    @PreAuthorize("isAuthenticated() and hasAuthority('FARMER')")
+    @GetMapping("/review/{nickname}")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Page<ReviewResponse>>> getAllReviews(
-            @Parameter(hidden = true) Long userId,
-            @ParameterObject
+            @PathVariable String nickname,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     );
 

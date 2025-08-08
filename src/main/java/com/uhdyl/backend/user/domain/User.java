@@ -2,6 +2,7 @@ package com.uhdyl.backend.user.domain;
 
 import com.uhdyl.backend.global.base.BaseEntity;
 import com.uhdyl.backend.global.oauth.user.OAuth2Provider;
+import com.uhdyl.backend.product.domain.Product;
 import com.uhdyl.backend.review.domain.Review;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -48,6 +49,9 @@ public class User extends BaseEntity {
   
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Product> products = new ArrayList<>();
 
     @Builder
     public User(String email, UserRole role, String name, String picture, OAuth2Provider provider, String providerId) {

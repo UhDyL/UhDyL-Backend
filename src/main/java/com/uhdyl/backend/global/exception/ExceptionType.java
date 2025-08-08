@@ -30,6 +30,7 @@ public enum ExceptionType {
     // User
     USER_NOT_FOUND(NOT_FOUND, "U001","사용자가 존재하지 않습니다"),
     USER_NOT_FARMER(FORBIDDEN, "U002", "판매자만 가능한 기능입니다."),
+    LOCATION_NOT_FOUND(NOT_FOUND, "U003", "저장된 위치를 찾을 수 없습니다."),
 
     // Chat
     CANT_CREATE_CHATROOM(FORBIDDEN, "CH001", "채팅방을 생성할 수 없습니다."),
@@ -52,6 +53,7 @@ public enum ExceptionType {
     REVIEW_NOT_FOUND(NOT_FOUND, "R001", "리뷰가 존재하지 않습니다."),
     CANT_REVIEW_MYSELF(FORBIDDEN, "R002", "자신에게 리뷰를 작성할 수 없습니다."),
     CANT_DELETE_REVIEW(FORBIDDEN, "R003", "다른 사용자의 리뷰를 삭제할 수 없습니다,"),
+
     ;
 
     private final HttpStatus status;

@@ -6,6 +6,7 @@ import com.uhdyl.backend.global.exception.ExceptionType;
 import com.uhdyl.backend.token.repository.RefreshTokenRepository;
 import com.uhdyl.backend.user.domain.User;
 import com.uhdyl.backend.user.domain.UserRole;
+import com.uhdyl.backend.user.dto.response.LocationResponse;
 import com.uhdyl.backend.user.repository.UserRepository;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
@@ -42,5 +43,16 @@ public class UserService {
 
         user.updateLocation(locationX, locationY);
         userRepository.save(user);
+    }
+
+    public LocationResponse getLocation(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
+
+        if (user.getLocation_x() == null || user.getLocation_y() == null) {
+            throw new BusinessException(ExceptionType.LOCATION_NOT_FOUND);
+        }
+
+        return new LocationResponse(user.getLocation_x(), user.getLocation_y());
     }
 }

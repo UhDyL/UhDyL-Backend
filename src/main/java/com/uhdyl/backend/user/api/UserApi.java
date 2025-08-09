@@ -72,7 +72,7 @@ public interface UserApi {
             }
     )
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     @GetMapping("/location")
     ResponseEntity<ResponseBody<LocationResponse>> getLocation(@Parameter(hidden = true) Long userId);
 }

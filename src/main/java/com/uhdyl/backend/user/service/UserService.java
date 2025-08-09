@@ -45,14 +45,19 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
     public LocationResponse getLocation(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
 
-        if (user.getLocation_x() == null || user.getLocation_y() == null) {
+        if (!isFarmer(userId)){
+            throw new BusinessException(ExceptionType.USER_NOT_FARMER);
+        }
+
+        if (user.getLocationX() == null) {
             throw new BusinessException(ExceptionType.LOCATION_NOT_FOUND);
         }
 
-        return new LocationResponse(user.getLocation_x(), user.getLocation_y());
+        return new LocationResponse(user.getLocationX(), user.getLocationX());
     }
 }

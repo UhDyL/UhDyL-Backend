@@ -105,6 +105,7 @@ public class User extends BaseEntity {
         if (product == null) return;
         this.products.remove(product);
         product.setUser(null);
+    }
 
     public void updateNickname(String nickname){
         this.nickname = nickname;

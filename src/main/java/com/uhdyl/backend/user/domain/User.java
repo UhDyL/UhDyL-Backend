@@ -81,4 +81,16 @@ public class User extends BaseEntity {
         this.reviews.remove(review);
         review.setUser(null);
     }
+
+    public void addProduct(Product product) {
+        if (product == null) return;
+        this.products.add(product);
+        product.setUser(this);
+    }
+
+    public void removeProduct(Product product) {
+        if (product == null) return;
+        this.products.remove(product);
+        product.setUser(null);
+    }
 }

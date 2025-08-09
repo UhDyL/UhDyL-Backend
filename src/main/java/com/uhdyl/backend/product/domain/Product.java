@@ -21,6 +21,7 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
@@ -50,6 +51,7 @@ public class Product extends BaseEntity {
     @OrderBy("imageOrder ASC")
     private List<Image> images = new ArrayList<>();
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -63,5 +65,15 @@ public class Product extends BaseEntity {
         this.price = price;
         this.category = category;
         this.user = user;
+    }
+
+    public void addImage(Image image) {
+        if (image == null) return;
+        this.images.add(image);
+    }
+
+    public void removeImage(Image image) {
+        if (image == null) return;
+        this.images.remove(image);
     }
 }

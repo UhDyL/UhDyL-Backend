@@ -41,10 +41,10 @@ public class User extends BaseEntity {
     private String publicId;
 
     @Column(precision = 9, scale = 6)
-    private BigDecimal location_x;
+    private BigDecimal locationX;
 
     @Column(precision = 9, scale = 6)
-    private BigDecimal location_y;
+    private BigDecimal locationY;
   
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
@@ -64,9 +64,9 @@ public class User extends BaseEntity {
         this.publicId = null;
     }
 
-    public void updateLocation(BigDecimal location_x, BigDecimal location_y){
-        this.location_x = location_x;
-        this.location_y = location_y;
+    public void updateLocation(BigDecimal locationX, BigDecimal locationY){
+        this.locationX = locationX;
+        this.locationY = locationY;
     }
     public void addReview(Review review){
         this.reviews.add(review);

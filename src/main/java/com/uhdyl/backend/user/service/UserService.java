@@ -8,6 +8,7 @@ import com.uhdyl.backend.token.domain.Token;
 import com.uhdyl.backend.token.repository.RefreshTokenRepository;
 import com.uhdyl.backend.user.domain.User;
 import com.uhdyl.backend.user.domain.UserRole;
+import com.uhdyl.backend.user.dto.response.LocationResponse;
 import com.uhdyl.backend.user.dto.request.UserNicknameUpdateRequest;
 import com.uhdyl.backend.user.dto.request.UserProfileUpdateRequest;
 import com.uhdyl.backend.user.dto.response.UserProfileResponse;
@@ -45,6 +46,18 @@ public class UserService {
 
         user.updateLocation(locationX, locationY);
         userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public LocationResponse getLocation(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
+
+        if (!user.isBBatRegistered()) {
+            throw new BusinessException(ExceptionType.LOCATION_NOT_FOUND);
+        }
+
+        return new LocationResponse(user.getLocationX(), user.getLocationY());
     }
 
     @Transactional

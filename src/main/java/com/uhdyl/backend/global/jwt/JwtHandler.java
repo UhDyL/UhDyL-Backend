@@ -48,6 +48,8 @@ public class JwtHandler {
         String refreshToken = UUID.randomUUID().toString();
         long refreshTokenExpireIn = jwtProperties.getRefreshTokenExpireIn();
         RefreshToken refreshTokenEntity = new RefreshToken(jwtUserClaim.userId(), refreshToken, refreshTokenExpireIn);
+        if(refreshTokenRepository.existsByUserId(jwtUserClaim.userId()))
+            refreshTokenRepository.deleteByUserId(jwtUserClaim.userId());
         refreshTokenRepository.save(refreshTokenEntity);
 
         return Token.builder()

@@ -1,5 +1,6 @@
 package com.uhdyl.backend.product.domain;
 
+import com.uhdyl.backend.global.base.BaseEntity;
 import com.uhdyl.backend.image.domain.Image;
 import com.uhdyl.backend.user.domain.User;
 import jakarta.persistence.CascadeType;
@@ -21,9 +22,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
-public class Product {
+public class Product extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

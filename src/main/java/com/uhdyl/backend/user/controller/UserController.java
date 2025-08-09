@@ -17,12 +17,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import static com.uhdyl.backend.global.response.ResponseUtil.createSuccessResponse;
@@ -57,14 +51,9 @@ public class UserController implements UserApi {
     @GetMapping("/location")
     @PreAuthorize(" isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<LocationResponse>> getLocation(
-            @Parameter(hidden = true) Long userId){
+            @Parameter(hidden = true) Long userId) {
         LocationResponse location = userService.getLocation(userId);
         return ResponseEntity.ok(createSuccessResponse(location));
-    @PreAuthorize(" isAuthenticated() and hasRole('USER')")
-    public ResponseEntity<ResponseBody<Void>> saveLocation(@RequestBody LocationRequest request,
-                                                           @Parameter(hidden = true) Long userId){
-        userService.saveLocation(userId, request.getLocation_x(), request.getLocation_y());
-        return ResponseEntity.ok(createSuccessResponse());
     }
 
     /**

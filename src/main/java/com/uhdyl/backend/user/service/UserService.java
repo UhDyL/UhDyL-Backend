@@ -53,15 +53,12 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
 
-        if (!isFarmer(userId)){
-            throw new BusinessException(ExceptionType.USER_NOT_FARMER);
-        }
-
-        if (user.getLocationX() == null) {
+        if (!user.isBBatRegistered()) {
             throw new BusinessException(ExceptionType.LOCATION_NOT_FOUND);
         }
 
-        return new LocationResponse(user.getLocationX(), user.getLocationX());
+        return new LocationResponse(user.getLocationX(), user.getLocationY());
+    }
 
     @Transactional
     public void updateNickname(Long userId, UserNicknameUpdateRequest request){

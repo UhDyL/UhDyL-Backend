@@ -109,7 +109,7 @@ public class User extends BaseEntity {
     }
 
     public boolean isBBatRegistered(){
-        if(this.location_x == null || this.location_y == null)
+        if (this.locationX == null || this.locationY == null)
             return false;
         return true;
     }

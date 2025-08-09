@@ -69,11 +69,11 @@ public class ReviewService {
         return reviewRepository.getMyReviews(userId, pageable);
     }
 
-    public Page<ReviewResponse> getAllReviews(Long userId, Pageable pageable){
-        if(!userRepository.existsById(userId))
-            throw new BusinessException(ExceptionType.USER_NOT_FOUND);
+    public Page<ReviewResponse> getAllReviews(String nickName, Pageable pageable){
+        User user = userRepository.findByNickname(nickName)
+                .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
 
-        return reviewRepository.getAllReviews(userId, pageable);
+        return reviewRepository.getAllReviews(user.getId(), pageable);
     }
 
 }

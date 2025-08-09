@@ -27,7 +27,7 @@ public class ImageController {
      */
     @PostMapping("/image/user")
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<ImageSavedSuccessResponse>> uploadProfileImage(
             Long userId,
             @RequestParam MultipartFile image
@@ -41,7 +41,7 @@ public class ImageController {
      * 채팅 이미지 업로드 api
      */
     @PostMapping("/image/chat")
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<ImageSavedSuccessResponse>> uploadChatMessageImage(
             @RequestParam Long roomId,
             @RequestParam MultipartFile image
@@ -55,7 +55,7 @@ public class ImageController {
      * 상품 이미지 업로드 api
      */
     @PostMapping("/image/product")
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<List<ImageSavedSuccessResponse>>> uploadProductImage(
             @RequestParam List<MultipartFile> images
     ){
@@ -77,7 +77,7 @@ public class ImageController {
      */
     @DeleteMapping("/image")
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasAuthority('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<Void>> deleteImage(
         @RequestBody List<ImageDeleteRequest> request,
         Long userId

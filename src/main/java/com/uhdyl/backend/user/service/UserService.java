@@ -54,10 +54,10 @@ public class UserService {
             throw new BusinessException(ExceptionType.USER_NOT_FARMER);
         }
 
-        if (user.getLocationX() == null) {
+        if (user.getLocationX() == null || user.getLocationY() == null) {
             throw new BusinessException(ExceptionType.LOCATION_NOT_FOUND);
         }
 
-        return new LocationResponse(user.getLocationX(), user.getLocationX());
+        return new LocationResponse(user.getLocationX(), user.getLocationY());
     }
 }

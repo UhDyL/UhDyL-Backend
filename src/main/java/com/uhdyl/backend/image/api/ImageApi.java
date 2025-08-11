@@ -6,10 +6,7 @@ import com.uhdyl.backend.global.config.swagger.SwaggerApiResponses;
 import com.uhdyl.backend.global.config.swagger.SwaggerApiSuccessResponse;
 import com.uhdyl.backend.global.exception.ExceptionType;
 import com.uhdyl.backend.global.response.ResponseBody;
-import com.uhdyl.backend.image.dto.request.ChatImageUploadRequest;
-import com.uhdyl.backend.image.dto.request.ImageDeleteRequest;
-import com.uhdyl.backend.image.dto.request.ProductImageUploadRequest;
-import com.uhdyl.backend.image.dto.request.ProfileImageUploadRequest;
+import com.uhdyl.backend.image.dto.request.*;
 import com.uhdyl.backend.image.dto.response.ImageSavedSuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -124,6 +121,36 @@ public interface ImageApi {
             @RequestParam("images") List<MultipartFile> images
     );
 
+    @Operation(
+            summary = "리뷰 이미지 업로드",
+            description = "리뷰 이미지를 업로드할 수 있습니다.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                            schema = @Schema(implementation = ReviewImageUploadRequest.class)
+                    )
+            )
+    )
+    @ApiResponse(content = @Content(schema = @Schema(implementation = ImageSavedSuccessResponse.class)))
+    @SwaggerApiResponses(
+            success = @SwaggerApiSuccessResponse(
+                    response = ImageSavedSuccessResponse.class,
+                    description = "리뷰 이미지 업로드 성공"
+            ),
+            errors = {
+                    @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
+                    @SwaggerApiFailedResponse(ExceptionType.IMAGE_SIZE_EXCEEDED),
+                    @SwaggerApiFailedResponse(ExceptionType.INVALID_IMAGE_FILE),
+                    @SwaggerApiFailedResponse(ExceptionType.IMAGE_UPLOAD_FAILED)
+            }
+    )
+    @PostMapping("/image/review")
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    public ResponseEntity<ResponseBody<ImageSavedSuccessResponse>> uploadReviewImage(
+            @Parameter(hidden = true) Long userId,
+            @RequestParam MultipartFile image
+    );
 
     @Operation(
             summary = "이미지 삭제",

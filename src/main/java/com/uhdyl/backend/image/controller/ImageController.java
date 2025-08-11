@@ -71,8 +71,17 @@ public class ImageController implements ImageApi {
         return ResponseEntity.ok(createSuccessResponse(response));
     }
 
-    // TODO: 리뷰 도메인 개발 후 리뷰 이미지 업로드 api 개발하기
-
+    @PostMapping("/image/review")
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    public ResponseEntity<ResponseBody<ImageSavedSuccessResponse>> uploadReviewImage(
+            Long userId,
+            @RequestParam MultipartFile image
+    ){
+        return ResponseEntity.ok(createSuccessResponse(
+                imageService.uploadImage(image, "review/" + userId + "/")
+        ));
+    }
     /**
      * 이미지 삭제 api
      */

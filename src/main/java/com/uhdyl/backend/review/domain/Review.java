@@ -43,4 +43,9 @@ public class Review extends BaseEntity {
     public void setUser(User user){
         this.user = user;
     }
+
+    public void deleteImage(){
+        this.imageUrl = null;
+        this.publicId = null;
+    }
 }

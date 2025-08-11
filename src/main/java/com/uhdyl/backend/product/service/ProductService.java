@@ -29,11 +29,17 @@ public class ProductService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
 
-        var aiResult = aiContentService.generateContent(
-                request.breed(),
-                request.price(),
-                request.tone(),
-                request.images());
+        AiContentService.AiResult aiResult;
+
+        try{
+            aiResult = aiContentService.generateContent(
+                    request.breed(),
+                    request.price(),
+                    request.tone(),
+                    request.images());
+        }catch (Exception e) {
+            throw new BusinessException(ExceptionType.AI_GENERATION_FAILED);
+        }
 
         String title = aiResult.title();
         String description = aiResult.description();

@@ -2,6 +2,7 @@ package com.uhdyl.backend.product.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.image.domain.QImage;
 import com.uhdyl.backend.product.domain.QProduct;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
@@ -60,7 +61,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
         return new MyProductListResponse(
                 totalCount != null ? totalCount : 0,
                 completedCount != null ? completedCount : 0,
-                page
+                GlobalPageResponse.create(page)
         );
     }
 }

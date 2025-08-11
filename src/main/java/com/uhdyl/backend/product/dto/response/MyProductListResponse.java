@@ -1,10 +1,10 @@
 package com.uhdyl.backend.product.dto.response;
 
-import org.springframework.data.domain.Page;
+import com.uhdyl.backend.global.response.GlobalPageResponse;
 
 public record MyProductListResponse(
         long totalCount,
         long completedCount,
-        Page<ProductListResponse> products
+        GlobalPageResponse<ProductListResponse> products
 ) {
 }

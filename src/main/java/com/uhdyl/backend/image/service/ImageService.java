@@ -10,6 +10,8 @@ import com.uhdyl.backend.image.domain.ImageType;
 import com.uhdyl.backend.image.dto.request.ImageDeleteRequest;
 import com.uhdyl.backend.image.dto.response.ImageSavedSuccessResponse;
 import com.uhdyl.backend.image.repository.ImageRepository;
+import com.uhdyl.backend.review.domain.Review;
+import com.uhdyl.backend.review.repository.ReviewRepository;
 import com.uhdyl.backend.user.domain.User;
 import com.uhdyl.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class ImageService {
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final ReviewRepository reviewRepository;
 
     public ImageSavedSuccessResponse uploadImage(MultipartFile image, String folderPath){
 
@@ -88,6 +91,15 @@ public class ImageService {
                     ChatMessage chatMessage = chatMessageRepository.findByPublicId(publicId);
                     chatMessage.deleteImage();
                 }
+
+                case REVIEW_IMAGE -> {
+                    if(!reviewRepository.existsByUserIdAndPublicId(userId, publicId))
+                        throw new BusinessException(ExceptionType.IMAGE_ACCESS_DENIED);
+
+                    Review review = reviewRepository.findByPublicId(publicId);
+                    review.deleteImage();
+                }
+
             }
 
             try {

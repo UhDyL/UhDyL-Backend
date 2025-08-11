@@ -1,10 +1,12 @@
 package com.uhdyl.backend.chat.controller;
 
+import com.uhdyl.backend.chat.api.ChatMessageApi;
 import com.uhdyl.backend.chat.dto.request.ChatMessageRequest;
 import com.uhdyl.backend.chat.dto.response.ChatMessageResponse;
 import com.uhdyl.backend.chat.service.ChatMessageService;
 import com.uhdyl.backend.global.jwt.JwtAuthentication;
 import com.uhdyl.backend.global.response.ResponseBody;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,7 +29,7 @@ import static com.uhdyl.backend.global.response.ResponseUtil.createSuccessRespon
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class ChatMessageController {
+public class ChatMessageController implements ChatMessageApi {
 
     private final ChatMessageService chatMessageService;
     private final SimpMessagingTemplate simpMessagingTemplate;
@@ -52,5 +54,13 @@ public class ChatMessageController {
     ) {
         Page<ChatMessageResponse> response = chatMessageService.findChatMessages(roomId, pageable, startDateTime);
         return ResponseEntity.ok(createSuccessResponse(response));
+    }
+
+    @PostMapping("/chat/room/{roomId}")
+    public void swaggerSendMessage(
+            @PathVariable Long roomId,
+            @RequestBody ChatMessageRequest request
+    ) {
+        // 실제 동작 없음 - Swagger 문서용
     }
 }

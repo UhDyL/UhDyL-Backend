@@ -1,5 +1,6 @@
 package com.uhdyl.backend.chat.controller;
 
+import com.uhdyl.backend.chat.api.ChatRoomApi;
 import com.uhdyl.backend.chat.dto.request.ChatRoomRequest;
 import com.uhdyl.backend.chat.dto.response.ChatRoomResponse;
 import com.uhdyl.backend.chat.service.ChatRoomService;
@@ -18,7 +19,7 @@ import static com.uhdyl.backend.global.response.ResponseUtil.createSuccessRespon
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class ChatRoomController {
+public class ChatRoomController implements ChatRoomApi {
 
     private final ChatRoomService chatRoomService;
 

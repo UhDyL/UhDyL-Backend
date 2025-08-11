@@ -11,5 +11,12 @@ public record ProductListResponse(
         boolean isCompleted
 ) {
     @QueryProjection
-    public ProductListResponse{}
+    public ProductListResponse(Long id, String name, String price, String sellerName, String mainImageUrl, boolean isCompleted) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.sellerName = sellerName;
+        this.mainImageUrl = mainImageUrl;
+        this.isCompleted = isCompleted;
+    }
 }

@@ -8,6 +8,7 @@ import com.uhdyl.backend.user.domain.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -33,6 +34,7 @@ public class JwtHandler {
         secretKey = new SecretKeySpec(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
+    @Transactional
     public Token createTokens(JwtUserClaim jwtUserClaim) {
         Map<String, Object> tokenClaims = this.createClaims(jwtUserClaim);
         Date now = new Date(System.currentTimeMillis());

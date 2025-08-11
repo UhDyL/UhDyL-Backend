@@ -27,7 +27,7 @@ public class ProductService {
     @Transactional
     public ProductCreateResponse createProduct(Long userId, ProductCreateRequest request){
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+                .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
 
         var aiResult = aiContentService.generateContent(
                 request.breed(),

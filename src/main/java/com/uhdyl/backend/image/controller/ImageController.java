@@ -2,6 +2,7 @@ package com.uhdyl.backend.image.controller;
 
 import com.uhdyl.backend.global.aop.AssignUserId;
 import com.uhdyl.backend.global.response.ResponseBody;
+import com.uhdyl.backend.image.api.ImageApi;
 import com.uhdyl.backend.image.dto.request.ImageDeleteRequest;
 import com.uhdyl.backend.image.dto.response.ImageSavedSuccessResponse;
 import com.uhdyl.backend.image.service.ImageService;
@@ -18,7 +19,7 @@ import static com.uhdyl.backend.global.response.ResponseUtil.createSuccessRespon
 
 @RestController
 @RequiredArgsConstructor
-public class ImageController {
+public class ImageController implements ImageApi {
 
     private final ImageService imageService;
 

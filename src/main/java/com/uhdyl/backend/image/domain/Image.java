@@ -29,6 +29,4 @@ public class Image {
         this.imageOrder = imageOrder;
         this.publicId = publicId;
     }
-
-
 }

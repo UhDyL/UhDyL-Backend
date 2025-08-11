@@ -36,6 +36,7 @@ public interface ProductAPI {
             success = @SwaggerApiSuccessResponse(description = "상품 등록 성공"),
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
+                    @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
                     @SwaggerApiFailedResponse(ExceptionType.INVALID_INPUT),
                     @SwaggerApiFailedResponse(ExceptionType.AI_GENERATION_FAILED)
             }
@@ -59,7 +60,8 @@ public interface ProductAPI {
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
                     @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
-                    @SwaggerApiFailedResponse(ExceptionType.PRODUCT_NOT_FOUND)
+                    @SwaggerApiFailedResponse(ExceptionType.PRODUCT_NOT_FOUND),
+                    @SwaggerApiFailedResponse(ExceptionType.CANT_DELETE_PRODUCT)
             }
     )
 

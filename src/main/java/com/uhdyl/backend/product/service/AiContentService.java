@@ -87,8 +87,14 @@ public class AiContentService {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode root = objectMapper.readTree(translatedResponseBody);
             String koreanResponse = root.get("response").asText();
-            String title = koreanResponse.split("제목:")[1].split("설명:")[0].trim();
-            String description = koreanResponse.split("설명:")[1].trim();
+            String[] parts = koreanResponse.split("제목:|설명:");
+
+            if (parts.length < 3) {
+                throw new RuntimeException("예상하지 못한 AI 응답 형식");
+            }
+
+            String title = parts[1].trim();
+            String description = parts[2].trim();
 
             return new AiResult(title, description);
 

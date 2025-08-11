@@ -54,7 +54,13 @@ public enum ExceptionType {
     // Review
     REVIEW_NOT_FOUND(NOT_FOUND, "R001", "리뷰가 존재하지 않습니다."),
     CANT_REVIEW_MYSELF(FORBIDDEN, "R002", "자신에게 리뷰를 작성할 수 없습니다."),
-    CANT_DELETE_REVIEW(FORBIDDEN, "R003", "다른 사용자의 리뷰를 삭제할 수 없습니다,"),
+    CANT_DELETE_REVIEW(FORBIDDEN, "R003", "다른 사용자의 리뷰를 삭제할 수 없습니다."),
+
+    // Product
+    INVALID_INPUT(BAD_REQUEST, "P001", "입력 값이 올바르지 않습니다."),
+    AI_GENERATION_FAILED(INTERNAL_SERVER_ERROR, "P002", "AI 생성에 실패했습니다."),
+    PRODUCT_NOT_FOUND(NOT_FOUND, "P003", "상품이 존재하지 않습니다."),
+    CANT_DELETE_PRODUCT(FORBIDDEN, "P004", "다른 사용자의 상품을 삭제할 수 없습니다.")
 
     ;
 

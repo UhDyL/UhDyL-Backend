@@ -40,6 +40,7 @@ public class AiContentService {
                         String base64Image = urlToBase64(imageUrl);
                         base64ImagesNode.add(base64Image);
                     } catch (IOException e) {
+                        log.warn("image URL -> base64 변환 실패: {}", imageUrl, e);
                     }
                 }
                 requestBody = objectMapper.createObjectNode()

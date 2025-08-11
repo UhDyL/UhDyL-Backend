@@ -84,6 +84,7 @@ public class ProductService {
         }
 
         user.removeProduct(product);
+        productRepository.delete(product);
     }
 
     @Transactional(readOnly = true)

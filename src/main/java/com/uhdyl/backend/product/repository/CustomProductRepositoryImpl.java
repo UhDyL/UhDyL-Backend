@@ -37,8 +37,8 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                 .from(product)
                 .leftJoin(product.images,image)
                 .where(product.user.id.eq(userId))
-                .groupBy(product.id, product.name, product.price, product.user.name, product.isSale)
-                .orderBy(product.createdAt.desc())
+                .groupBy(product.id, product.name, product.price, product.user.name, product.isSale, image.imageOrder)
+                .orderBy(product.createdAt.desc(), image.imageOrder.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

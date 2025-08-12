@@ -41,7 +41,7 @@ jobs:
             git submodule sync
             git config submodule.src/main/resources/security.url \
               https://x-access-token:\${SUBMODULE_TOKEN}@github.com/UhDyL/UhDyL-Security.git
-            git submodule update --init --recursive --depth 1
+            git submodule update --init --recursive
 
             ./gradlew clean build -x test
 

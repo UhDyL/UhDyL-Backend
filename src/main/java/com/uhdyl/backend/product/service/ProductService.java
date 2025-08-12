@@ -25,29 +25,34 @@ public class ProductService {
     private final AiContentService aiContentService;
 
     @Transactional
-    public ProductCreateResponse createProduct(Long userId, ProductCreateRequest request){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
+    public ProductCreateResponse createProduct(Long userId, ProductCreateRequest request) {
+        AiContentService.AiResult aiResult = callAiService(request);
 
-        AiContentService.AiResult aiResult;
+        return saveProduct(userId, request, aiResult);
+    }
 
-        try{
-            aiResult = aiContentService.generateContent(
+    private AiContentService.AiResult callAiService(ProductCreateRequest request) {
+        try {
+            return aiContentService.generateContent(
                     request.breed(),
                     request.price(),
                     request.tone(),
-                    request.images());
-        }catch (Exception e) {
+                    request.images()
+            );
+        } catch (Exception e) {
             throw new BusinessException(ExceptionType.AI_GENERATION_FAILED);
         }
+    }
 
-        String title = aiResult.title();
-        String description = aiResult.description();
+    @Transactional
+    public ProductCreateResponse saveProduct(Long userId, ProductCreateRequest request, AiContentService.AiResult aiResult){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
 
         Product product = Product.builder()
                 .name(request.breed())
-                .title(title)
-                .description(description)
+                .title(aiResult.title())
+                .description(aiResult.description())
                 .isSale(true) // true = 거래 가능
                 .price(String.valueOf(request.price()))
                 .category(request.category())

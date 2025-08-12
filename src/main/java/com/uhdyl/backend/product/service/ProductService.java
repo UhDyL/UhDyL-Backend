@@ -59,9 +59,12 @@ public class ProductService {
                 .user(user)
                 .build();
 
-        long order = 0;
-        for (String imageUrl : request.images()){
-            product.addImage(new Image(imageUrl, order++, null));
+        if (request.images() != null && !request.images().isEmpty()) {
+            long order = 0;
+            for (String imageUrl : request.images()) {
+                if (imageUrl == null || imageUrl.isBlank()) continue;
+                product.addImage(new Image(imageUrl, order++, null));
+            }
         }
 
         Product saved = productRepository.save(product);

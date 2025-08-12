@@ -3,6 +3,7 @@ package com.uhdyl.backend.product.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.uhdyl.backend.product.AiProperties;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +13,6 @@ import java.util.Base64;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpEntity;
@@ -23,10 +23,9 @@ import org.springframework.http.MediaType;
 @Service
 @RequiredArgsConstructor
 public class AiContentService {
-    @Value("${ai.server.url}")
-    private String aiServerUrl;
 
     private final RestTemplate restTemplate;
+    private final AiProperties aiProperties;
 
     public record AiResult(String title, String description) {}
 
@@ -63,7 +62,7 @@ public class AiContentService {
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
-        String url = aiServerUrl + "/generate";
+        String url =  aiProperties.getUrl() + "/generate";
         String responseBody = restTemplate.postForObject(url, entity, String.class);
         String englishAiResponse;
         try {

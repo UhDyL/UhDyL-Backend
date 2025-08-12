@@ -1,4 +1,4 @@
-package com.uhdyl.backend.product;
+package com.uhdyl.backend.global.config.ai;
 
 import lombok.Getter;
 import lombok.Setter;

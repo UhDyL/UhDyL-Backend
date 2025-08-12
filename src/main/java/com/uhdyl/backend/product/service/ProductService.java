@@ -11,11 +11,13 @@ import com.uhdyl.backend.product.repository.ProductRepository;
 import com.uhdyl.backend.user.domain.User;
 import com.uhdyl.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProductService {
@@ -40,6 +42,7 @@ public class ProductService {
                     request.images()
             );
         } catch (Exception e) {
+            log.error("AI 콘텐츠 생성 실패 - breed: {}, price: {}", request.breed(), request.price(), e);
             throw new BusinessException(ExceptionType.AI_GENERATION_FAILED);
         }
     }

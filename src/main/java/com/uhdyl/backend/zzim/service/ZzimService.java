@@ -42,7 +42,12 @@ public class ZzimService {
                 .user(userProxy)
                 .product(product)
                 .build();
-        zzimRepository.save(zzim);
+        try {
+            zzimRepository.save(zzim);
+        }
+        catch (Exception e){
+            throw new BusinessException(ExceptionType.ALREADY_ZZIMED);
+        }
     }
 
     public GlobalPageResponse<ZzimResponse> getZzims(Long userId, Pageable pageable){

@@ -60,7 +60,12 @@ public enum ExceptionType {
     INVALID_INPUT(BAD_REQUEST, "P001", "입력 값이 올바르지 않습니다."),
     AI_GENERATION_FAILED(INTERNAL_SERVER_ERROR, "P002", "AI 생성에 실패했습니다."),
     PRODUCT_NOT_FOUND(NOT_FOUND, "P003", "상품이 존재하지 않습니다."),
-    CANT_DELETE_PRODUCT(FORBIDDEN, "P004", "다른 사용자의 상품을 삭제할 수 없습니다.")
+    CANT_DELETE_PRODUCT(FORBIDDEN, "P004", "다른 사용자의 상품을 삭제할 수 없습니다."),
+
+    // Zzim
+    ALREADY_ZZIMED(FORBIDDEN, "Z001", "이미 찜한 상품입니다."),
+    ZZIM_NOT_FOUND(NOT_FOUND, "Z002","존재하지 않는 찜입니다."),
+    ZZIM_ACCESS_DENIED(FORBIDDEN, "Z003","해당 찜에 접근할 수 없습니다"),
 
     ;
 

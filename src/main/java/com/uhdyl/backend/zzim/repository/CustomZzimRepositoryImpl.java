@@ -44,7 +44,7 @@ public class CustomZzimRepositoryImpl implements CustomZzimRepository{
                 .innerJoin(qZzim.product, qProduct)
                 .leftJoin(qProduct.images, qImage)
                 .where(builder)
-                .groupBy(qZzim.id, qProduct.title, qProduct.price, qProduct.name)
+                .groupBy(qZzim.id, qProduct.title, qProduct.price, qProduct.user.name)
                 .orderBy(qZzim.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

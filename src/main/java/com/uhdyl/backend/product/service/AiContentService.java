@@ -14,10 +14,12 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Service
@@ -71,9 +73,29 @@ public class AiContentService {
             throw new RuntimeException("JSON 생성 오류", e);
         }
 
+        if (aiProperties.getUrl() == null || aiProperties.getUrl().isBlank()) {
+            throw new IllegalStateException("AI 서버 URL이 설정되지 않았습니다(ai.server.url).");
+        }
+
+        String url = UriComponentsBuilder
+                .fromUriString(aiProperties.getUrl())
+                .pathSegment("generate")
+                .build(true)
+                .toUriString();
+
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
-        String url =  aiProperties.getUrl() + "/generate";
-        String responseBody = restTemplate.postForObject(url, entity, String.class);
+
+        String responseBody;
+        try {
+            responseBody = restTemplate.postForObject(url, entity, String.class);
+        } catch (RestClientException ex) {
+            throw new RuntimeException("AI 서버 호출 실패", ex);
+        }
+
+        if (responseBody == null) {
+            throw new RuntimeException("AI 서버 응답이 비어 있습니다");
+        }
+
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();

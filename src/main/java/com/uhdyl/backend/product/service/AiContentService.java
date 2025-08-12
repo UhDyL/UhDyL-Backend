@@ -3,7 +3,7 @@ package com.uhdyl.backend.product.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.uhdyl.backend.product.AiProperties;
+import com.uhdyl.backend.global.config.ai.AiProperties;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,10 +30,21 @@ public class AiContentService {
     public record AiResult(String title, String description) {}
 
     public AiResult generateContent(String breed, int price, String tone, List<String> imageUrls) {
-        String englishPrompt = String.format("Generate a product title and description based on the following information. Product: %s, Price: %d won, Tone: %s. The title should be within 20 characters and the description should be within 100 characters.", breed, price, tone);
+        String koreanPrompt = String.format("""
+        You are a professional copywriter for product listings.
+        Generate a product title and description in Korean based on the following information.
+        Product: %s
+        Price: %d won
+        Tone: %s
+        Title character limit: 20
+        Description character limit: 100
+        
+        Output the result in JSON format with two keys: "title" and "description". Do not include any other text.
+        """, breed, price, tone);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+
         String requestBody;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -48,12 +59,12 @@ public class AiContentService {
                     }
                 }
                 requestBody = objectMapper.createObjectNode()
-                        .put("prompt", englishPrompt)
+                        .put("prompt", koreanPrompt)
                         .set("images", base64ImagesNode)
                         .toString();
             } else {
                 requestBody = objectMapper.createObjectNode()
-                        .put("prompt", englishPrompt)
+                        .put("prompt", koreanPrompt)
                         .toString();
             }
         } catch (Exception e) {
@@ -61,49 +72,23 @@ public class AiContentService {
         }
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
-
         String url =  aiProperties.getUrl() + "/generate";
         String responseBody = restTemplate.postForObject(url, entity, String.class);
-        String englishAiResponse;
+
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode root = objectMapper.readTree(responseBody);
-            englishAiResponse = root.get("response").asText();
-        } catch (Exception e) {
-            throw new RuntimeException("AI 응답 파싱 오류", e);
-        }
 
-        String translationPrompt = String.format("Translate the following into Korean and provide the output in the format '제목: [translated title]\n설명: [translated description]': %s", englishAiResponse);
-        String translationRequestBody;
+            String responseStr = root.get("response").asText();
+            JsonNode aiResponse = objectMapper.readTree(responseStr);
 
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            translationRequestBody = objectMapper.createObjectNode()
-                    .put("prompt", translationPrompt)
-                    .toString();
-        } catch (Exception e) {
-            throw new RuntimeException("Translation JSON 생성 오류", e);
-        }
-        HttpEntity<String> translationEntity = new HttpEntity<>(translationRequestBody, headers);
-        String translatedResponseBody = restTemplate.postForObject(url, translationEntity, String.class);
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode root = objectMapper.readTree(translatedResponseBody);
-            String koreanResponse = root.get("response").asText();
-            String[] parts = koreanResponse.split("제목:|설명:");
-
-            if (parts.length < 3) {
-                throw new RuntimeException("예상하지 못한 AI 응답 형식");
-            }
-
-            String title = parts[1].trim();
-            String description = parts[2].trim();
+            String title = aiResponse.get("title").asText();
+            String description = aiResponse.get("description").asText();
 
             return new AiResult(title, description);
 
         } catch (Exception e) {
-            throw new RuntimeException("번역된 AI 응답 파싱 오류", e);
+            throw new RuntimeException("AI 응답 파싱 오류", e);
         }
     }
 

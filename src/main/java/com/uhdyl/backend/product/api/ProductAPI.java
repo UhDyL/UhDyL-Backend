@@ -81,7 +81,8 @@ public interface ProductAPI {
             success = @SwaggerApiSuccessResponse(description = "상품 목록 조회 성공"),
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
-                    @SwaggerApiFailedResponse(ExceptionType.INVALID_INPUT)
+                    @SwaggerApiFailedResponse(ExceptionType.INVALID_INPUT),
+                    @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND)
             }
     )
 

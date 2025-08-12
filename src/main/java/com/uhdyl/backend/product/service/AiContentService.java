@@ -11,15 +11,20 @@ import java.net.URISyntaxException;
 import java.util.Base64;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AiContentService {
+    @Value("${ai.server.url}")
+    private String aiServerUrl;
 
     private final RestTemplate restTemplate;
 
@@ -58,7 +63,7 @@ public class AiContentService {
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
-        String url = "http://202.31.135.91:8000/generate";
+        String url = aiServerUrl + "/generate";
         String responseBody = restTemplate.postForObject(url, entity, String.class);
         String englishAiResponse;
         try {

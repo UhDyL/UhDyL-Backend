@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.uhdyl.backend.global.config.ai.AiProperties;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Base64;
@@ -115,16 +113,35 @@ public class AiContentService {
     }
 
     public String urlToBase64(String imageUrl) throws IOException {
-        try (InputStream is = new URI(imageUrl).toURL().openStream();
-             ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[8192];
-            int bytesRead;
-            while ((bytesRead = is.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
+        validateExternalImageUrl(imageUrl);
+
+        try {
+            byte[] bytes = restTemplate.getForObject(imageUrl, byte[].class);
+            if (bytes == null || bytes.length == 0) {
+                throw new IOException("이미지 다운로드 실패: 빈 응답");
             }
-            return Base64.getEncoder().encodeToString(os.toByteArray());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            final int maxBytes = 5 * 1024 * 1024;
+            if (bytes.length > maxBytes) {
+                throw new IOException("이미지 용량 초과: " + bytes.length);
+            }
+            return Base64.getEncoder().encodeToString(bytes);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("잘못된 이미지 URL", e);
+        }
+    }
+    private void validateExternalImageUrl(String imageUrl) {
+        try {
+            URI uri = new URI(imageUrl);
+            String host = uri.getHost();
+            if (host == null) throw new IllegalArgumentException("호스트가 없는 URL");
+
+            java.net.InetAddress addr = java.net.InetAddress.getByName(host);
+            if (addr.isAnyLocalAddress() || addr.isLoopbackAddress() || addr.isSiteLocalAddress()) {
+                throw new IllegalArgumentException("허용되지 않은 내부/사설 네트워크 접근");
+            }
+
+        } catch (URISyntaxException | java.net.UnknownHostException e) {
+            throw new IllegalArgumentException("유효하지 않은 이미지 URL", e);
         }
     }
 }

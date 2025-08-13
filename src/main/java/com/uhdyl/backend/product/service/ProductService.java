@@ -116,7 +116,7 @@ public class ProductService {
 
     @Transactional
     public void completeProduct(Long userId, Long productId) {
-        Product product = productRepository.findByIdAndUserId(productId, userId)
+        Product product = productRepository.findByIdAndUser_Id(productId, userId)
                 .orElseThrow(() -> new BusinessException(ExceptionType.CANT_UPDATE_PRODUCT));
 
         if (!product.isSale()) {

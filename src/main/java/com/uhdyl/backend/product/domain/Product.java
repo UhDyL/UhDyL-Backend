@@ -46,7 +46,7 @@ public class Product extends BaseEntity {
 
     @NotNull
     @Positive
-    Long price;
+    private Long price;
 
     @Version
     @NotNull

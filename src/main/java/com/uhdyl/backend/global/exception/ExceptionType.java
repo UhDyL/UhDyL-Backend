@@ -61,7 +61,7 @@ public enum ExceptionType {
     AI_GENERATION_FAILED(INTERNAL_SERVER_ERROR, "P002", "AI 생성에 실패했습니다."),
     PRODUCT_NOT_FOUND(NOT_FOUND, "P003", "상품이 존재하지 않습니다."),
     CANT_DELETE_PRODUCT(FORBIDDEN, "P004", "다른 사용자의 상품을 삭제할 수 없습니다."),
-    CANT_UPDATE_PRODUCT(BAD_REQUEST, "P005", "상품 소유자가 아니거나 이미 판매 완료된 상품입니다."),
+    CANT_UPDATE_PRODUCT(FORBIDDEN, "P005", "상품 소유자가 아니거나 이미 판매 완료된 상품입니다."),
 
     // Zzim
     ALREADY_ZZIMED(FORBIDDEN, "Z001", "이미 찜한 상품입니다."),

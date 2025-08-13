@@ -58,7 +58,7 @@ public interface ZzimApi {
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(
                     responsePage = ZzimResponse.class,
-                    description = "리뷰 페이징 조회 성공"
+                    description = "찜 페이징 조회 성공"
             ),
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
@@ -80,7 +80,7 @@ public interface ZzimApi {
     )
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(
-                    description = "리뷰 삭제 성공"
+                    description = "찜 삭제 성공"
             ),
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),

@@ -26,7 +26,6 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
-@Setter
 public class Product extends BaseEntity {
 
     @Id
@@ -76,5 +75,9 @@ public class Product extends BaseEntity {
     public void removeImage(Image image) {
         if (image == null) return;
         this.images.remove(image);
+    }
+
+    public void markSaleCompleted() {
+        this.isSale = false;
     }
 }

@@ -123,7 +123,7 @@ public class ProductService {
             throw new BusinessException(ExceptionType.CANT_UPDATE_PRODUCT);
         }
 
-        product.setSale(false);
+        product.markSaleCompleted();
         productRepository.save(product);
     }
 }

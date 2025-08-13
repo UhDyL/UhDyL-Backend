@@ -124,6 +124,5 @@ public class ProductService {
         }
 
         product.markSaleCompleted();
-        productRepository.save(product);
     }
 }

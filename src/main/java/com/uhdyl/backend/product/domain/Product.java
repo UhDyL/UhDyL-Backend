@@ -16,6 +16,8 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
@@ -41,7 +43,7 @@ public class Product extends BaseEntity {
 
     private boolean isSale;
 
-    private Long price;
+    @NotNull @Positive Long price;
 
     @Enumerated(EnumType.STRING)
     private Category category;

@@ -35,9 +35,6 @@ public class ZzimService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(()-> new BusinessException(ExceptionType.PRODUCT_NOT_FOUND));
 
-        if(zzimRepository.existsByUser_IdAndProduct_Id(userId, productId))
-            throw new BusinessException(ExceptionType.ALREADY_ZZIMED);
-
         Zzim zzim = Zzim.builder()
                 .user(userProxy)
                 .product(product)

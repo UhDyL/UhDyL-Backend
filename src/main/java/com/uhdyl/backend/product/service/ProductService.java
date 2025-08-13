@@ -11,9 +11,14 @@ import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import com.uhdyl.backend.product.repository.ProductRepository;
 import com.uhdyl.backend.user.domain.User;
 import com.uhdyl.backend.user.repository.UserRepository;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Pageable;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +31,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final AiContentService aiContentService;
+    private static final int RETRY_COUNT = 3;
 
     @Transactional
     public ProductCreateResponse createProduct(Long userId, ProductCreateRequest request) {
@@ -114,6 +120,11 @@ public class ProductService {
         return productRepository.getSalesStats(userId);
     }
 
+    @Retryable(
+            retryFor = OptimisticLockingFailureException.class,
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 100)
+    )
     @Transactional
     public void completeProduct(Long userId, Long productId) {
         Product product = productRepository.findByIdAndUser_Id(productId, userId)
@@ -124,5 +135,11 @@ public class ProductService {
         }
 
         product.markSaleCompleted();
+        productRepository.save(product);
+    }
+
+    @Recover
+    public void recover(Exception e, Long userId, Long productId) {
+        throw new BusinessException(ExceptionType.PRODUCT_COMPLETE_CONFLICT);
     }
 }

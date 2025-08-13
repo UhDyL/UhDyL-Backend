@@ -62,6 +62,9 @@ public enum ExceptionType {
     PRODUCT_NOT_FOUND(NOT_FOUND, "P003", "상품이 존재하지 않습니다."),
     CANT_DELETE_PRODUCT(FORBIDDEN, "P004", "다른 사용자의 상품을 삭제할 수 없습니다."),
     CANT_UPDATE_PRODUCT(FORBIDDEN, "P005", "상품 소유자가 아니거나 이미 판매 완료된 상품입니다."),
+    PRODUCT_COMPLETE_CONFLICT(CONFLICT, "P006", "동시 처리 충돌로 상품 완료 실패"),
+    PRODUCT_COMPLETE_INTERRUPTED(INTERNAL_SERVER_ERROR, "P007", "재시도 중 인터럽트 발생"),
+
 
     // Zzim
     ALREADY_ZZIMED(FORBIDDEN, "Z001", "이미 찜한 상품입니다."),

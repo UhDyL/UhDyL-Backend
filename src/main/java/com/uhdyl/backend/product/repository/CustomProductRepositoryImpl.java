@@ -1,5 +1,6 @@
 package com.uhdyl.backend.product.repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.uhdyl.backend.global.response.GlobalPageResponse;
@@ -7,6 +8,8 @@ import com.uhdyl.backend.image.domain.QImage;
 import com.uhdyl.backend.product.domain.QProduct;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductListResponse;
+import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
+import com.uhdyl.backend.user.domain.QUser;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -62,6 +65,30 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                 totalCount != null ? totalCount : 0,
                 completedCount != null ? completedCount : 0,
                 GlobalPageResponse.create(page)
+        );
+    }
+
+    @Override
+    public SalesStatsResponse getSalesStats(Long userId){
+        QProduct product = QProduct.product;
+        QUser user = QUser.user;
+
+        Tuple result = jpaQueryFactory
+                .select(user.name, product.count(), product.price.sumLong())
+                .from(user)
+                .leftJoin(user.products, product)
+                .on(product.isSale.eq(false))
+                .where(user.id.eq(userId))
+                .fetchOne();
+
+        String name = result != null ? result.get(user.name) : null;
+        Long salesCount = result != null ? result.get(1, Long.class) : 0L;
+        Long salesRevenue = result != null ? result.get(2, Long.class) : 0L;
+
+        return new SalesStatsResponse(
+                name != null ? name : "",
+                salesCount != null ? salesCount : 0L,
+                salesRevenue != null ? salesRevenue : 0L
         );
     }
 }

@@ -7,6 +7,7 @@ import com.uhdyl.backend.product.domain.Product;
 import com.uhdyl.backend.product.dto.request.ProductCreateRequest;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductCreateResponse;
+import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import com.uhdyl.backend.product.repository.ProductRepository;
 import com.uhdyl.backend.user.domain.User;
 import com.uhdyl.backend.user.repository.UserRepository;
@@ -57,7 +58,7 @@ public class ProductService {
                 .title(aiResult.title())
                 .description(aiResult.description())
                 .isSale(true) // true = 거래 가능
-                .price(String.valueOf(request.price()))
+                .price(request.price())
                 .category(request.category())
                 .user(user)
                 .build();
@@ -104,5 +105,25 @@ public class ProductService {
             throw new BusinessException(ExceptionType.USER_NOT_FOUND);
 
         return productRepository.getMyProducts(userId, pageable);
+    }
+
+    public SalesStatsResponse getSalesStats(Long userId) {
+        if(!userRepository.existsById(userId))
+            throw new BusinessException(ExceptionType.USER_NOT_FOUND);
+
+        return productRepository.getSalesStats(userId);
+    }
+
+    @Transactional
+    public void completeProduct(Long userId, Long productId) {
+        Product product = productRepository.findByIdAndUserId(productId, userId)
+                .orElseThrow(() -> new BusinessException(ExceptionType.CANT_UPDATE_PRODUCT));
+
+        if (!product.isSale()) {
+            throw new BusinessException(ExceptionType.CANT_UPDATE_PRODUCT);
+        }
+
+        product.setSale(false);
+        productRepository.save(product);
     }
 }

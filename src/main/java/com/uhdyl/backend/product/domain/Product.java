@@ -26,6 +26,7 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
+@Setter
 public class Product extends BaseEntity {
 
     @Id
@@ -41,7 +42,7 @@ public class Product extends BaseEntity {
 
     private boolean isSale;
 
-    private String price;
+    private Long price;
 
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -57,7 +58,7 @@ public class Product extends BaseEntity {
     private User user;
 
     @Builder
-    public Product(Long id, String name, String title, String description, boolean isSale, String price, Category category, User user) {
+    public Product(Long id, String name, String title, String description, boolean isSale, Long price, Category category, User user) {
         this.name = name;
         this.title = title;
         this.description = description;

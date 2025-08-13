@@ -6,7 +6,7 @@ public record ProductCreateResponse(
         Long id,
         String title,
         String description,
-        String price,
+        Long price,
         List<String> images,
         boolean isSale
 ) {}

@@ -7,6 +7,6 @@ public record ProductCreateRequest(
         Category category,
         String breed,
         List<String> images,
-        int price,
+        Long price,
         String tone
 ){}

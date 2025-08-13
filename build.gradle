@@ -52,6 +52,9 @@ dependencies {
     // Aop
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 
+    // Retry
+    implementation 'org.springframework.retry:spring-retry'
+
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
 

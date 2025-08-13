@@ -16,6 +16,7 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.util.ArrayList;
@@ -43,7 +44,13 @@ public class Product extends BaseEntity {
 
     private boolean isSale;
 
-    @NotNull @Positive Long price;
+    @NotNull
+    @Positive
+    Long price;
+
+    @Version
+    @NotNull
+    private long version = 0L;
 
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -59,7 +66,7 @@ public class Product extends BaseEntity {
     private User user;
 
     @Builder
-    public Product(Long id, String name, String title, String description, boolean isSale, Long price, Category category, User user) {
+    public Product(Long id, String name, String title, String description, boolean isSale, Long price, Category category, User user, long version) {
         this.name = name;
         this.title = title;
         this.description = description;

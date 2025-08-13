@@ -73,22 +73,19 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
         QProduct product = QProduct.product;
         QUser user = QUser.user;
 
-        Tuple result = jpaQueryFactory
-                .select(user.name, product.count(), product.price.sumLong())
+        SalesStatsResponse stats = jpaQueryFactory
+                .select(Projections.constructor(SalesStatsResponse.class,
+                        user.name.coalesce(""),
+                        product.count(),
+                        product.price.sumLong().coalesce(0L)
+                ))
                 .from(user)
                 .leftJoin(user.products, product)
                 .on(product.isSale.eq(false))
                 .where(user.id.eq(userId))
+                .groupBy(user.id, user.name)
                 .fetchOne();
 
-        String name = result != null ? result.get(user.name) : null;
-        Long salesCount = result != null ? result.get(1, Long.class) : 0L;
-        Long salesRevenue = result != null ? result.get(2, Long.class) : 0L;
-
-        return new SalesStatsResponse(
-                name != null ? name : "",
-                salesCount != null ? salesCount : 0L,
-                salesRevenue != null ? salesRevenue : 0L
-        );
+        return stats != null ? stats : new SalesStatsResponse("", 0L, 0L);
     }
 }

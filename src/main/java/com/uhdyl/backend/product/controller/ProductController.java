@@ -71,7 +71,7 @@ public class ProductController implements ProductAPI {
      * 판매 현황 조회 api
      */
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     @GetMapping("/product/sales-stats")
     public ResponseEntity<ResponseBody<SalesStatsResponse>> getSalesStats(
             Long userId

@@ -110,7 +110,7 @@ public interface ProductAPI {
     )
 
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     @GetMapping("/product/sales-stats")
     ResponseEntity<ResponseBody<SalesStatsResponse>> getSalesStats(
             @Parameter(hidden = true) Long userId

@@ -83,7 +83,7 @@ public class ProductController implements ProductAPI {
      * 판매 완료 변경 api
      */
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     @PatchMapping("/product/{productId}/complete")
     public ResponseEntity<ResponseBody<Void>> completeProduct(
             Long userId,

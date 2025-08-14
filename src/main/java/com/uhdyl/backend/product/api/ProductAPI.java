@@ -130,7 +130,7 @@ public interface ProductAPI {
             }
     )
     @PatchMapping("/product/{productId}/complete")
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     @AssignUserId
     ResponseEntity<ResponseBody<Void>> completeProduct(
             @Parameter(hidden = true) Long userId,

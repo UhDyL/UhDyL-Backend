@@ -126,7 +126,8 @@ public interface ProductAPI {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
                     @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
                     @SwaggerApiFailedResponse(ExceptionType.PRODUCT_NOT_FOUND),
-                    @SwaggerApiFailedResponse(ExceptionType.CANT_UPDATE_PRODUCT)
+                    @SwaggerApiFailedResponse(ExceptionType.CANT_UPDATE_PRODUCT),
+                    @SwaggerApiFailedResponse(ExceptionType.PRODUCT_COMPLETE_CONFLICT)
             }
     )
     @PatchMapping("/product/{productId}/complete")

@@ -29,7 +29,7 @@ public class AiContentService {
 
     public record AiResult(String title, String description) {}
 
-    public AiResult generateContent(String breed, int price, String tone, List<String> imageUrls) {
+    public AiResult generateContent(String breed, Long price, String tone, List<String> imageUrls) {
         String koreanPrompt = String.format("""
         You are a professional copywriter for product listings.
         Generate a product title and description in Korean based on the following information.

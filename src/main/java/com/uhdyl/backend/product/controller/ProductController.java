@@ -8,6 +8,7 @@ import com.uhdyl.backend.product.api.ProductAPI;
 import com.uhdyl.backend.product.dto.request.ProductCreateRequest;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductCreateResponse;
+import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import com.uhdyl.backend.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,5 +65,32 @@ public class ProductController implements ProductAPI {
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
             ) {
         return ResponseEntity.ok(createSuccessResponse(productService.getMyProducts(userId, pageable)));
+    }
+
+    /**
+     * 판매 현황 조회 api
+     */
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
+    @GetMapping("/product/sales-stats")
+    public ResponseEntity<ResponseBody<SalesStatsResponse>> getSalesStats(
+            Long userId
+    ) {
+        return ResponseEntity.ok(createSuccessResponse(productService.getSalesStats(userId)));
+    }
+
+    /**
+     * 판매 완료 변경 api
+     */
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
+    @PatchMapping("/product/{productId}/complete")
+    public ResponseEntity<ResponseBody<Void>> completeProduct(
+            Long userId,
+            @PathVariable Long productId
+
+    ) {
+        productService.completeProduct(userId, productId);
+        return ResponseEntity.ok(createSuccessResponse());
     }
 }

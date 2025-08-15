@@ -4,6 +4,6 @@ public record ZzimResponse(
         Long id,
         String title,
         String imageUrl,
-        String price,
+        Long price,
         String sellerName
 ) {}

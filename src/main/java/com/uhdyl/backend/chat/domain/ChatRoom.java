@@ -22,12 +22,15 @@ public class ChatRoom extends BaseEntity {
 
     private Long user2;
 
-    private String name;
+    private String chatRoomTitle;
+
+    private Long productId;
 
     @Builder
-    public ChatRoom(Long user1, Long user2, String name) {
+    public ChatRoom(Long user1, Long user2, String chatRoomTitle, Long productId) {
         this.user1 = user1;
         this.user2 = user2;
-        this.name = name;
+        this.chatRoomTitle = chatRoomTitle;
+        this.productId = productId;
     }
 }

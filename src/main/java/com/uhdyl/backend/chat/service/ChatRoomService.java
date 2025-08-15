@@ -1,67 +1,65 @@
 package com.uhdyl.backend.chat.service;
 
+import com.uhdyl.backend.chat.domain.ChatMessage;
 import com.uhdyl.backend.chat.domain.ChatRoom;
+import com.uhdyl.backend.chat.dto.request.ChatRoomRequest;
 import com.uhdyl.backend.chat.dto.response.ChatRoomResponse;
 import com.uhdyl.backend.chat.repository.ChatMessageRepository;
 import com.uhdyl.backend.chat.repository.ChatRoomRepository;
 import com.uhdyl.backend.global.exception.BusinessException;
 import com.uhdyl.backend.global.exception.ExceptionType;
-import com.uhdyl.backend.user.domain.User;
+import com.uhdyl.backend.global.response.GlobalPageResponse;
+import com.uhdyl.backend.product.domain.Product;
+import com.uhdyl.backend.product.repository.ProductRepository;
 import com.uhdyl.backend.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
 
 
     @Transactional
-    public ChatRoomResponse createChatRoom(Long opponentId, Long userId){
-        // 이미 존재하는 채팅방이 있는지 확인 후,
-        // 이미 존재한다면 그 채팅방과 채팅 메시지를 반환
-        // 없다면 새로 채팅방을 만들어서 반환
+    public ChatRoomResponse createChatRoom(ChatRoomRequest request, Long userId){
 
-        // TODO: 프론트 연결 시 상품의 제목과 아이디를 통해 유저를 DB에서 조회하는 과정이 필요함
-        //  Product product = productRepository.findByTitleAndName(title,name);
-        //  product.getUser()?
-
+        Product product = productRepository.findById(request.productId())
+                .orElseThrow(() -> new BusinessException(ExceptionType.PRODUCT_NOT_FOUND));
+        Long opponentId = product.getUser().getId();
         Long user1 = Math.min(userId, opponentId);
         Long user2 = Math.max(userId, opponentId);
 
         if(Objects.equals(user1, user2))
             throw new BusinessException(ExceptionType.CANT_CREATE_CHATROOM);
 
-        // TODO: 채팅방 이름을 어떻게 정할지 프론트와 상의하기
-        User user = userRepository.findById(user2)
-                .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
+        ChatRoom room = chatRoomRepository
+                .findByUser1AndUser2AndProductId(user1, user2, request.productId())
+                .orElseGet(() -> chatRoomRepository.save(
+                        ChatRoom.builder()
+                                .user1(user1)
+                                .user2(user2)
+                                .chatRoomTitle(product.getTitle())
+                                .productId(request.productId())
+                                .build()
+                ));
 
-        return chatRoomRepository.findByUser1AndUser2(user1, user2)
-                .map(
-                        ChatRoomResponse::to)
-                .orElseGet(
-                        () -> {
-                            return ChatRoomResponse.to(
-                                    chatRoomRepository.save(
-                                            ChatRoom.builder()
-                                                    .user1(user1)
-                                                    .user2(user2)
-                                                    .name(user.getName())
-                                                    .build()
-                                            ));
+        ChatMessage last = chatMessageRepository
+                .findFirstByChatRoom_IdOrderByCreatedAtDescIdDesc(room.getId())
+                .orElse(null);
 
-                        }
-                );
+        return ChatRoomResponse.to(room, product, last);
     }
 
     public boolean isParticipant(Long roomId, Long userId){
@@ -76,5 +74,12 @@ public class ChatRoomService {
 
 
         return isUser;
+    }
+
+    public GlobalPageResponse<ChatRoomResponse> getChatRooms(Long userId, Pageable pageable){
+        if(!userRepository.existsById(userId))
+            throw new BusinessException(ExceptionType.USER_NOT_FOUND);
+
+        return chatRoomRepository.getChatRooms(userId, pageable);
     }
 }

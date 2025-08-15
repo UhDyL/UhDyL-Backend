@@ -5,8 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
-    Optional<ChatRoom> findByUser1AndUser2(Long user1, Long user2);
+public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long>, CustomChatRoomRepository {
+    Optional<ChatRoom> findByUser1AndUser2AndProductId(Long user1, Long user2, Long productId);
 
-    ChatRoom findByName(String name);
 }

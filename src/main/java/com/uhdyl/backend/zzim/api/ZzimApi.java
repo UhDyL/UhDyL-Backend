@@ -7,8 +7,9 @@ import com.uhdyl.backend.global.config.swagger.SwaggerApiSuccessResponse;
 import com.uhdyl.backend.global.exception.ExceptionType;
 import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.global.response.ResponseBody;
-import com.uhdyl.backend.zzim.dto.request.ZzimCreateRequest;
+import com.uhdyl.backend.zzim.dto.request.ZzimToggleRequest;
 import com.uhdyl.backend.zzim.dto.response.ZzimResponse;
+import com.uhdyl.backend.zzim.dto.response.ZzimToggleResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,12 +24,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import static com.uhdyl.backend.global.response.ResponseUtil.createSuccessResponse;
+
 @Tag(name = "찜 API", description = "찜 관련 API")
 public interface ZzimApi {
 
     @Operation(
-            summary = "찜 등록",
-            description = "사용자는 판매 글을 찜으로 등록합니다."
+            summary = "찜 토글",
+            description = "사용자는 판매 글이 찜으로 등록되어 있으면 삭제합니다. " +
+                    "사용자는 판매 글이 찜으로 등록되어 있지 않으면 찜으로 등록합니다."
     )
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(
@@ -45,14 +49,15 @@ public interface ZzimApi {
     @PostMapping("/zzim")
     @AssignUserId
     @PreAuthorize("isAuthenticated() and hasRole('USER')")
-    public ResponseEntity<ResponseBody<Void>> createZzim(
+    public ResponseEntity<ResponseBody<ZzimToggleResponse>> toggleZzim(
             @Parameter(hidden = true) Long userId,
-            @RequestBody ZzimCreateRequest request
+            @RequestBody ZzimToggleRequest request
     );
 
     @Operation(
             summary = "찜 페이징 조회",
-            description = "등록한 찜을 페이징으로 조회합니다."
+            description = "등록한 찜을 페이징으로 조회합니다." +
+                    "찜으로 등록된 상품을 조회하기 때문에 찜 여부를 나타내는 필드는 표시되지 않습니다."
     )
     @ApiResponse(content = @Content(schema = @Schema(implementation = ZzimResponse.class)))
     @SwaggerApiResponses(
@@ -72,28 +77,5 @@ public interface ZzimApi {
             @Parameter(hidden = true) Long userId,
             @ParameterObject
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
-    );
-
-    @Operation(
-            summary = "찜 삭제",
-            description = "사용자는 자신이 등록한 찜을 삭제할 수 있습니다."
-    )
-    @SwaggerApiResponses(
-            success = @SwaggerApiSuccessResponse(
-                    description = "찜 삭제 성공"
-            ),
-            errors = {
-                    @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
-                    @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
-                    @SwaggerApiFailedResponse(ExceptionType.ZZIM_NOT_FOUND),
-                    @SwaggerApiFailedResponse(ExceptionType.ZZIM_ACCESS_DENIED)
-            }
-    )
-    @DeleteMapping("/zzim/{zzimId}")
-    @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
-    public ResponseEntity<ResponseBody<Void>> deleteZzim(
-            @Parameter(hidden = true) Long userId,
-            @PathVariable Long zzimId
     );
 }

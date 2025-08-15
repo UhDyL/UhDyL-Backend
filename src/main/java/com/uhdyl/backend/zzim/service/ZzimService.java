@@ -8,9 +8,12 @@ import com.uhdyl.backend.product.repository.ProductRepository;
 import com.uhdyl.backend.user.domain.User;
 import com.uhdyl.backend.user.repository.UserRepository;
 import com.uhdyl.backend.zzim.domain.Zzim;
+import com.uhdyl.backend.zzim.dto.request.ZzimToggleRequest;
 import com.uhdyl.backend.zzim.dto.response.ZzimResponse;
+import com.uhdyl.backend.zzim.dto.response.ZzimToggleResponse;
 import com.uhdyl.backend.zzim.repository.ZzimRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,45 +28,38 @@ public class ZzimService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
-    @Transactional
-    public void createZzim(Long userId, Long productId){
-
-        if(!userRepository.existsById(userId))
-            throw new BusinessException(ExceptionType.USER_NOT_FOUND);
-        User userProxy = userRepository.getReferenceById(userId);
-
-        Product product = productRepository.findById(productId)
-                .orElseThrow(()-> new BusinessException(ExceptionType.PRODUCT_NOT_FOUND));
-
-        Zzim zzim = Zzim.builder()
-                .user(userProxy)
-                .product(product)
-                .build();
-        try {
-            zzimRepository.save(zzim);
-        }
-        catch (Exception e){
-            throw new BusinessException(ExceptionType.ALREADY_ZZIMED);
-        }
-    }
-
     public GlobalPageResponse<ZzimResponse> getZzims(Long userId, Pageable pageable){
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new BusinessException(ExceptionType.USER_NOT_FOUND));
 
-        return zzimRepository.findByUser(userId, pageable);
+        return zzimRepository.findAllByUser(userId, pageable);
     }
 
     @Transactional
-    public void deleteZzim(Long userId, Long zzimId){
+    public ZzimToggleResponse toggleZzim(Long userId, ZzimToggleRequest request){
         if(!userRepository.existsById(userId))
             throw new BusinessException(ExceptionType.USER_NOT_FOUND);
+        if(!productRepository.existsById(request.productId()))
+            throw new BusinessException(ExceptionType.PRODUCT_NOT_FOUND);
 
-        Zzim zzim = zzimRepository.findById(zzimId)
-                .orElseThrow(()-> new BusinessException(ExceptionType.ZZIM_NOT_FOUND));
-        if(!zzim.getUser().getId().equals(userId))
-            throw new BusinessException(ExceptionType.ZZIM_ACCESS_DENIED);
+        if (zzimRepository.existsByUser_IdAndProduct_Id(userId, request.productId())){
+            ZzimResponse zzimResponse = zzimRepository.findZzim(userId, request.productId());
+            zzimRepository.deleteByUser_IdAndProduct_Id(userId, request.productId());
+            return ZzimToggleResponse.to(zzimResponse, false);
+        }
 
-        zzimRepository.deleteById(zzimId);
+        User userProxy = userRepository.getReferenceById(userId);
+        Product productProxy = productRepository.getReferenceById(request.productId());
+        try {
+            zzimRepository.save(Zzim.builder()
+                    .user(userProxy)
+                    .product(productProxy)
+                    .build());
+            ZzimResponse zzimResponse = zzimRepository.findZzim(userId, request.productId());
+            return ZzimToggleResponse.to(zzimResponse, true);
+        }
+        catch (DataIntegrityViolationException e){
+            throw new BusinessException(ExceptionType.ALREADY_ZZIMED);
+        }
     }
 }

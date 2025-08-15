@@ -1,6 +1,7 @@
 package com.uhdyl.backend.product.dto.response;
 
 import com.querydsl.core.annotations.QueryProjection;
+import com.uhdyl.backend.product.domain.Product;
 
 public record ProductListResponse(
         Long id,
@@ -18,5 +19,16 @@ public record ProductListResponse(
         this.sellerName = sellerName;
         this.mainImageUrl = mainImageUrl;
         this.isCompleted = isCompleted;
+    }
+
+    public static ProductListResponse to(Product product){
+        return new ProductListResponse(
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getUser().getNickname(),
+                product.getImages().get(0).getImageUrl(),
+                product.isSale()
+        );
     }
 }

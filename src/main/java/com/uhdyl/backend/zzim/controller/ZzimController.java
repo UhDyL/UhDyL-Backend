@@ -4,8 +4,9 @@ import com.uhdyl.backend.global.aop.AssignUserId;
 import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.global.response.ResponseBody;
 import com.uhdyl.backend.zzim.api.ZzimApi;
-import com.uhdyl.backend.zzim.dto.request.ZzimCreateRequest;
+import com.uhdyl.backend.zzim.dto.request.ZzimToggleRequest;
 import com.uhdyl.backend.zzim.dto.response.ZzimResponse;
+import com.uhdyl.backend.zzim.dto.response.ZzimToggleResponse;
 import com.uhdyl.backend.zzim.service.ZzimService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -22,17 +23,6 @@ import static com.uhdyl.backend.global.response.ResponseUtil.createSuccessRespon
 public class ZzimController implements ZzimApi {
     private final ZzimService zzimService;
 
-    @PostMapping("/zzim")
-    @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
-    public ResponseEntity<ResponseBody<Void>> createZzim(
-            Long userId,
-            @RequestBody ZzimCreateRequest request
-            ) {
-        zzimService.createZzim(userId, request.productId());
-        return ResponseEntity.ok(createSuccessResponse());
-    }
-
     @GetMapping("/zzim")
     @AssignUserId
     @PreAuthorize("isAuthenticated() and hasRole('USER')")
@@ -43,14 +33,13 @@ public class ZzimController implements ZzimApi {
         return ResponseEntity.ok(createSuccessResponse(zzimService.getZzims(userId, pageable)));
     }
 
-    @DeleteMapping("/zzim/{zzimId}")
+    @PostMapping("/zzim")
     @AssignUserId
     @PreAuthorize("isAuthenticated() and hasRole('USER')")
-    public ResponseEntity<ResponseBody<Void>> deleteZzim(
+    public ResponseEntity<ResponseBody<ZzimToggleResponse>> toggleZzim(
             Long userId,
-            @PathVariable Long zzimId
+            @RequestBody ZzimToggleRequest request
     ){
-        zzimService.deleteZzim(userId, zzimId);
-        return ResponseEntity.ok(createSuccessResponse());
+        return ResponseEntity.ok(createSuccessResponse(zzimService.toggleZzim(userId, request)));
     }
 }

@@ -8,6 +8,7 @@ import com.uhdyl.backend.image.domain.QImage;
 import com.uhdyl.backend.product.domain.QProduct;
 import com.uhdyl.backend.zzim.domain.QZzim;
 import com.uhdyl.backend.zzim.dto.response.ZzimResponse;
+import com.uhdyl.backend.zzim.dto.response.ZzimToggleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,7 +22,7 @@ public class CustomZzimRepositoryImpl implements CustomZzimRepository{
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public GlobalPageResponse<ZzimResponse> findByUser(Long userId, Pageable pageable) {
+    public GlobalPageResponse<ZzimResponse> findAllByUser(Long userId, Pageable pageable) {
         QZzim qZzim = QZzim.zzim;
         QProduct qProduct = QProduct.product;
         QImage qImage = QImage.image;
@@ -60,4 +61,36 @@ public class CustomZzimRepositoryImpl implements CustomZzimRepository{
         Page<ZzimResponse> pageResponse =  new PageImpl<>(queryResponse, pageable, total != null ? total : 0);
         return GlobalPageResponse.create(pageResponse);
     }
+
+    @Override
+    public ZzimResponse findZzim(Long userId, Long productId) {
+        QZzim qZzim = QZzim.zzim;
+        QProduct qProduct = QProduct.product;
+        QImage qImage = QImage.image;
+        BooleanBuilder builder = new BooleanBuilder();
+
+        builder.and(qZzim.user.id.eq(userId).and(qZzim.product.id.eq(productId)));
+
+        return jpaQueryFactory
+                .select(
+                        Projections.constructor(
+                                ZzimResponse.class,
+                                qZzim.id,
+                                qProduct.title,
+                                qImage.imageUrl.min(),
+                                qProduct.price,
+                                qProduct.user.name
+                        )
+                )
+                .from(qZzim)
+                .innerJoin(qZzim.product, qProduct)
+                .leftJoin(qProduct.images, qImage)
+                .where(builder)
+                .groupBy(qZzim.id, qProduct.title, qProduct.price, qProduct.user.name)
+                .orderBy(qZzim.createdAt.desc())
+                .fetchOne();
+
+    }
+
+
 }

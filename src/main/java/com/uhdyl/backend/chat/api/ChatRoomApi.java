@@ -58,10 +58,10 @@ public interface ChatRoomApi {
             summary = "채팅방 페이징 조회",
             description = "채팅방 목록을 페이징으로 조회합니다."
     )
-    @ApiResponse(content = @Content(schema = @Schema(implementation = ZzimResponse.class)))
+    @ApiResponse(content = @Content(schema = @Schema(implementation = ChatRoomResponse.class)))
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(
-                    responsePage = ZzimResponse.class,
+                    responsePage = ChatRoomResponse.class,
                     description = "채팅방 페이징 조회 성공"
             ),
             errors = {

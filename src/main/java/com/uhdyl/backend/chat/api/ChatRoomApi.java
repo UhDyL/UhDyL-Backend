@@ -7,15 +7,22 @@ import com.uhdyl.backend.global.config.swagger.SwaggerApiFailedResponse;
 import com.uhdyl.backend.global.config.swagger.SwaggerApiResponses;
 import com.uhdyl.backend.global.config.swagger.SwaggerApiSuccessResponse;
 import com.uhdyl.backend.global.exception.ExceptionType;
+import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.global.response.ResponseBody;
+import com.uhdyl.backend.zzim.dto.response.ZzimResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -44,5 +51,30 @@ public interface ChatRoomApi {
             // TODO: 현재는 상대방의 ID를 전달받지만, 프론트 연결 시에는 상품의 PK 또는 상품의 제목과 닉네임을 받아서 채팅방을 만드는 구조로 변경해야됨
             @RequestBody ChatRoomRequest request,
             @Parameter(hidden = true) Long userId
+    );
+
+
+    @Operation(
+            summary = "채팅방 페이징 조회",
+            description = "채팅방 목록을 페이징으로 조회합니다."
+    )
+    @ApiResponse(content = @Content(schema = @Schema(implementation = ZzimResponse.class)))
+    @SwaggerApiResponses(
+            success = @SwaggerApiSuccessResponse(
+                    responsePage = ZzimResponse.class,
+                    description = "채팅방 페이징 조회 성공"
+            ),
+            errors = {
+                    @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
+                    @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
+            }
+    )
+    @GetMapping("/chat/room")
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    public ResponseEntity<ResponseBody<GlobalPageResponse<ChatRoomResponse>>> getChatRooms(
+            @Parameter(hidden = true) Long userId,
+            @ParameterObject
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     );
 }

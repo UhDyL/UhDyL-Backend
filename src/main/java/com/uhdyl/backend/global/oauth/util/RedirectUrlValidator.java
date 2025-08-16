@@ -8,7 +8,9 @@ public class RedirectUrlValidator {
             "http://localhost:5173",
             "http://localhost:8080",
             "exp://192.168.0.102:8081",
-            "exp://192.168.0.102:8081/--/auth/callback"
+            "exp://192.168.0.102:8081/--/auth/callback",
+            "uhdyl://auth/callback"
+
     );
 
     public static void validate(String uri) {

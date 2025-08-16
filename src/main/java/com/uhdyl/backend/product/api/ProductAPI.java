@@ -171,7 +171,7 @@ public interface ProductAPI {
             description = "특정 상품의 상세 정보를 조회합니다."
     )
     @SwaggerApiResponses(
-            success = @SwaggerApiSuccessResponse(description = "삼품 상세 조회 성공"),
+            success = @SwaggerApiSuccessResponse(description = "상품 상세 조회 성공"),
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
                     @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),

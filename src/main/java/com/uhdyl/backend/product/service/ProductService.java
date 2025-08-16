@@ -11,7 +11,6 @@ import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import com.uhdyl.backend.product.repository.ProductRepository;
 import com.uhdyl.backend.user.domain.User;
 import com.uhdyl.backend.user.repository.UserRepository;
-import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.OptimisticLockingFailureException;
@@ -31,7 +30,6 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final AiContentService aiContentService;
-    private static final int RETRY_COUNT = 3;
 
     @Transactional
     public ProductCreateResponse createProduct(Long userId, ProductCreateRequest request) {

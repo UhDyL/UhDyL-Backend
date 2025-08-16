@@ -12,6 +12,7 @@ import com.uhdyl.backend.product.domain.Category;
 import com.uhdyl.backend.product.dto.request.ProductCreateRequest;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductCreateResponse;
+import com.uhdyl.backend.product.dto.response.ProductDetailResponse;
 import com.uhdyl.backend.product.dto.response.ProductListResponse;
 import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -160,5 +161,24 @@ public interface ProductAPI {
             @PathVariable Category category,
             @ParameterObject
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    );
+
+    @Operation(
+            summary = "상품 (게시글) 상세보기",
+            description = "특정 상품의 상세 정보를 조회합니다."
+    )
+    @SwaggerApiResponses(
+            success = @SwaggerApiSuccessResponse(description = "삼품 상세 조회 성공"),
+            errors = {
+                    @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
+                    @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
+                    @SwaggerApiFailedResponse(ExceptionType.INVALID_INPUT),
+                    @SwaggerApiFailedResponse(ExceptionType.PRODUCT_NOT_FOUND)
+            }
+    )
+    @GetMapping("/product/{productId}")
+    ResponseEntity<ResponseBody<ProductDetailResponse>> getProductDetail(
+            @Parameter(hidden = true) Long userId,
+            @PathVariable Long productId
     );
 }

@@ -102,15 +102,14 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                         product.title,
                         product.price,
                         product.user.name,
-                        image.imageUrl.min(),
+                        image.imageUrl,
                         product.isSale.not()
                 ))
                 .from(product)
-                .leftJoin(product.images, image)
+                .leftJoin(product.images, image).on(image.imageOrder.eq(0L))
                 .where(product.categories.any().eq(category)
                         .and(product.isSale.eq(true)))
-                .groupBy(product.id, product.name, product.title, product.price, product.user.name, product.isSale, image.imageOrder)
-                .orderBy(product.createdAt.desc(), image.imageOrder.asc())
+                .orderBy(product.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

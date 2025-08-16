@@ -6,10 +6,13 @@ import com.uhdyl.backend.global.config.swagger.SwaggerApiFailedResponse;
 import com.uhdyl.backend.global.config.swagger.SwaggerApiResponses;
 import com.uhdyl.backend.global.config.swagger.SwaggerApiSuccessResponse;
 import com.uhdyl.backend.global.exception.ExceptionType;
+import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.global.response.ResponseBody;
+import com.uhdyl.backend.product.domain.Category;
 import com.uhdyl.backend.product.dto.request.ProductCreateRequest;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductCreateResponse;
+import com.uhdyl.backend.product.dto.response.ProductListResponse;
 import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -136,5 +139,26 @@ public interface ProductAPI {
     ResponseEntity<ResponseBody<Void>> completeProduct(
             @Parameter(hidden = true) Long userId,
             @PathVariable Long productId
+    );
+
+    @Operation(
+            summary = "카테고리별 상품 조회",
+            description = "특정 카테고리에 속하는 상품 목록을 조회합니다."
+    )
+    @SwaggerApiResponses(
+            success = @SwaggerApiSuccessResponse(description = "카테고리별 상품 조회 성공"),
+            errors = {
+                    @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
+                    @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
+                    @SwaggerApiFailedResponse(ExceptionType.INVALID_INPUT),
+                    @SwaggerApiFailedResponse(ExceptionType.CATEGORY_NOT_FOUND)
+            }
+    )
+    @GetMapping("/product/category/{category}")
+    ResponseEntity<ResponseBody<GlobalPageResponse<ProductListResponse>>> getProductsByCategory(
+            @Parameter(hidden = true) Long userId,
+            @PathVariable Category category,
+            @ParameterObject
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     );
 }

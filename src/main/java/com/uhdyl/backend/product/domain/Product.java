@@ -4,6 +4,9 @@ import com.uhdyl.backend.global.base.BaseEntity;
 import com.uhdyl.backend.image.domain.Image;
 import com.uhdyl.backend.user.domain.User;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -52,8 +55,11 @@ public class Product extends BaseEntity {
     @NotNull
     private long version = 0L;
 
+    @ElementCollection(targetClass = Category.class, fetch = FetchType.LAZY)
+    @CollectionTable(name = "product_category", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "category", nullable = false, columnDefinition = "VARCHAR(255)")
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private List<Category> categories = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "product_id", nullable = false)
@@ -66,13 +72,13 @@ public class Product extends BaseEntity {
     private User user;
 
     @Builder
-    public Product(Long id, String name, String title, String description, boolean isSale, Long price, Category category, User user, long version) {
+    public Product(Long id, String name, String title, String description, boolean isSale, Long price, List<Category> categories, User user, long version) {
         this.name = name;
         this.title = title;
         this.description = description;
         this.isSale = isSale;
         this.price = price;
-        this.category = category;
+        this.categories = categories;
         this.user = user;
     }
 

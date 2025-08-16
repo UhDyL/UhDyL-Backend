@@ -63,7 +63,7 @@ public class ProductService {
                 .description(aiResult.description())
                 .isSale(true) // true = 거래 가능
                 .price(request.price())
-                .category(request.category())
+                .categories(request.categories())
                 .user(user)
                 .build();
 

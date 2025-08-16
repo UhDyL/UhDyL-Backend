@@ -155,6 +155,9 @@ public interface ProductAPI {
                     @SwaggerApiFailedResponse(ExceptionType.CATEGORY_NOT_FOUND)
             }
     )
+
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     @GetMapping("/product/category/{category}")
     ResponseEntity<ResponseBody<GlobalPageResponse<ProductListResponse>>> getProductsByCategory(
             @Parameter(hidden = true) Long userId,
@@ -176,6 +179,9 @@ public interface ProductAPI {
                     @SwaggerApiFailedResponse(ExceptionType.PRODUCT_NOT_FOUND)
             }
     )
+
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     @GetMapping("/product/{productId}")
     ResponseEntity<ResponseBody<ProductDetailResponse>> getProductDetail(
             @Parameter(hidden = true) Long userId,

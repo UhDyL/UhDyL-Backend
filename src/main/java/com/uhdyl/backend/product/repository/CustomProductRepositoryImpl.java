@@ -1,14 +1,19 @@
 package com.uhdyl.backend.product.repository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.uhdyl.backend.global.exception.BusinessException;
+import com.uhdyl.backend.global.exception.ExceptionType;
 import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.image.domain.QImage;
 import com.uhdyl.backend.product.domain.Category;
 import com.uhdyl.backend.product.domain.QProduct;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
+import com.uhdyl.backend.product.dto.response.ProductDetailResponse;
 import com.uhdyl.backend.product.dto.response.ProductListResponse;
 import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
+import com.uhdyl.backend.review.domain.QReview;
 import com.uhdyl.backend.user.domain.QUser;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -124,5 +129,58 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
         Page<ProductListResponse> page = new PageImpl<>(content, pageable, total != null ? total : 0);
 
         return GlobalPageResponse.create(page);
+    }
+
+    @Override
+    public ProductDetailResponse getProductDetail(Long productId) {
+        QProduct product = QProduct.product;
+        QImage image = QImage.image;
+        QUser user = QUser.user;
+        QReview review = QReview.review;
+
+        var productInfoTuple = jpaQueryFactory
+                .select(
+                        product.id,
+                        product.name,
+                        product.title,
+                        product.price,
+                        product.description,
+                        user.name,
+                        user.picture,
+                        JPAExpressions
+                                .select(review.rating.avg().coalesce(0.0))
+                                .from(review)
+                                .where(review.targetUserId.eq(user.id)),
+                        product.isSale.not()
+                )
+                .from(product)
+                .leftJoin(product.user, user)
+                .where(product.id.eq(productId))
+                .fetchOne();
+
+        if (productInfoTuple == null) {
+            throw new BusinessException(ExceptionType.PRODUCT_NOT_FOUND);
+        }
+
+        List<String> images = jpaQueryFactory
+                .select(image.imageUrl)
+                .from(product)
+                .join(product.images, image)
+                .where(product.id.eq(productId))
+                .orderBy(image.imageOrder.asc())
+                .fetch();
+
+        return new ProductDetailResponse(
+                productInfoTuple.get(0, Long.class),
+                productInfoTuple.get(1, String.class),
+                productInfoTuple.get(2, String.class),
+                productInfoTuple.get(3, Long.class),
+                productInfoTuple.get(4, String.class),
+                productInfoTuple.get(5, String.class),
+                productInfoTuple.get(6, String.class),
+                productInfoTuple.get(7, Double.class),
+                images,
+                Boolean.TRUE.equals(productInfoTuple.get(8, Boolean.class))
+        );
     }
 }

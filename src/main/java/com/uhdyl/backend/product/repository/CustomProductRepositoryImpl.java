@@ -40,13 +40,14 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                         product.title,
                         product.price,
                         product.user.name,
+                        product.user.picture,
                         image.imageUrl.min(),
                         product.isSale.not()
                 ))
                 .from(product)
                 .leftJoin(product.images,image)
                 .where(product.user.id.eq(userId))
-                .groupBy(product.id, product.name, product.title, product.price, product.user.name, product.isSale, image.imageOrder)
+                .groupBy(product.id, product.name, product.title, product.price, product.user.name, product.user.picture, product.isSale, image.imageOrder)
                 .orderBy(product.createdAt.desc(), image.imageOrder.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -83,16 +84,18 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                 .select(Projections.constructor(SalesStatsResponse.class,
                         user.name.coalesce(""),
                         product.count(),
-                        product.price.sumLong().coalesce(0L)
+                        product.price.sumLong().coalesce(0L),
+                        user.picture.coalesce("")
+
                 ))
                 .from(user)
                 .leftJoin(user.products, product)
                 .on(product.isSale.eq(false))
                 .where(user.id.eq(userId))
-                .groupBy(user.id, user.name)
+                .groupBy(user.id, user.name, user.picture)
                 .fetchOne();
 
-        return stats != null ? stats : new SalesStatsResponse("", 0L, 0L);
+        return stats != null ? stats : new SalesStatsResponse("", 0L, 0L, "");
     }
 
     @Override

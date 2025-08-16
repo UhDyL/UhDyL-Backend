@@ -1,10 +1,10 @@
 package com.uhdyl.backend.product.repository;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.image.domain.QImage;
+import com.uhdyl.backend.product.domain.Category;
 import com.uhdyl.backend.product.domain.QProduct;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductListResponse;
@@ -87,5 +87,41 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                 .fetchOne();
 
         return stats != null ? stats : new SalesStatsResponse("", 0L, 0L);
+    }
+
+    @Override
+    public GlobalPageResponse<ProductListResponse> getProductsByCategory(Category category, Pageable pageable){
+        QProduct product = QProduct.product;
+        QImage image = QImage.image;
+
+        List<ProductListResponse> content = jpaQueryFactory
+                .select(Projections.constructor(ProductListResponse.class,
+                        product.id,
+                        product.name,
+                        product.price,
+                        product.user.name,
+                        image.imageUrl.min(),
+                        product.isSale.not()
+                ))
+                .from(product)
+                .leftJoin(product.images, image)
+                .where(product.categories.any().eq(category)
+                        .and(product.isSale.eq(true)))
+                .groupBy(product.id, product.name, product.price, product.user.name, product.isSale, image.imageOrder)
+                .orderBy(product.createdAt.desc(), image.imageOrder.asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = jpaQueryFactory
+                .select(product.count())
+                .from(product)
+                .where(product.categories.any().eq(category)
+                        .and(product.isSale.eq(true)))
+                .fetchOne();
+
+        Page<ProductListResponse> page = new PageImpl<>(content, pageable, total != null ? total : 0);
+
+        return GlobalPageResponse.create(page);
     }
 }

@@ -6,14 +6,16 @@ import com.uhdyl.backend.product.domain.Product;
 public record ProductListResponse(
         Long id,
         String name,
+        String title,
         Long price,
         String sellerName,
         String mainImageUrl,
         boolean isCompleted
 ) {
     @QueryProjection
-    public ProductListResponse(Long id, String name, Long price, String sellerName, String mainImageUrl, boolean isCompleted) {
+    public ProductListResponse(Long id, String name, String title, Long price, String sellerName, String mainImageUrl, boolean isCompleted) {
         this.id = id;
+        this.title = title;
         this.name = name;
         this.price = price;
         this.sellerName = sellerName;
@@ -25,6 +27,7 @@ public record ProductListResponse(
         return new ProductListResponse(
                 product.getId(),
                 product.getName(),
+                product.getTitle(),
                 product.getPrice(),
                 product.getUser().getNickname(),
                 product.getImages().get(0).getImageUrl(),

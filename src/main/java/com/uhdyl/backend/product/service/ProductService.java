@@ -2,16 +2,18 @@ package com.uhdyl.backend.product.service;
 
 import com.uhdyl.backend.global.exception.BusinessException;
 import com.uhdyl.backend.global.exception.ExceptionType;
+import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.image.domain.Image;
+import com.uhdyl.backend.product.domain.Category;
 import com.uhdyl.backend.product.domain.Product;
 import com.uhdyl.backend.product.dto.request.ProductCreateRequest;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductCreateResponse;
+import com.uhdyl.backend.product.dto.response.ProductListResponse;
 import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import com.uhdyl.backend.product.repository.ProductRepository;
 import com.uhdyl.backend.user.domain.User;
 import com.uhdyl.backend.user.repository.UserRepository;
-import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.OptimisticLockingFailureException;
@@ -31,7 +33,6 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final AiContentService aiContentService;
-    private static final int RETRY_COUNT = 3;
 
     @Transactional
     public ProductCreateResponse createProduct(Long userId, ProductCreateRequest request) {
@@ -65,7 +66,7 @@ public class ProductService {
                 .description(aiResult.description())
                 .isSale(true) // true = 거래 가능
                 .price(request.price())
-                .category(request.category())
+                .categories(request.categories())
                 .user(user)
                 .build();
 
@@ -141,5 +142,13 @@ public class ProductService {
     @Recover
     public void recover(Exception e, Long userId, Long productId) {
         throw new BusinessException(ExceptionType.PRODUCT_COMPLETE_CONFLICT);
+    }
+
+    @Transactional(readOnly = true)
+    public GlobalPageResponse<ProductListResponse> getProductsByCategory(Long userId, Category category, Pageable pageable){
+        if(!userRepository.existsById(userId))
+            throw new BusinessException(ExceptionType.USER_NOT_FOUND);
+
+        return productRepository.getProductsByCategory(category, pageable);
     }
 }

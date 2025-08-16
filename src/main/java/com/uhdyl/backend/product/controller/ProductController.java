@@ -3,11 +3,14 @@ package com.uhdyl.backend.product.controller;
 import static com.uhdyl.backend.global.response.ResponseUtil.createSuccessResponse;
 
 import com.uhdyl.backend.global.aop.AssignUserId;
+import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.global.response.ResponseBody;
 import com.uhdyl.backend.product.api.ProductAPI;
+import com.uhdyl.backend.product.domain.Category;
 import com.uhdyl.backend.product.dto.request.ProductCreateRequest;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductCreateResponse;
+import com.uhdyl.backend.product.dto.response.ProductListResponse;
 import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import com.uhdyl.backend.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -92,5 +95,19 @@ public class ProductController implements ProductAPI {
     ) {
         productService.completeProduct(userId, productId);
         return ResponseEntity.ok(createSuccessResponse());
+    }
+
+    /**
+     * 카테고리 별 상품 조회 api
+     */
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @GetMapping("/product/category/{category}")
+    public ResponseEntity<ResponseBody<GlobalPageResponse<ProductListResponse>>> getProductsByCategory(
+            Long userId,
+            @PathVariable Category category,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+            ) {
+        return ResponseEntity.ok(createSuccessResponse(productService.getProductsByCategory(userId, category, pageable)));
     }
 }

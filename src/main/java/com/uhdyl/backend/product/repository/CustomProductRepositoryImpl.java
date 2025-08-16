@@ -32,6 +32,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
     public MyProductListResponse getMyProducts(Long userId, Pageable pageable){
         QProduct product = QProduct.product;
         QImage image = QImage.image;
+        QUser user = QUser.user;
 
         List<ProductListResponse> content = jpaQueryFactory
                 .select(Projections.constructor(ProductListResponse.class,
@@ -39,15 +40,15 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                         product.name,
                         product.title,
                         product.price,
-                        product.user.name,
-                        product.user.picture,
+                        user.nickname.coalesce(user.name).coalesce(""),
+                        user.picture,
                         image.imageUrl.min(),
                         product.isSale.not()
                 ))
                 .from(product)
                 .leftJoin(product.images,image)
                 .where(product.user.id.eq(userId))
-                .groupBy(product.id, product.name, product.title, product.price, product.user.name, product.user.picture, product.isSale, image.imageOrder)
+                .groupBy(product.id, product.name, product.title, product.price, user.nickname, user.name, user.picture, product.isSale, image.imageOrder)
                 .orderBy(product.createdAt.desc(), image.imageOrder.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -82,7 +83,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
 
         SalesStatsResponse stats = jpaQueryFactory
                 .select(Projections.constructor(SalesStatsResponse.class,
-                        user.name.coalesce(""),
+                        user.nickname.coalesce(user.name).coalesce(""),
                         product.count(),
                         product.price.sumLong().coalesce(0L),
                         user.picture.coalesce("")
@@ -92,7 +93,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                 .leftJoin(user.products, product)
                 .on(product.isSale.eq(false))
                 .where(user.id.eq(userId))
-                .groupBy(user.id, user.name, user.picture)
+                .groupBy(user.id, user.nickname, user.name, user.picture)
                 .fetchOne();
 
         return stats != null ? stats : new SalesStatsResponse("", 0L, 0L, "");
@@ -102,6 +103,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
     public GlobalPageResponse<ProductListResponse> getProductsByCategory(Category category, Pageable pageable){
         QProduct product = QProduct.product;
         QImage image = QImage.image;
+        QUser user = QUser.user;
 
         List<ProductListResponse> content = jpaQueryFactory
                 .select(Projections.constructor(ProductListResponse.class,
@@ -109,7 +111,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                         product.name,
                         product.title,
                         product.price,
-                        product.user.name,
+                        user.nickname.coalesce(user.name).coalesce(""),
                         image.imageUrl,
                         product.isSale.not()
                 ))
@@ -148,7 +150,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                         product.title,
                         product.price,
                         product.description,
-                        user.name,
+                        user.nickname.coalesce(user.name).coalesce(""),
                         user.picture,
                         JPAExpressions
                                 .select(review.rating.avg().coalesce(0.0))

@@ -46,10 +46,10 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                         product.isSale.not()
                 ))
                 .from(product)
-                .leftJoin(product.images,image)
+                .leftJoin(product.images, image).on(image.imageOrder.eq(0L))
                 .where(product.user.id.eq(userId))
-                .groupBy(product.id, product.name, product.title, product.price, user.nickname, user.name, user.picture, product.isSale, image.imageOrder)
-                .orderBy(product.createdAt.desc(), image.imageOrder.asc())
+                .groupBy(product.id, product.name, product.title, product.price, user.nickname, user.name, user.picture, product.isSale)
+                .orderBy(product.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -112,6 +112,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                         product.title,
                         product.price,
                         user.nickname.coalesce(user.name).coalesce(""),
+                        user.picture.coalesce(""),
                         image.imageUrl,
                         product.isSale.not()
                 ))

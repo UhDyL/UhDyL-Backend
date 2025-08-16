@@ -9,6 +9,7 @@ import com.uhdyl.backend.product.domain.Product;
 import com.uhdyl.backend.product.dto.request.ProductCreateRequest;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductCreateResponse;
+import com.uhdyl.backend.product.dto.response.ProductDetailResponse;
 import com.uhdyl.backend.product.dto.response.ProductListResponse;
 import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import com.uhdyl.backend.product.repository.ProductRepository;
@@ -150,5 +151,13 @@ public class ProductService {
             throw new BusinessException(ExceptionType.USER_NOT_FOUND);
 
         return productRepository.getProductsByCategory(category, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public ProductDetailResponse getProductDetail(Long userId, Long productId) {
+        if(!userRepository.existsById(userId))
+            throw new BusinessException(ExceptionType.USER_NOT_FOUND);
+
+        return productRepository.getProductDetail(productId);
     }
 }

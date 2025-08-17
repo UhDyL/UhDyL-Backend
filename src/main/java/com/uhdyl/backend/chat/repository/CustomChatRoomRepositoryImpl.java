@@ -55,8 +55,10 @@ public class CustomChatRoomRepositoryImpl implements CustomChatRoomRepository{
                                 ProductListResponse.class,
                                 qProduct.id,
                                 qProduct.name,
+                                qProduct.title,
                                 qProduct.price,
                                 qProduct.user.name,
+                                qProduct.user.picture,
                                 mainImageUrl,
                                 qProduct.isSale
                         ),
@@ -70,7 +72,7 @@ public class CustomChatRoomRepositoryImpl implements CustomChatRoomRepository{
                                 .and(qChatMessage.id.eq(latestMsgId))
                 )
                 .where(builder)
-                .orderBy(qChatRoom.createdAt.desc())
+                .orderBy(qChatMessage.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

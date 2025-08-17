@@ -52,8 +52,7 @@ public class Product extends BaseEntity {
     private Long price;
 
     @Version
-    @NotNull
-    private long version = 0L;
+    private Long version;
 
     @ElementCollection(targetClass = Category.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "product_category", joinColumns = @JoinColumn(name = "product_id"))
@@ -72,7 +71,7 @@ public class Product extends BaseEntity {
     private User user;
 
     @Builder
-    public Product(Long id, String name, String title, String description, boolean isSale, Long price, List<Category> categories, User user, long version) {
+    public Product(Long id, String name, String title, String description, boolean isSale, Long price, List<Category> categories, User user, Long version) {
         this.name = name;
         this.title = title;
         this.description = description;
@@ -80,6 +79,7 @@ public class Product extends BaseEntity {
         this.price = price;
         this.categories = categories;
         this.user = user;
+        this.version = version;
     }
 
     public void addImage(Image image) {

@@ -115,63 +115,6 @@ public class ProductService {
         );
     }
 
-//
-//    @Transactional
-//    public ProductCreateResponse createProduct(Long userId, ProductCreateWithAiContentRequest request) {
-//        AiContentService.AiResult aiResult = callAiService(request);
-//
-//        return saveProduct(userId, request, aiResult);
-//    }
-//
-//    private AiContentService.AiResult callAiService(ProductCreateWithAiContentRequest request) {
-//        try {
-//            return aiContentService.generateContent(
-//                    request.breed(),
-//                    request.price(),
-//                    request.tone(),
-//                    request.images()
-//            );
-//        } catch (Exception e) {
-//            log.error("AI 콘텐츠 생성 실패 - breed: {}, price: {}", request.breed(), request.price(), e);
-//            throw new BusinessException(ExceptionType.AI_GENERATION_FAILED);
-//        }
-//    }
-//
-//    @Transactional
-//    public ProductCreateResponse saveProduct(Long userId, ProductCreateWithAiContentRequest request, AiContentService.AiResult aiResult){
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
-//
-//        Product product = Product.builder()
-//                .name(request.breed())
-//                .title(aiResult.title())
-//                .description(aiResult.description())
-//                .isSale(true) // true = 거래 가능
-//                .price(request.price())
-//                .categories(request.categories())
-//                .user(user)
-//                .build();
-//
-//        if (request.images() != null && !request.images().isEmpty()) {
-//            long order = 0;
-//            for (String imageUrl : request.images()) {
-//                if (imageUrl == null || imageUrl.isBlank()) continue;
-//                product.addImage(new Image(imageUrl, order++, null));
-//            }
-//        }
-//
-//        Product saved = productRepository.save(product);
-//
-//        return new ProductCreateResponse(
-//                saved.getId(),
-//                saved.getTitle(),
-//                saved.getDescription(),
-//                saved.getPrice(),
-//                saved.getImages().stream().map(Image::getImageUrl).toList(),
-//                saved.isSale()
-//        );
-//    }
-
     @Transactional
     public void deleteProduct(Long userId, Long productId) {
         User user = userRepository.findById(userId)
@@ -184,7 +127,6 @@ public class ProductService {
             throw new BusinessException(ExceptionType.CANT_DELETE_PRODUCT);
         }
 
-        user.removeProduct(product);
         productRepository.delete(product);
     }
 

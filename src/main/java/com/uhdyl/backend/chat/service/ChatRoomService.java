@@ -92,6 +92,9 @@ public class ChatRoomService {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new BusinessException(ExceptionType.CHATROOM_NOT_EXIST));
 
+        if(!isParticipant(chatRoomId, userId))
+            throw new BusinessException(ExceptionType.WS_ROOM_ACCESS_DENIED);
+
         if(chatRoom.isTradeCompleted())
             throw new BusinessException(ExceptionType.CANT_COMPLETE_TRADE);
         chatRoom.setTradeCompleted();

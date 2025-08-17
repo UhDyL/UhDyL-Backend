@@ -42,6 +42,10 @@ public class ReviewService {
         Long targetUserId = product.getUser().getId();
         Long user1 = Math.min(userId, targetUserId);
         Long user2 = Math.max(userId, targetUserId);
+
+        if(Objects.equals(user.getId(), targetUserId))
+            throw new BusinessException(ExceptionType.CANT_REVIEW_MYSELF);
+
         ChatRoom chatRoom = chatRoomRepository.findByUser1AndUser2AndProductId(user1, user2, request.productId())
                 .orElseThrow(()->new BusinessException(ExceptionType.CHATROOM_NOT_EXIST));
 
@@ -50,9 +54,6 @@ public class ReviewService {
 
         if(!userRepository.existsById(targetUserId))
             throw new BusinessException(ExceptionType.USER_NOT_FOUND);
-
-        if(Objects.equals(user.getId(), targetUserId))
-            throw new BusinessException(ExceptionType.CANT_REVIEW_MYSELF);
 
         Review review = Review.builder()
                 .user(user)

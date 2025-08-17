@@ -51,7 +51,7 @@ public interface ProductAPI {
     )
 
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     @PostMapping("/product/ai-generate")
     ResponseEntity<ResponseBody<AiGeneratedContentResponse>> generateAiContent(
             @Parameter(hidden = true) Long userId,
@@ -73,7 +73,7 @@ public interface ProductAPI {
     )
 
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     @PostMapping("/product")
     ResponseEntity<ResponseBody<ProductCreateResponse>> createProduct(
             @Parameter(hidden = true) Long userId,
@@ -96,7 +96,7 @@ public interface ProductAPI {
     )
 
     @DeleteMapping("/product/{productId}")
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     @AssignUserId
     public ResponseEntity<ResponseBody<Void>> deleteProduct(
             @Parameter(hidden = true) Long userId,

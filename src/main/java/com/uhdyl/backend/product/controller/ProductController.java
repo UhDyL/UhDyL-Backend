@@ -39,7 +39,7 @@ public class ProductController implements ProductAPI {
      * AI 글 작성 API (1단계 - AI 글 생성)
      */
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     @PostMapping("/product/ai-generate")
     public ResponseEntity<ResponseBody<AiGeneratedContentResponse>> generateAiContent(Long userId, ProductAiGenerateRequest request) {
         AiGeneratedContentResponse response = productService.generateAiContent(userId, request);
@@ -50,7 +50,7 @@ public class ProductController implements ProductAPI {
      * 상품 등록 API (2단계 - AI로 생성된 글로 등록)
      */
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     @PostMapping("/product")
     public ResponseEntity<ResponseBody<ProductCreateResponse>> createProduct(Long userId, ProductCreateWithAiContentRequest request) {
         ProductCreateResponse response = productService.createProductWithGeneratedContent(userId, request);
@@ -61,7 +61,7 @@ public class ProductController implements ProductAPI {
      * 상품 삭제 api
      */
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     @DeleteMapping("/product/{productId}")
     public ResponseEntity<ResponseBody<Void>> deleteProduct(
             Long userId,

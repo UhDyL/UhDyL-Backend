@@ -51,6 +51,7 @@ public class Product extends BaseEntity {
     @Positive
     private Long price;
 
+    @Column(nullable = false)
     @Version
     private Long version;
 

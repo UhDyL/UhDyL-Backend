@@ -26,11 +26,18 @@ public class ChatRoom extends BaseEntity {
 
     private Long productId;
 
+    private boolean tradeCompleted;
+
     @Builder
-    public ChatRoom(Long user1, Long user2, String chatRoomTitle, Long productId) {
+    public ChatRoom(Long user1, Long user2, String chatRoomTitle, Long productId, boolean tradeCompleted) {
         this.user1 = user1;
         this.user2 = user2;
         this.chatRoomTitle = chatRoomTitle;
         this.productId = productId;
+        this.tradeCompleted = tradeCompleted;
+    }
+
+    public void setTradeCompleted(){
+        this.tradeCompleted = true;
     }
 }

@@ -14,10 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.uhdyl.backend.global.response.ResponseUtil.createSuccessResponse;
 
@@ -46,5 +43,16 @@ public class ChatRoomController implements ChatRoomApi {
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ){
         return ResponseEntity.ok(createSuccessResponse(chatRoomService.getChatRooms(userId, pageable)));
+    }
+
+    @PostMapping("/chat/room/complete")
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
+    public ResponseEntity<ResponseBody<Void>> completeTrade(
+            Long userId,
+            @RequestParam Long chatRoomId
+    ){
+        chatRoomService.completeTrade(userId, chatRoomId);
+        return ResponseEntity.ok(createSuccessResponse());
     }
 }

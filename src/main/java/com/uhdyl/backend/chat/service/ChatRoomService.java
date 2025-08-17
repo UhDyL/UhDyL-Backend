@@ -52,6 +52,7 @@ public class ChatRoomService {
                                 .user2(user2)
                                 .chatRoomTitle(product.getTitle())
                                 .productId(request.productId())
+                                .tradeCompleted(false)
                                 .build()
                 ));
 
@@ -81,5 +82,18 @@ public class ChatRoomService {
             throw new BusinessException(ExceptionType.USER_NOT_FOUND);
 
         return chatRoomRepository.getChatRooms(userId, pageable);
+    }
+
+    @Transactional
+    public void completeTrade(Long userId, Long chatRoomId){
+        if(!userRepository.existsById(userId))
+            throw new BusinessException(ExceptionType.USER_NOT_FOUND);
+
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new BusinessException(ExceptionType.CHATROOM_NOT_EXIST));
+
+        if(chatRoom.isTradeCompleted())
+            throw new BusinessException(ExceptionType.CANT_COMPLETE_TRADE);
+        chatRoom.setTradeCompleted();
     }
 }

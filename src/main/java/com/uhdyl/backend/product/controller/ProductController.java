@@ -16,6 +16,7 @@ import com.uhdyl.backend.product.dto.response.ProductDetailResponse;
 import com.uhdyl.backend.product.dto.response.ProductListResponse;
 import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import com.uhdyl.backend.product.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -41,7 +42,9 @@ public class ProductController implements ProductAPI {
     @AssignUserId
     @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     @PostMapping("/product/ai-generate")
-    public ResponseEntity<ResponseBody<AiGeneratedContentResponse>> generateAiContent(Long userId, ProductAiGenerateRequest request) {
+    public ResponseEntity<ResponseBody<AiGeneratedContentResponse>> generateAiContent(
+            Long userId,
+            @Valid ProductAiGenerateRequest request) {
         AiGeneratedContentResponse response = productService.generateAiContent(userId, request);
         return ResponseEntity.ok(createSuccessResponse(response));
     }
@@ -52,7 +55,9 @@ public class ProductController implements ProductAPI {
     @AssignUserId
     @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     @PostMapping("/product")
-    public ResponseEntity<ResponseBody<ProductCreateResponse>> createProduct(Long userId, ProductCreateWithAiContentRequest request) {
+    public ResponseEntity<ResponseBody<ProductCreateResponse>> createProduct(
+            Long userId,
+            @Valid ProductCreateWithAiContentRequest request) {
         ProductCreateResponse response = productService.createProductWithGeneratedContent(userId, request);
         return ResponseEntity.ok(createSuccessResponse(response));
     }

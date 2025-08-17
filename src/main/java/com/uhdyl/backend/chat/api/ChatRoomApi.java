@@ -86,7 +86,7 @@ public interface ChatRoomApi {
     )
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(
-                    description = "채팅방 생성 성공"
+                    description = "거래 완료 표시 성공"
             ),
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),

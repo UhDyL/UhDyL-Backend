@@ -10,6 +10,7 @@ import com.uhdyl.backend.product.domain.Category;
 import com.uhdyl.backend.product.dto.request.ProductCreateRequest;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductCreateResponse;
+import com.uhdyl.backend.product.dto.response.ProductDetailResponse;
 import com.uhdyl.backend.product.dto.response.ProductListResponse;
 import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import com.uhdyl.backend.product.service.ProductService;
@@ -109,5 +110,18 @@ public class ProductController implements ProductAPI {
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
             ) {
         return ResponseEntity.ok(createSuccessResponse(productService.getProductsByCategory(userId, category, pageable)));
+    }
+
+    /**
+     * 상품 상세 조회 api
+     */
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @GetMapping("/product/{productId}")
+    public ResponseEntity<ResponseBody<ProductDetailResponse>> getProductDetail(
+            Long userId,
+            @PathVariable Long productId
+    ) {
+        return ResponseEntity.ok(createSuccessResponse(productService.getProductDetail(userId, productId)));
     }
 }

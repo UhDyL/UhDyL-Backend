@@ -1,8 +1,9 @@
 package com.uhdyl.backend.product.dto.response;
 
 public record SalesStatsResponse(
-        String name,
+        String sellerName,
         Long salesCount,
-        Long salesRevenue
+        Long salesRevenue,
+        String sellerPicture
 ) {
 }

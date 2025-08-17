@@ -97,9 +97,9 @@ public class ProductService {
 
         if (request.images() != null && !request.images().isEmpty()) {
             long order = 0;
-            for (String imageUrl : request.images()) {
-                if (imageUrl == null || imageUrl.isBlank()) continue;
-                product.addImage(new Image(imageUrl, order++, null));
+            for (ProductCreateWithAiContentRequest.ImageRequest imageRequest : request.images()){
+                if (imageRequest.url() == null || imageRequest.url().isBlank()) continue;
+                product.addImage(new Image(imageRequest.url(), order++, imageRequest.publicId()));
             }
         }
 

@@ -30,14 +30,17 @@ public class Review extends BaseEntity {
 
     private Long targetUserId;
 
+    private Long productId;
+
     @Builder
-    public Review(User user, String content, String imageUrl, String publicId, Long rating, Long targetUserId) {
+    public Review(User user, String content, String imageUrl, String publicId, Long rating, Long targetUserId, Long productId) {
         this.user = user;
         this.content = content;
         this.imageUrl = imageUrl;
         this.publicId = publicId;
         this.rating = rating;
         this.targetUserId = targetUserId;
+        this.productId = productId;
     }
 
     public void setUser(User user){

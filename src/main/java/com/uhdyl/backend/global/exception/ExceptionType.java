@@ -55,6 +55,7 @@ public enum ExceptionType {
     REVIEW_NOT_FOUND(NOT_FOUND, "R001", "리뷰가 존재하지 않습니다."),
     CANT_REVIEW_MYSELF(FORBIDDEN, "R002", "자신에게 리뷰를 작성할 수 없습니다."),
     CANT_DELETE_REVIEW(FORBIDDEN, "R003", "다른 사용자의 리뷰를 삭제할 수 없습니다."),
+    CANT_REVIEW_FAKE(FORBIDDEN, "R004", "거래 완료 전에 리뷰를 작성할 수 없습니다."),
 
     // Product
     INVALID_INPUT(BAD_REQUEST, "P001", "입력 값이 올바르지 않습니다."),
@@ -65,6 +66,7 @@ public enum ExceptionType {
     PRODUCT_COMPLETE_CONFLICT(CONFLICT, "P006", "동시 처리 충돌로 상품 완료 실패"),
     PRODUCT_COMPLETE_INTERRUPTED(INTERNAL_SERVER_ERROR, "P007", "재시도 중 인터럽트 발생"),
     CATEGORY_NOT_FOUND(NOT_FOUND, "P007", "해당 카테고리가 존재하지 않습니다."),
+    CANT_COMPLETE_TRADE(FORBIDDEN, "P008", "거래 완료를 할 수 없습니다."),
 
 
     // Zzim

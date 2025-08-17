@@ -9,7 +9,9 @@ import com.uhdyl.backend.global.exception.ExceptionType;
 import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.global.response.ResponseBody;
 import com.uhdyl.backend.product.domain.Category;
-import com.uhdyl.backend.product.dto.request.ProductCreateRequest;
+import com.uhdyl.backend.product.dto.request.ProductAiGenerateRequest;
+import com.uhdyl.backend.product.dto.request.ProductCreateWithAiContentRequest;
+import com.uhdyl.backend.product.dto.response.AiGeneratedContentResponse;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductCreateResponse;
 import com.uhdyl.backend.product.dto.response.ProductDetailResponse;
@@ -35,11 +37,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface ProductAPI {
 
     @Operation(
-            summary = "상품 등록",
-            description = "판매자가 상품을 등록합니다. 제목과 설명은 AI가 생성합니다."
+            summary = "AI 글 작성",
+            description = "AI가 상품 정보를 바탕으로 제목과 설명을 생성합니다."
     )
     @SwaggerApiResponses(
-            success = @SwaggerApiSuccessResponse(description = "상품 등록 성공"),
+            success = @SwaggerApiSuccessResponse(description = "AI 글 생성 성공"),
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
                     @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
@@ -50,10 +52,32 @@ public interface ProductAPI {
 
     @AssignUserId
     @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @PostMapping("/product/ai-generate")
+    ResponseEntity<ResponseBody<AiGeneratedContentResponse>> generateAiContent(
+            @Parameter(hidden = true) Long userId,
+            @RequestBody ProductAiGenerateRequest request
+    );
+
+    @Operation(
+            summary = "상품 등록",
+            description = "AI로 생성된 글을 바탕으로 상품을 등록합니다. 제목과 설명은 사용자가 수정할 수 있습니다."
+    )
+    @SwaggerApiResponses(
+            success = @SwaggerApiSuccessResponse(description = "상품 등록 성공"),
+            errors = {
+                    @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
+                    @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
+                    @SwaggerApiFailedResponse(ExceptionType.INVALID_INPUT),
+                    @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FARMER)
+            }
+    )
+
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
     @PostMapping("/product")
     ResponseEntity<ResponseBody<ProductCreateResponse>> createProduct(
             @Parameter(hidden = true) Long userId,
-            @RequestBody ProductCreateRequest request
+            @RequestBody ProductCreateWithAiContentRequest request
     );
 
     @Operation(

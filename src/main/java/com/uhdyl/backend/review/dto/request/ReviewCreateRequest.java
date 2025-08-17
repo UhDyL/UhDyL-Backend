@@ -5,6 +5,6 @@ public record ReviewCreateRequest (
         Long rating,
         String imageUrl,
         String publicId,
-        Long targetUserId
+        Long productId
 ){
 }

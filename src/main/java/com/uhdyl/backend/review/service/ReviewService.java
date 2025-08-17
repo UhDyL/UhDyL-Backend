@@ -1,7 +1,12 @@
 package com.uhdyl.backend.review.service;
 
+import com.uhdyl.backend.chat.domain.ChatRoom;
+import com.uhdyl.backend.chat.repository.ChatRoomRepository;
 import com.uhdyl.backend.global.exception.BusinessException;
 import com.uhdyl.backend.global.exception.ExceptionType;
+import com.uhdyl.backend.global.response.GlobalPageResponse;
+import com.uhdyl.backend.product.domain.Product;
+import com.uhdyl.backend.product.repository.ProductRepository;
 import com.uhdyl.backend.review.domain.Review;
 import com.uhdyl.backend.review.dto.request.ReviewCreateRequest;
 import com.uhdyl.backend.review.dto.response.ReviewResponse;
@@ -23,17 +28,32 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     @Transactional
     public void createReview(Long userId, ReviewCreateRequest request){
         User user = userRepository.findById(userId).
                 orElseThrow(()->new BusinessException(ExceptionType.USER_NOT_FOUND));
 
-        if(!userRepository.existsById(request.targetUserId()))
-            throw new BusinessException(ExceptionType.USER_NOT_FOUND);
 
-        if(Objects.equals(user.getId(), request.targetUserId()))
+        Product product = productRepository.findById(request.productId())
+                .orElseThrow(()->new BusinessException(ExceptionType.PRODUCT_NOT_FOUND));
+        Long targetUserId = product.getUser().getId();
+        Long user1 = Math.min(userId, targetUserId);
+        Long user2 = Math.max(userId, targetUserId);
+
+        if(Objects.equals(user.getId(), targetUserId))
             throw new BusinessException(ExceptionType.CANT_REVIEW_MYSELF);
+
+        ChatRoom chatRoom = chatRoomRepository.findByUser1AndUser2AndProductId(user1, user2, request.productId())
+                .orElseThrow(()->new BusinessException(ExceptionType.CHATROOM_NOT_EXIST));
+
+        if(!chatRoom.isTradeCompleted())
+            throw new BusinessException(ExceptionType.CANT_REVIEW_FAKE);
+
+        if(!userRepository.existsById(targetUserId))
+            throw new BusinessException(ExceptionType.USER_NOT_FOUND);
 
         Review review = Review.builder()
                 .user(user)
@@ -41,7 +61,8 @@ public class ReviewService {
                 .content(request.content())
                 .publicId(request.publicId())
                 .rating(request.rating())
-                .targetUserId(request.targetUserId())
+                .targetUserId(targetUserId)
+                .productId(request.productId())
                 .build();
         user.addReview(review);
         reviewRepository.save(review);
@@ -62,18 +83,18 @@ public class ReviewService {
         review.getUser().deleteReview(review);
     }
 
-    public Page<ReviewResponse> getMyReviews(Long userId, Pageable pageable){
+    public GlobalPageResponse<ReviewResponse> getMyReviews(Long userId, Pageable pageable){
         if(!userRepository.existsById(userId))
             throw new BusinessException(ExceptionType.USER_NOT_FOUND);
 
-        return reviewRepository.getMyReviews(userId, pageable);
+        return GlobalPageResponse.create(reviewRepository.getMyReviews(userId, pageable));
     }
 
-    public Page<ReviewResponse> getAllReviews(String nickName, Pageable pageable){
+    public GlobalPageResponse<ReviewResponse> getAllReviews(String nickName, Pageable pageable){
         User user = userRepository.findByNickname(nickName)
                 .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
 
-        return reviewRepository.getAllReviews(user.getId(), pageable);
+        return GlobalPageResponse.create(reviewRepository.getAllReviews(user.getId(), pageable));
     }
 
 }

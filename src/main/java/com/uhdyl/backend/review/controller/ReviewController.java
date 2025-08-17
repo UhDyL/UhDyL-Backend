@@ -1,6 +1,7 @@
 package com.uhdyl.backend.review.controller;
 
 import com.uhdyl.backend.global.aop.AssignUserId;
+import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.global.response.ResponseBody;
 import com.uhdyl.backend.review.api.ReviewApi;
 import com.uhdyl.backend.review.dto.request.ReviewCreateRequest;
@@ -45,7 +46,7 @@ public class ReviewController implements ReviewApi {
     @AssignUserId
     @GetMapping("/review/me")
     @PreAuthorize("isAuthenticated() and hasRole('USER')")
-    public ResponseEntity<ResponseBody<Page<ReviewResponse>>> getMyReviews(
+    public ResponseEntity<ResponseBody<GlobalPageResponse<ReviewResponse>>> getMyReviews(
             Long userId,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ){
@@ -57,7 +58,7 @@ public class ReviewController implements ReviewApi {
      */
     @GetMapping("/review/{nickname}")
     @PreAuthorize("isAuthenticated() and hasRole('USER')")
-    public ResponseEntity<ResponseBody<Page<ReviewResponse>>> getAllReviews(
+    public ResponseEntity<ResponseBody<GlobalPageResponse<ReviewResponse>>> getAllReviews(
             @PathVariable String nickname,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ){

@@ -85,7 +85,7 @@ public class ImageService {
                 }
 
                 case CHAT_IMAGE -> {
-                    if (!chatMessageRepository.existsByUserIdAndPublicId(userId, publicId))
+                    if (!chatMessageRepository.existsByUser_IdAndPublicId(userId, publicId))
                         throw new BusinessException(ExceptionType.IMAGE_ACCESS_DENIED);
 
                     ChatMessage chatMessage = chatMessageRepository.findByPublicId(publicId);
@@ -93,7 +93,7 @@ public class ImageService {
                 }
 
                 case REVIEW_IMAGE -> {
-                    if(!reviewRepository.existsByUserIdAndPublicId(userId, publicId))
+                    if(!reviewRepository.existsByUser_IdAndPublicId(userId, publicId))
                         throw new BusinessException(ExceptionType.IMAGE_ACCESS_DENIED);
 
                     Review review = reviewRepository.findByPublicId(publicId);

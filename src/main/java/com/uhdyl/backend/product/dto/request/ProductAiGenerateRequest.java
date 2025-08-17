@@ -3,10 +3,10 @@ package com.uhdyl.backend.product.dto.request;
 import com.uhdyl.backend.product.domain.Category;
 import java.util.List;
 
-public record ProductCreateRequest(
+public record ProductAiGenerateRequest(
         List<Category> categories,
         String breed,
         List<String> images,
         Long price,
         String tone
-){}
+) {}

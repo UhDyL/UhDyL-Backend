@@ -6,7 +6,9 @@ import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.image.domain.Image;
 import com.uhdyl.backend.product.domain.Category;
 import com.uhdyl.backend.product.domain.Product;
-import com.uhdyl.backend.product.dto.request.ProductCreateRequest;
+import com.uhdyl.backend.product.dto.request.ProductAiGenerateRequest;
+import com.uhdyl.backend.product.dto.request.ProductCreateWithAiContentRequest;
+import com.uhdyl.backend.product.dto.response.AiGeneratedContentResponse;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductCreateResponse;
 import com.uhdyl.backend.product.dto.response.ProductDetailResponse;
@@ -35,37 +37,59 @@ public class ProductService {
     private final UserRepository userRepository;
     private final AiContentService aiContentService;
 
-    @Transactional
-    public ProductCreateResponse createProduct(Long userId, ProductCreateRequest request) {
-        AiContentService.AiResult aiResult = callAiService(request);
+    /**
+     * 1단계: AI 글 생성 (트랜잭션 없음, 저장하지 않고 반환만)
+     */
+    public AiGeneratedContentResponse generateAiContent(Long userId, ProductAiGenerateRequest request) {
+        if (!userRepository.existsById(userId)) {
+            throw new BusinessException(ExceptionType.USER_NOT_FOUND);
+        }
 
-        return saveProduct(userId, request, aiResult);
-    }
-
-    private AiContentService.AiResult callAiService(ProductCreateRequest request) {
         try {
-            return aiContentService.generateContent(
+            AiContentService.AiResult aiResult = aiContentService.generateContent(
                     request.breed(),
                     request.price(),
                     request.tone(),
                     request.images()
             );
+
+            return new AiGeneratedContentResponse(
+                    aiResult.title(),
+                    aiResult.description(),
+                    request.breed(),
+                    request.price(),
+                    request.images(),
+                    request.categories(),
+                    request.tone()
+            );
+
         } catch (Exception e) {
-            log.error("AI 콘텐츠 생성 실패 - breed: {}, price: {}", request.breed(), request.price(), e);
+            log.error("AI 콘텐츠 생성 실패 - userId: {}, breed: {}, price: {}",
+                    userId, request.breed(), request.price(), e);
             throw new BusinessException(ExceptionType.AI_GENERATION_FAILED);
         }
     }
 
+    /**
+     * 2단계: AI로 생성된 글로 상품 등록 (사용자가 수정했을 수도 있음)
+     */
     @Transactional
-    public ProductCreateResponse saveProduct(Long userId, ProductCreateRequest request, AiContentService.AiResult aiResult){
+    public ProductCreateResponse createProductWithGeneratedContent(Long userId, ProductCreateWithAiContentRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
 
+        if (request.title() == null || request.title().isBlank()) {
+            throw new BusinessException(ExceptionType.INVALID_INPUT);
+        }
+        if (request.description() == null || request.description().isBlank()) {
+            throw new BusinessException(ExceptionType.INVALID_INPUT);
+        }
+
         Product product = Product.builder()
                 .name(request.breed())
-                .title(aiResult.title())
-                .description(aiResult.description())
-                .isSale(true) // true = 거래 가능
+                .title(request.title())
+                .description(request.description())
+                .isSale(true)
                 .price(request.price())
                 .categories(request.categories())
                 .user(user)
@@ -90,6 +114,63 @@ public class ProductService {
                 saved.isSale()
         );
     }
+
+//
+//    @Transactional
+//    public ProductCreateResponse createProduct(Long userId, ProductCreateWithAiContentRequest request) {
+//        AiContentService.AiResult aiResult = callAiService(request);
+//
+//        return saveProduct(userId, request, aiResult);
+//    }
+//
+//    private AiContentService.AiResult callAiService(ProductCreateWithAiContentRequest request) {
+//        try {
+//            return aiContentService.generateContent(
+//                    request.breed(),
+//                    request.price(),
+//                    request.tone(),
+//                    request.images()
+//            );
+//        } catch (Exception e) {
+//            log.error("AI 콘텐츠 생성 실패 - breed: {}, price: {}", request.breed(), request.price(), e);
+//            throw new BusinessException(ExceptionType.AI_GENERATION_FAILED);
+//        }
+//    }
+//
+//    @Transactional
+//    public ProductCreateResponse saveProduct(Long userId, ProductCreateWithAiContentRequest request, AiContentService.AiResult aiResult){
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
+//
+//        Product product = Product.builder()
+//                .name(request.breed())
+//                .title(aiResult.title())
+//                .description(aiResult.description())
+//                .isSale(true) // true = 거래 가능
+//                .price(request.price())
+//                .categories(request.categories())
+//                .user(user)
+//                .build();
+//
+//        if (request.images() != null && !request.images().isEmpty()) {
+//            long order = 0;
+//            for (String imageUrl : request.images()) {
+//                if (imageUrl == null || imageUrl.isBlank()) continue;
+//                product.addImage(new Image(imageUrl, order++, null));
+//            }
+//        }
+//
+//        Product saved = productRepository.save(product);
+//
+//        return new ProductCreateResponse(
+//                saved.getId(),
+//                saved.getTitle(),
+//                saved.getDescription(),
+//                saved.getPrice(),
+//                saved.getImages().stream().map(Image::getImageUrl).toList(),
+//                saved.isSale()
+//        );
+//    }
 
     @Transactional
     public void deleteProduct(Long userId, Long productId) {

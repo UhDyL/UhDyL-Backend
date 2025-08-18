@@ -2,7 +2,8 @@ package com.uhdyl.backend.product.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @Schema(description = "상품 수정 요청 DTO")
 public record ProductUpdateRequest(
@@ -15,7 +16,8 @@ public record ProductUpdateRequest(
         String description,
 
         @Schema(description = "수정할 상품 가격", example = "25000")
-        @PositiveOrZero(message = "가격은 0 이상이어야 합니다.")
+        @NotNull(message = "가격은 필수 입력 항목입니다.")
+        @Positive(message = "가격은 0보다 커야 합니다.")
         Long price
 ) {
 }

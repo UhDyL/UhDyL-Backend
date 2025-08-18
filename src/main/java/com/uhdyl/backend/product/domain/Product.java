@@ -49,7 +49,7 @@ public class Product extends BaseEntity {
     private boolean isSale;
 
     @NotNull
-    @PositiveOrZero
+    @Positive
     private Long price;
 
     @Column(nullable = false)

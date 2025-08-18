@@ -22,6 +22,7 @@ import jakarta.persistence.OrderBy;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
@@ -95,5 +96,11 @@ public class Product extends BaseEntity {
 
     public void markSaleCompleted() {
         this.isSale = false;
+    }
+
+    public void update(String title, String description, Long price) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
     }
 }

@@ -9,6 +9,7 @@ import com.uhdyl.backend.product.api.ProductAPI;
 import com.uhdyl.backend.product.domain.Category;
 import com.uhdyl.backend.product.dto.request.ProductAiGenerateRequest;
 import com.uhdyl.backend.product.dto.request.ProductCreateWithAiContentRequest;
+import com.uhdyl.backend.product.dto.request.ProductUpdateRequest;
 import com.uhdyl.backend.product.dto.response.AiGeneratedContentResponse;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductCreateResponse;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -158,5 +160,20 @@ public class ProductController implements ProductAPI {
     ) {
         GlobalPageResponse<ProductListResponse> response = productService.searchProducts(userId, keyword, category, pageable);
         return ResponseEntity.ok(createSuccessResponse(response));
+    }
+
+    /**
+     * 상품 수정 API
+     */
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
+    @PatchMapping("/product/{productId}")
+    public ResponseEntity<ResponseBody<Void>> updateProduct(
+            Long userId,
+            @PathVariable Long productId,
+            @Valid @RequestBody ProductUpdateRequest request
+    ) {
+        productService.updateProduct(userId, productId, request);
+        return ResponseEntity.ok(createSuccessResponse());
     }
 }

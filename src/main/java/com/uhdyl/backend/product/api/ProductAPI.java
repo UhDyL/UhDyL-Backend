@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "상품 API", description = "상품 관련 API")
 public interface ProductAPI {
@@ -189,30 +190,6 @@ public interface ProductAPI {
     );
 
     @Operation(
-            summary = "카테고리별 상품 조회",
-            description = "특정 카테고리에 속하는 상품 목록을 조회합니다."
-    )
-    @SwaggerApiResponses(
-            success = @SwaggerApiSuccessResponse(description = "카테고리별 상품 조회 성공"),
-            errors = {
-                    @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
-                    @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
-                    @SwaggerApiFailedResponse(ExceptionType.INVALID_INPUT),
-                    @SwaggerApiFailedResponse(ExceptionType.CATEGORY_NOT_FOUND)
-            }
-    )
-
-    @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
-    @GetMapping("/product/category/{category}")
-    ResponseEntity<ResponseBody<GlobalPageResponse<ProductListResponse>>> getProductsByCategory(
-            @Parameter(hidden = true) Long userId,
-            @PathVariable Category category,
-            @ParameterObject
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
-    );
-
-    @Operation(
             summary = "상품 (게시글) 상세보기",
             description = "특정 상품의 상세 정보를 조회합니다."
     )
@@ -232,5 +209,35 @@ public interface ProductAPI {
     ResponseEntity<ResponseBody<ProductDetailResponse>> getProductDetail(
             @Parameter(hidden = true) Long userId,
             @PathVariable Long productId
+    );
+
+    @Operation(
+            summary = "상품 목록 조회 및 검색",
+            description = "통합 검색 API. 파라미터가 없으면 전체 목록을 조회합니다. "
+                    + "keyword: 제목으로 검색. "
+                    + "category: 카테고리로 필터링."
+    )
+    @SwaggerApiResponses(
+            success = @SwaggerApiSuccessResponse(description = "상품 검색 성공"),
+            errors = {
+                    @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
+                    @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
+                    @SwaggerApiFailedResponse(ExceptionType.INVALID_INPUT)
+            }
+    )
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @GetMapping("/product/search")
+    ResponseEntity<ResponseBody<GlobalPageResponse<ProductListResponse>>> searchProducts(
+            @Parameter(hidden = true) Long userId,
+
+            @Parameter(description = "검색 키워드(제목)", example = "감자")
+            @RequestParam(required = false) String keyword,
+
+            @Parameter(description = "검색 카테고리", example = "VEGETABLE")
+            @RequestParam(required = false) Category category,
+
+            @ParameterObject
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     );
 }

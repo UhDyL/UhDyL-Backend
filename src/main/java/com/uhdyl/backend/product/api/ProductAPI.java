@@ -105,6 +105,28 @@ public interface ProductAPI {
 
     @Operation(
             summary = "상품 목록",
+            description = "전체 상품 목록을 조회합니다."
+    )
+    @SwaggerApiResponses(
+            success = @SwaggerApiSuccessResponse(description = "전체 상품 목록 조회 성공"),
+            errors = {
+                    @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
+                    @SwaggerApiFailedResponse(ExceptionType.INVALID_INPUT),
+                    @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND)
+            }
+    )
+
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @GetMapping("/product")
+    ResponseEntity<ResponseBody<GlobalPageResponse<ProductListResponse>>> getAllProducts(
+            @Parameter(hidden = true) Long userId,
+            @ParameterObject
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    );
+
+    @Operation(
+            summary = "상품 목록",
             description = "판매자가 등록한 상품 목록 및 판매 현황을 조회합니다."
     )
     @SwaggerApiResponses(

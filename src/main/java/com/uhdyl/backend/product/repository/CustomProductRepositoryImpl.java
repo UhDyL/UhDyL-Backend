@@ -189,4 +189,41 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                 Boolean.TRUE.equals(productInfoTuple.get(8, Boolean.class))
         );
     }
+
+    @Override
+    public GlobalPageResponse<ProductListResponse> getAllProducts(Pageable pageable) {
+        QProduct product = QProduct.product;
+        QImage image = QImage.image;
+        QUser user = QUser.user;
+
+        List<ProductListResponse> content = jpaQueryFactory
+                .select(Projections.constructor(ProductListResponse.class,
+                        product.id,
+                        product.name,
+                        product.title,
+                        product.price,
+                        user.nickname.coalesce(user.name).coalesce(""),
+                        user.picture.coalesce(""),
+                        image.imageUrl,
+                        product.isSale.not()
+                ))
+                .from(product)
+                .leftJoin(product.images, image).on(image.imageOrder.eq(0L))
+                .leftJoin(product.user, user)
+                .where(product.isSale.eq(true))
+                .orderBy(product.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = jpaQueryFactory
+                .select(product.count())
+                .from(product)
+                .where(product.isSale.eq(true))
+                .fetchOne();
+
+        Page<ProductListResponse> page = new PageImpl<>(content, pageable, total != null ? total : 0);
+
+        return GlobalPageResponse.create(page);
+    }
 }

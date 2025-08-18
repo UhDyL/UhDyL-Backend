@@ -13,4 +13,5 @@ public interface CustomProductRepository {
     SalesStatsResponse getSalesStats(Long userId);
     GlobalPageResponse<ProductListResponse> getProductsByCategory(Category category, Pageable pageable);
     ProductDetailResponse getProductDetail(Long productId);
+    GlobalPageResponse<ProductListResponse> getAllProducts(Pageable pageable);
 }

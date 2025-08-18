@@ -11,6 +11,7 @@ import com.uhdyl.backend.global.response.ResponseBody;
 import com.uhdyl.backend.product.domain.Category;
 import com.uhdyl.backend.product.dto.request.ProductAiGenerateRequest;
 import com.uhdyl.backend.product.dto.request.ProductCreateWithAiContentRequest;
+import com.uhdyl.backend.product.dto.request.ProductUpdateRequest;
 import com.uhdyl.backend.product.dto.response.AiGeneratedContentResponse;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductCreateResponse;
@@ -20,6 +21,7 @@ import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -128,7 +130,7 @@ public interface ProductAPI {
 
     @Operation(
             summary = "상품 목록",
-            description = "판매자가 등록한 상품 목록 및 판매 현황을 조회합니다."
+            description = "판매자 본인이 등록한 상품 목록 및 판매 현황을 조회합니다."
     )
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(description = "상품 목록 조회 성공"),
@@ -239,5 +241,28 @@ public interface ProductAPI {
 
             @ParameterObject
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    );
+
+    @Operation(
+            summary = "상품 수정",
+            description = "판매자가 본인의 상품 정보를 수정합니다. (제목, 내용, 가격만 수정 가능)"
+    )
+    @SwaggerApiResponses(
+            success = @SwaggerApiSuccessResponse(description = "상품 수정 성공"),
+            errors = {
+                    @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
+                    @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
+                    @SwaggerApiFailedResponse(ExceptionType.PRODUCT_NOT_FOUND),
+                    @SwaggerApiFailedResponse(ExceptionType.CANT_UPDATE_PRODUCT),
+                    @SwaggerApiFailedResponse(ExceptionType.INVALID_INPUT)
+            }
+    )
+    @PatchMapping("/product/{productId}")
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
+    @AssignUserId
+    ResponseEntity<ResponseBody<Void>> updateProduct(
+            @Parameter(hidden = true) Long userId,
+            @PathVariable Long productId,
+            @Valid @RequestBody ProductUpdateRequest request
     );
 }

@@ -7,13 +7,16 @@ import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.global.response.ResponseBody;
 import com.uhdyl.backend.product.api.ProductAPI;
 import com.uhdyl.backend.product.domain.Category;
-import com.uhdyl.backend.product.dto.request.ProductCreateRequest;
+import com.uhdyl.backend.product.dto.request.ProductAiGenerateRequest;
+import com.uhdyl.backend.product.dto.request.ProductCreateWithAiContentRequest;
+import com.uhdyl.backend.product.dto.response.AiGeneratedContentResponse;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductCreateResponse;
 import com.uhdyl.backend.product.dto.response.ProductDetailResponse;
 import com.uhdyl.backend.product.dto.response.ProductListResponse;
 import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import com.uhdyl.backend.product.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -34,13 +37,28 @@ public class ProductController implements ProductAPI {
     private final ProductService productService;
 
     /**
-     * 상품 등록 api
+     * AI 글 작성 API (1단계 - AI 글 생성)
      */
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
+    @PostMapping("/product/ai-generate")
+    public ResponseEntity<ResponseBody<AiGeneratedContentResponse>> generateAiContent(
+            Long userId,
+            @Valid ProductAiGenerateRequest request) {
+        AiGeneratedContentResponse response = productService.generateAiContent(userId, request);
+        return ResponseEntity.ok(createSuccessResponse(response));
+    }
+
+    /**
+     * 상품 등록 API (2단계 - AI로 생성된 글로 등록)
+     */
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     @PostMapping("/product")
-    public ResponseEntity<ResponseBody<ProductCreateResponse>> createProduct(Long userId, ProductCreateRequest request) {
-        ProductCreateResponse response = productService.createProduct(userId, request);
+    public ResponseEntity<ResponseBody<ProductCreateResponse>> createProduct(
+            Long userId,
+            @Valid ProductCreateWithAiContentRequest request) {
+        ProductCreateResponse response = productService.createProductWithGeneratedContent(userId, request);
         return ResponseEntity.ok(createSuccessResponse(response));
     }
 
@@ -48,7 +66,7 @@ public class ProductController implements ProductAPI {
      * 상품 삭제 api
      */
     @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     @DeleteMapping("/product/{productId}")
     public ResponseEntity<ResponseBody<Void>> deleteProduct(
             Long userId,

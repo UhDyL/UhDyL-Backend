@@ -169,14 +169,6 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public GlobalPageResponse<ProductListResponse> getProductsByCategory(Long userId, Category category, Pageable pageable){
-        if(!userRepository.existsById(userId))
-            throw new BusinessException(ExceptionType.USER_NOT_FOUND);
-
-        return productRepository.getProductsByCategory(category, pageable);
-    }
-
-    @Transactional(readOnly = true)
     public ProductDetailResponse getProductDetail(Long userId, Long productId) {
         if(!userRepository.existsById(userId))
             throw new BusinessException(ExceptionType.USER_NOT_FOUND);
@@ -190,5 +182,13 @@ public class ProductService {
             throw new BusinessException(ExceptionType.USER_NOT_FOUND);
 
         return productRepository.getAllProducts(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public GlobalPageResponse<ProductListResponse> searchProducts(Long userId, String keyword, Category category, Pageable pageable) {
+        if (!userRepository.existsById(userId)) {
+            throw new BusinessException(ExceptionType.USER_NOT_FOUND);
+        }
+        return productRepository.searchProducts(keyword, category, pageable);
     }
 }

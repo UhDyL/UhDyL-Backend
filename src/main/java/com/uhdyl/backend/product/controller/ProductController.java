@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -117,20 +118,6 @@ public class ProductController implements ProductAPI {
     }
 
     /**
-     * 카테고리 별 상품 조회 api
-     */
-    @AssignUserId
-    @PreAuthorize("isAuthenticated() and hasRole('USER')")
-    @GetMapping("/product/category/{category}")
-    public ResponseEntity<ResponseBody<GlobalPageResponse<ProductListResponse>>> getProductsByCategory(
-            Long userId,
-            @PathVariable Category category,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
-            ) {
-        return ResponseEntity.ok(createSuccessResponse(productService.getProductsByCategory(userId, category, pageable)));
-    }
-
-    /**
      * 상품 상세 조회 api
      */
     @AssignUserId
@@ -154,6 +141,22 @@ public class ProductController implements ProductAPI {
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         GlobalPageResponse<ProductListResponse> response = productService.getAllProducts(userId, pageable);
+        return ResponseEntity.ok(createSuccessResponse(response));
+    }
+
+    /**
+     * 상품 통합 검색 API
+     */
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @GetMapping("/product/search")
+    public ResponseEntity<ResponseBody<GlobalPageResponse<ProductListResponse>>> searchProducts(
+            Long userId,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Category category,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        GlobalPageResponse<ProductListResponse> response = productService.searchProducts(userId, keyword, category, pageable);
         return ResponseEntity.ok(createSuccessResponse(response));
     }
 }

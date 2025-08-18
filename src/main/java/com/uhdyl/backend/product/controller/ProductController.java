@@ -142,4 +142,18 @@ public class ProductController implements ProductAPI {
     ) {
         return ResponseEntity.ok(createSuccessResponse(productService.getProductDetail(userId, productId)));
     }
+
+    /**
+     * 전체 상품 목록 조회 api
+     */
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    @GetMapping("/product")
+    public ResponseEntity<ResponseBody<GlobalPageResponse<ProductListResponse>>> getAllProducts(
+            Long userId,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        GlobalPageResponse<ProductListResponse> response = productService.getAllProducts(userId, pageable);
+        return ResponseEntity.ok(createSuccessResponse(response));
+    }
 }

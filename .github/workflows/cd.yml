@@ -1,0 +1,66 @@
+name: Deploy to EC2
+
+on:
+  workflow_run:
+    workflows: [ "Java CI with Gradle" ]
+    types: [ completed ]
+    branches: [ "dev" ]
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) 코드 체크아웃 – 그대로
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2) SSH 키 준비 – 그대로
+      - name: Setup SSH key
+        run: |
+          echo "${{ secrets.EC2_KEY }}" > key.pem
+          chmod 600 key.pem
+
+      # 3) EC2 배포
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem \
+            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash -s" -- "${{ secrets.SUBMODULE_TOKEN }}" <<EOF
+            SUBMODULE_TOKEN="\$1"
+            set -e
+
+            cd ~/UhDyL-Backend
+            echo ">>> SUBMODULE_TOKEN is '\${SUBMODULE_TOKEN:0:5}...' (masked)"
+
+            git remote set-url origin \
+              https://x-access-token:\${SUBMODULE_TOKEN}@github.com/UhDyL/UhDyL-Backend.git
+            git pull origin dev
+
+              git submodule sync
+              git submodule foreach --recursive "git remote set-url origin https://x-access-token:\${SUBMODULE_TOKEN}@github.com/UhDyL/UhDyL-Security.git"
+            
+              git submodule update --init --recursive --depth 1
+
+            ./gradlew clean build -x test
+
+            pkill -f 'UhDyL-Backend-0.0.1-SNAPSHOT.jar' || true
+
+            echo "🔍 서버 사전 실행 테스트..."
+            java -jar build/libs/UhDyL-Backend-0.0.1-SNAPSHOT.jar \
+                 --spring.profiles.active=dev > /tmp/test.log 2>&1 &
+            sleep 10
+
+            if grep -Ei 'Exception|ERROR' /tmp/test.log; then
+              echo '❌ 서버 실행 중 에러 발생!'
+              cat /tmp/test.log
+              exit 1
+            fi
+
+            echo "✅ 사전 실행 성공 → 본 실행"
+            pkill -f 'UhDyL-Backend-0.0.1-SNAPSHOT.jar' || true
+
+            nohup java -jar build/libs/UhDyL-Backend-0.0.1-SNAPSHOT.jar \
+                 --spring.profiles.active=dev \
+                 > app.log 2>&1 &
+          EOF

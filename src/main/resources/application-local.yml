@@ -5,6 +5,9 @@ spring:
     import:
       - security/application-database.yml
       - security/application-security.yml
+      - security/application-swagger.yml
+      - security/application-cloudinary.yml
+
 
   datasource:
     url: ${UhDyL.mysql.url}
@@ -17,7 +20,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     open-in-view: false
     show-sql: true
     properties:
@@ -25,6 +28,10 @@ spring:
         format_sql: false
         highlight_sql: true
         default_batch_fetch_size: 100
+  servlet:
+    multipart:
+      max-file-size: 10MB     # 한 파일 최대 크기
+      max-request-size: 100MB  # 전체 요청 최대 크기 (여러 파일 합산)
 
 logging:
   level:

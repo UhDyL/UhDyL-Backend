@@ -1,0 +1,16 @@
+package com.uhdyl.backend.product.dto.response;
+
+import java.util.List;
+
+public record ProductDetailResponse(
+        Long id,
+        String name,
+        String title,
+        Long price,
+        String description,
+        String sellerName,
+        String sellerPicture,
+        Double sellerRating,
+        List<String> images,
+        boolean isCompleted
+) {}

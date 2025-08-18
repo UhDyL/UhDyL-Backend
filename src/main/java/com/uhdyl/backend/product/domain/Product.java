@@ -22,6 +22,7 @@ import jakarta.persistence.OrderBy;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
@@ -48,7 +49,7 @@ public class Product extends BaseEntity {
     private boolean isSale;
 
     @NotNull
-    @Positive
+    @PositiveOrZero
     private Long price;
 
     @Column(nullable = false)

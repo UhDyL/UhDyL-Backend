@@ -198,6 +198,10 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new BusinessException(ExceptionType.PRODUCT_NOT_FOUND));
 
+        if (!userRepository.existsById(userId)) {
+            throw new BusinessException(ExceptionType.USER_NOT_FOUND);
+        }
+
         if (!product.getUser().getId().equals(userId)) {
             throw new BusinessException(ExceptionType.CANT_UPDATE_PRODUCT);
         }

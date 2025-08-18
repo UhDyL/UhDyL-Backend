@@ -96,4 +96,10 @@ public class Product extends BaseEntity {
     public void markSaleCompleted() {
         this.isSale = false;
     }
+
+    public void update(String title, String description, Long price) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+    }
 }

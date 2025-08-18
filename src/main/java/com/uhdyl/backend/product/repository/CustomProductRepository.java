@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 public interface CustomProductRepository {
     MyProductListResponse getMyProducts(Long userId, Pageable pageable);
     SalesStatsResponse getSalesStats(Long userId);
-    GlobalPageResponse<ProductListResponse> getProductsByCategory(Category category, Pageable pageable);
     ProductDetailResponse getProductDetail(Long productId);
     GlobalPageResponse<ProductListResponse> getAllProducts(Pageable pageable);
+    GlobalPageResponse<ProductListResponse> searchProducts(String keyword, Category category, Pageable pageable);
 }

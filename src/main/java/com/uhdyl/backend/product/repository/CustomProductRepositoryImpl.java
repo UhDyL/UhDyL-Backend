@@ -1,5 +1,6 @@
 package com.uhdyl.backend.product.repository;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -100,44 +101,6 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
     }
 
     @Override
-    public GlobalPageResponse<ProductListResponse> getProductsByCategory(Category category, Pageable pageable){
-        QProduct product = QProduct.product;
-        QImage image = QImage.image;
-        QUser user = QUser.user;
-
-        List<ProductListResponse> content = jpaQueryFactory
-                .select(Projections.constructor(ProductListResponse.class,
-                        product.id,
-                        product.name,
-                        product.title,
-                        product.price,
-                        user.nickname.coalesce(user.name).coalesce(""),
-                        user.picture.coalesce(""),
-                        image.imageUrl,
-                        product.isSale.not()
-                ))
-                .from(product)
-                .leftJoin(product.images, image).on(image.imageOrder.eq(0L))
-                .where(product.categories.any().eq(category)
-                        .and(product.isSale.eq(true)))
-                .orderBy(product.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        Long total = jpaQueryFactory
-                .select(product.count())
-                .from(product)
-                .where(product.categories.any().eq(category)
-                        .and(product.isSale.eq(true)))
-                .fetchOne();
-
-        Page<ProductListResponse> page = new PageImpl<>(content, pageable, total != null ? total : 0);
-
-        return GlobalPageResponse.create(page);
-    }
-
-    @Override
     public ProductDetailResponse getProductDetail(Long productId) {
         QProduct product = QProduct.product;
         QImage image = QImage.image;
@@ -224,6 +187,53 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
 
         Page<ProductListResponse> page = new PageImpl<>(content, pageable, total != null ? total : 0);
 
+        return GlobalPageResponse.create(page);
+    }
+
+    @Override
+    public GlobalPageResponse<ProductListResponse> searchProducts(String keyword, Category category, Pageable pageable) {
+        QProduct product = QProduct.product;
+        QImage image = QImage.image;
+        QUser user = QUser.user;
+
+        BooleanBuilder whereClause = new BooleanBuilder();
+        whereClause.and(product.isSale.eq(true));
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            whereClause.and(product.title.lower().like("%" + keyword.trim().toLowerCase() + "%"));
+        }
+
+        if (category != null) {
+            whereClause.and(product.categories.any().eq(category));
+        }
+
+        List<ProductListResponse> content = jpaQueryFactory
+                .select(Projections.constructor(ProductListResponse.class,
+                        product.id,
+                        product.name,
+                        product.title,
+                        product.price,
+                        user.nickname.coalesce(user.name).coalesce(""),
+                        user.picture.coalesce(""),
+                        image.imageUrl,
+                        product.isSale.not()
+                ))
+                .from(product)
+                .leftJoin(product.user, user)
+                .leftJoin(product.images, image).on(image.imageOrder.eq(0L))
+                .where(whereClause)
+                .orderBy(product.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = jpaQueryFactory
+                .select(product.count())
+                .from(product)
+                .where(whereClause)
+                .fetchOne();
+
+        Page<ProductListResponse> page = new PageImpl<>(content, pageable, total != null ? total : 0);
         return GlobalPageResponse.create(page);
     }
 }

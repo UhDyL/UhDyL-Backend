@@ -8,6 +8,7 @@ import com.uhdyl.backend.product.domain.Category;
 import com.uhdyl.backend.product.domain.Product;
 import com.uhdyl.backend.product.dto.request.ProductAiGenerateRequest;
 import com.uhdyl.backend.product.dto.request.ProductCreateWithAiContentRequest;
+import com.uhdyl.backend.product.dto.request.ProductUpdateRequest;
 import com.uhdyl.backend.product.dto.response.AiGeneratedContentResponse;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductCreateResponse;
@@ -190,5 +191,17 @@ public class ProductService {
             throw new BusinessException(ExceptionType.USER_NOT_FOUND);
         }
         return productRepository.searchProducts(keyword, category, pageable);
+    }
+
+    @Transactional
+    public void updateProduct(Long userId, Long productId, ProductUpdateRequest request) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new BusinessException(ExceptionType.PRODUCT_NOT_FOUND));
+
+        if (!product.getUser().getId().equals(userId)) {
+            throw new BusinessException(ExceptionType.CANT_UPDATE_PRODUCT);
+        }
+
+        product.update(request.title(), request.description(), request.price());
     }
 }

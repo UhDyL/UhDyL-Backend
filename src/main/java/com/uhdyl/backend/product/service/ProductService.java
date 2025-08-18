@@ -183,4 +183,12 @@ public class ProductService {
 
         return productRepository.getProductDetail(productId);
     }
+
+    @Transactional(readOnly = true)
+    public GlobalPageResponse<ProductListResponse> getAllProducts(Long userId, Pageable pageable) {
+        if(!userRepository.existsById(userId))
+            throw new BusinessException(ExceptionType.USER_NOT_FOUND);
+
+        return productRepository.getAllProducts(pageable);
+    }
 }

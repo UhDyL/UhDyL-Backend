@@ -99,15 +99,6 @@ public class Product extends BaseEntity {
     }
 
     public void update(String title, String description, Long price) {
-        if (title == null || title.isBlank()) {
-            throw new IllegalArgumentException("제목은 빈칸이 되면 안됨");
-        }
-        if (description == null || description.isBlank()) {
-            throw new IllegalArgumentException("본문은 빈칸이 되면 안됨");
-        }
-        if (price == null || price <= 0) {
-            throw new IllegalArgumentException("가격은 양수여야 함");
-        }
         this.title = title;
         this.description = description;
         this.price = price;

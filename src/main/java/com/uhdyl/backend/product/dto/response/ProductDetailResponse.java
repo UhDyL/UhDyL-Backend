@@ -12,5 +12,6 @@ public record ProductDetailResponse(
         String sellerPicture,
         Double sellerRating,
         List<String> images,
-        boolean isCompleted
+        boolean isCompleted,
+        boolean isZzimed
 ) {}

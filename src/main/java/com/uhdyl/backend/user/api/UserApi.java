@@ -71,6 +71,7 @@ public interface UserApi {
             summary =  "판매자 밭 위치 반환",
             description = "FARMER 권한을 가진 사용자의 위치를 반환합니다."
     )
+    @ApiResponse(content = @Content(schema = @Schema(implementation = LocationResponse.class)))
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(description = "위치 조회 성공"),
             errors = {
@@ -82,7 +83,9 @@ public interface UserApi {
     @AssignUserId
     @PreAuthorize("isAuthenticated() and hasRole('USER')")
     @GetMapping("/location")
-    ResponseEntity<ResponseBody<LocationResponse>> getLocation(@Parameter(hidden = true) Long userId);
+    ResponseEntity<ResponseBody<LocationResponse>> getLocation(
+            @Parameter(hidden = true) Long userId
+    );
 
 
     @Operation(

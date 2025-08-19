@@ -20,6 +20,9 @@ import com.uhdyl.backend.product.dto.response.ProductListResponse;
 import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
@@ -43,6 +46,7 @@ public interface ProductAPI {
             summary = "AI 글 작성",
             description = "AI가 상품 정보를 바탕으로 제목과 설명을 생성합니다."
     )
+    @ApiResponse(content = @Content(schema = @Schema(implementation = AiGeneratedContentResponse.class)))
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(description = "AI 글 생성 성공"),
             errors = {
@@ -56,6 +60,7 @@ public interface ProductAPI {
     @AssignUserId
     @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
     @PostMapping("/product/ai-generate")
+
     ResponseEntity<ResponseBody<AiGeneratedContentResponse>> generateAiContent(
             @Parameter(hidden = true) Long userId,
             @RequestBody ProductAiGenerateRequest request
@@ -65,6 +70,7 @@ public interface ProductAPI {
             summary = "상품 등록",
             description = "AI로 생성된 글을 바탕으로 상품을 등록합니다. 제목과 설명은 사용자가 수정할 수 있습니다."
     )
+    @ApiResponse(content = @Content(schema = @Schema(implementation = ProductCreateResponse.class)))
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(description = "상품 등록 성공"),
             errors = {
@@ -110,6 +116,7 @@ public interface ProductAPI {
             summary = "상품 목록",
             description = "전체 상품 목록을 조회합니다."
     )
+    @ApiResponse(content = @Content(schema = @Schema(implementation = ProductListResponse.class)))
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(description = "전체 상품 목록 조회 성공"),
             errors = {
@@ -132,6 +139,7 @@ public interface ProductAPI {
             summary = "판매자 본인 상품 목록",
             description = "판매자 본인이 등록한 상품 목록 및 판매 현황을 조회합니다."
     )
+    @ApiResponse(content = @Content(schema = @Schema(implementation = MyProductListResponse.class)))
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(description = "상품 목록 조회 성공"),
             errors = {
@@ -154,6 +162,7 @@ public interface ProductAPI {
             summary = "판매자 판매 현황 조회",
             description = "판매자의 판매 건수와 판매 수익을 조회합니다."
     )
+    @ApiResponse(content = @Content(schema = @Schema(implementation = SalesStatsResponse.class)))
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(description = "판매 현황 조회 성공"),
             errors = {
@@ -195,6 +204,7 @@ public interface ProductAPI {
             summary = "상품 게시글 상세보기",
             description = "특정 상품의 상세 정보를 조회합니다."
     )
+    @ApiResponse(content = @Content(schema = @Schema(implementation = ProductDetailResponse.class)))
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(description = "상품 상세 조회 성공"),
             errors = {
@@ -219,6 +229,7 @@ public interface ProductAPI {
                     + "keyword: 제목으로 검색. "
                     + "category: 카테고리로 필터링."
     )
+    @ApiResponse(content = @Content(schema = @Schema(implementation = ProductListResponse.class)))
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(description = "상품 검색 성공"),
             errors = {

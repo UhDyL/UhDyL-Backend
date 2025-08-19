@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.uhdyl.backend.global.config.ai.AiProperties;
-import com.uhdyl.backend.product.domain.Category;
 import com.uhdyl.backend.product.dto.request.ProductAiGenerateRequest;
 import java.io.IOException;
 import java.net.URI;
@@ -41,39 +40,47 @@ public class AiContentService {
         };
 
         String categoriesString = request.categories().stream()
-                .map(Category::name)
+                .map(Enum::name)
                 .collect(Collectors.joining(", "));
 
-        if (request.condition() == null || request.weight() == null ||
-                request.quantityPerWeight() == null || request.price() == null) {
-            throw new IllegalArgumentException("필수 필드가 누락되었습니다");
-        }
-
         String koreanPrompt = String.format("""
-        You are a professional copywriter specializing in marketing agricultural products in South Korea.
-        Based on the information below, generate a compelling product title and description **in Korean**.
-        The product is so-called 'ugly produce', which has minor cosmetic flaws but is perfectly fine to eat. Emphasize its good value and taste.
-
-        **Product Information:**
-        - Condition: %s
-        - Weight Unit: %s
-        - Quantity per Unit: %s
-        - Price: %d won
-        - Keywords: %s
-        - Desired Tone: %s
-
-        **Constraints:**
-        - Language: Korean
-        - Title character limit: 20
-        - Description character limit: 100
-        - Output Format: A single JSON object with two keys: "title" and "description". Do not include any other text or markdown formatting.
-        """,
+        [SYSTEM]
+        You are a professional copywriter in South Korea. Your specialty is writing compelling sales copy for 'ugly produce' (못난이 농산물).
+        Your goal is to generate a product title and description in KOREAN.
+        You must follow all instructions and output only a valid JSON object.
+        
+        [CONTEXT]
+        The product has minor cosmetic flaws but is perfectly fresh and delicious. Your copy should emphasize its great taste and excellent value for money, turning its imperfections into a positive point.
+        
+        **[표현 가이드라인 (Guideline for Expression)]**
+        - When describing cosmetic flaws, use natural Korean phrases.
+        - GOOD examples: "못생겼지만 맛은 최고예요", "모양이 제멋대로", "개성있게 생긴", "약간의 흠집이 있지만", "정품과 맛은 똑같아요"
+        - BAD examples: "주을 고려하더라도", "외관의 결함에도 불구하고" (Avoid overly literal or awkward translations)
+        
+        [PRODUCT INFORMATION]
+        - Product Condition (includes 품종명): %s
+        - Packaging Unit: %s
+        - Total Price: %d KRW
+        - Categories/Keywords: %s
+        - Desired Tone of Voice: %s
+        
+        [INSTRUCTIONS]
+        1.  Generate the response **in KOREAN**.
+        2.  Create a catchy title (max 20 characters) that **must include the product variety name from "Product Condition" (상품의 품종명)**.
+        3.  Write an appealing description (max 400 characters).
+        4.  Use natural and persuasive Korean phrases suitable for selling food, based on the Guideline for Expression.
+        5.  Output must be a single, raw JSON object with two keys: "title" and "description".
+        6.  Do not include any other text, explanations, or markdown formatting like ```json.
+        
+        **[매우 중요한 규칙 (CRITICAL RULE)]**
+        - **Do NOT create or use awkward, non-existent, or made-up Korean words, Stick to common and natural vocabulary.**
+    """,
                 request.condition(),
-                request.weight(),
-                request.quantityPerWeight(),
+                request.pricePerWeight(),
                 request.price(),
                 categoriesString,
-                toneInstruction);
+                toneInstruction
+        );
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -127,13 +134,23 @@ public class AiContentService {
         if (responseBody == null) {
             throw new RuntimeException("AI 서버 응답이 비어 있습니다");
         }
+        log.info("AI raw response: {}", responseBody);
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode root = objectMapper.readTree(responseBody);
 
             String responseStr = root.get("response").asText();
-            JsonNode aiResponse = objectMapper.readTree(responseStr);
+
+            String cleanJsonStr = responseStr.trim();
+            if (cleanJsonStr.startsWith("```json")) {
+                cleanJsonStr = cleanJsonStr.substring(7);
+                if (cleanJsonStr.endsWith("```")) {
+                    cleanJsonStr = cleanJsonStr.substring(0, cleanJsonStr.length() - 3);
+                }
+            }
+            cleanJsonStr = cleanJsonStr.trim();
+            JsonNode aiResponse = objectMapper.readTree(cleanJsonStr);
 
             String title = aiResponse.get("title").asText();
             String description = aiResponse.get("description").asText();
@@ -141,6 +158,7 @@ public class AiContentService {
             return new AiResult(title, description);
 
         } catch (Exception e) {
+            log.error("AI 응답 파싱 오류. Raw Response: {}", responseBody, e);
             throw new RuntimeException("AI 응답 파싱 오류", e);
         }
     }

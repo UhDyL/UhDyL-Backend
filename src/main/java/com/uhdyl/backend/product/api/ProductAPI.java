@@ -129,7 +129,7 @@ public interface ProductAPI {
     );
 
     @Operation(
-            summary = "상품 목록",
+            summary = "판매자 본인 상품 목록",
             description = "판매자 본인이 등록한 상품 목록 및 판매 현황을 조회합니다."
     )
     @SwaggerApiResponses(
@@ -192,7 +192,7 @@ public interface ProductAPI {
     );
 
     @Operation(
-            summary = "상품 (게시글) 상세보기",
+            summary = "상품 게시글 상세보기",
             description = "특정 상품의 상세 정보를 조회합니다."
     )
     @SwaggerApiResponses(

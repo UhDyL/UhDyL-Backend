@@ -10,6 +10,7 @@ public record ProductDetailResponse(
         String sellerName,
         String sellerPicture,
         Double sellerRating,
+        Long sellerSalesCount,
         List<String> images,
         boolean isCompleted,
         boolean isZzimed

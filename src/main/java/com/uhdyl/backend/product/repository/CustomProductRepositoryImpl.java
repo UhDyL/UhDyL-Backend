@@ -109,6 +109,8 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
         QReview review = QReview.review;
         QZzim zzim = QZzim.zzim;
 
+        QProduct subProduct = new QProduct("subProduct");
+
         BooleanExpression isZzimedExpression = JPAExpressions
                 .selectOne()
                 .from(zzim)
@@ -128,6 +130,11 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                                 .select(review.rating.avg().coalesce(0.0))
                                 .from(review)
                                 .where(review.targetUserId.eq(user.id)),
+                        JPAExpressions
+                                .select(subProduct.count())
+                                .from(subProduct)
+                                .where(subProduct.user.id.eq(user.id)
+                                        .and(subProduct.isSale.eq(false))),
                         product.isSale.not(),
                         isZzimedExpression
                 )
@@ -156,9 +163,10 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                 productInfoTuple.get(4, String.class),    // sellerName
                 productInfoTuple.get(5, String.class),    // sellerPicture
                 productInfoTuple.get(6, Double.class),    // rating
+                productInfoTuple.get(7, Long.class),      // sellerSalesCount
                 images,
-                Boolean.TRUE.equals(productInfoTuple.get(7, Boolean.class)), // isCompleted
-                Boolean.TRUE.equals(productInfoTuple.get(8, Boolean.class))  // isZzimed
+                Boolean.TRUE.equals(productInfoTuple.get(8, Boolean.class)), // isCompleted
+                Boolean.TRUE.equals(productInfoTuple.get(9, Boolean.class))  // isZzimed
         );
     }
 

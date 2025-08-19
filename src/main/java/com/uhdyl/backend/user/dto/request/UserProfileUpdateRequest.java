@@ -11,7 +11,7 @@ public record UserProfileUpdateRequest (
         JsonNullable<String> nickname,
 
         @Schema(description = "사용자의 현재 모드", example = "구매자|판매자")
-        String mode
+        JsonNullable<String> mode
 ){
 
 }

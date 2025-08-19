@@ -77,6 +77,7 @@ public class CustomZzimRepositoryImpl implements CustomZzimRepository{
                         Projections.constructor(
                                 ZzimResponse.class,
                                 qZzim.id,
+                                qProduct.id,
                                 qProduct.title,
                                 qImage.imageUrl.min(),
                                 qProduct.price,

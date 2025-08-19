@@ -2,6 +2,8 @@ package com.uhdyl.backend.product.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.uhdyl.backend.global.exception.BusinessException;
@@ -16,6 +18,7 @@ import com.uhdyl.backend.product.dto.response.ProductListResponse;
 import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import com.uhdyl.backend.review.domain.QReview;
 import com.uhdyl.backend.user.domain.QUser;
+import com.uhdyl.backend.zzim.domain.QZzim;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -101,11 +104,19 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
     }
 
     @Override
-    public ProductDetailResponse getProductDetail(Long productId) {
+    public ProductDetailResponse getProductDetail(Long userId, Long productId) {
         QProduct product = QProduct.product;
         QImage image = QImage.image;
         QUser user = QUser.user;
         QReview review = QReview.review;
+        QZzim zzim = QZzim.zzim;
+
+        BooleanExpression isZzimedExpression = JPAExpressions
+                .selectOne()
+                .from(zzim)
+                .where(zzim.product.id.eq(productId)
+                        .and(zzim.user.id.eq(userId)))
+                .exists();
 
         var productInfoTuple = jpaQueryFactory
                 .select(
@@ -120,7 +131,8 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                                 .select(review.rating.avg().coalesce(0.0))
                                 .from(review)
                                 .where(review.targetUserId.eq(user.id)),
-                        product.isSale.not()
+                        product.isSale.not(),
+                        isZzimedExpression
                 )
                 .from(product)
                 .leftJoin(product.user, user)
@@ -149,7 +161,8 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                 productInfoTuple.get(6, String.class),
                 productInfoTuple.get(7, Double.class),
                 images,
-                Boolean.TRUE.equals(productInfoTuple.get(8, Boolean.class))
+                Boolean.TRUE.equals(productInfoTuple.get(8, Boolean.class)),
+                Boolean.TRUE.equals(productInfoTuple.get(9, Boolean.class))
         );
     }
 

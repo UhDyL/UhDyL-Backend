@@ -80,7 +80,6 @@ public class ProductService {
         }
 
         Product product = Product.builder()
-                .name(request.breed())
                 .title(request.title())
                 .description(request.description())
                 .isSale(true)

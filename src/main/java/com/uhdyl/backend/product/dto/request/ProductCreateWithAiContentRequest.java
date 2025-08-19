@@ -5,7 +5,6 @@ import java.util.List;
 
 public record ProductCreateWithAiContentRequest(
         List<Category> categories,
-        String breed,
         List<ImageRequest> images,
         Long price,
         String title,

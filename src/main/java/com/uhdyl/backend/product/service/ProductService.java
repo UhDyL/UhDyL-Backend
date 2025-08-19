@@ -174,7 +174,7 @@ public class ProductService {
         if(!userRepository.existsById(userId))
             throw new BusinessException(ExceptionType.USER_NOT_FOUND);
 
-        return productRepository.getProductDetail(productId);
+        return productRepository.getProductDetail(userId, productId);
     }
 
     @Transactional(readOnly = true)

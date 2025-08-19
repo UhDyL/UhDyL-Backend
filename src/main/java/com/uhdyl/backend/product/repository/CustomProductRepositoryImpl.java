@@ -1,8 +1,11 @@
 package com.uhdyl.backend.product.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.uhdyl.backend.global.exception.BusinessException;
@@ -10,6 +13,7 @@ import com.uhdyl.backend.global.exception.ExceptionType;
 import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.image.domain.QImage;
 import com.uhdyl.backend.product.domain.Category;
+import com.uhdyl.backend.product.domain.Product;
 import com.uhdyl.backend.product.domain.QProduct;
 import com.uhdyl.backend.product.dto.response.MyProductListResponse;
 import com.uhdyl.backend.product.dto.response.ProductDetailResponse;
@@ -18,10 +22,12 @@ import com.uhdyl.backend.product.dto.response.SalesStatsResponse;
 import com.uhdyl.backend.review.domain.QReview;
 import com.uhdyl.backend.user.domain.QUser;
 import com.uhdyl.backend.zzim.domain.QZzim;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 public class CustomProductRepositoryImpl implements CustomProductRepository{
 
@@ -31,11 +37,30 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
+    private OrderSpecifier<?>[] getOrderSpecifiers(Pageable pageable, PathBuilder<?> entityPath) {
+        List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
+        if (pageable.getSort().isSorted()) {
+            for (Sort.Order order : pageable.getSort()) {
+                Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+                String prop = order.getProperty();
+                orderSpecifiers.add(new OrderSpecifier(direction, entityPath.get(prop)));
+            }
+        }
+        if (orderSpecifiers.isEmpty()) {
+            orderSpecifiers.add(new OrderSpecifier(Order.DESC, entityPath.get("createdAt")));
+        }
+        return orderSpecifiers.toArray(new OrderSpecifier[0]);
+    }
+
     @Override
     public MyProductListResponse getMyProducts(Long userId, Pageable pageable){
         QProduct product = QProduct.product;
         QImage image = QImage.image;
         QUser user = QUser.user;
+
+        PathBuilder<Product> entityPath = new PathBuilder<>(Product.class, "product");
+
+        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable, entityPath);
 
         List<ProductListResponse> content = jpaQueryFactory
                 .select(Projections.constructor(ProductListResponse.class,
@@ -51,7 +76,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                 .leftJoin(product.images, image).on(image.imageOrder.eq(0L))
                 .where(product.user.id.eq(userId))
                 .groupBy(product.id, product.title, product.price, user.nickname, user.name, user.picture, product.isSale)
-                .orderBy(product.createdAt.desc())
+                .orderBy(orderSpecifiers)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -176,6 +201,10 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
         QImage image = QImage.image;
         QUser user = QUser.user;
 
+        PathBuilder<Product> entityPath = new PathBuilder<>(Product.class, "product");
+
+        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable, entityPath);
+
         List<ProductListResponse> content = jpaQueryFactory
                 .select(Projections.constructor(ProductListResponse.class,
                         product.id,
@@ -190,7 +219,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                 .leftJoin(product.images, image).on(image.imageOrder.eq(0L))
                 .leftJoin(product.user, user)
                 .where(product.isSale.eq(true))
-                .orderBy(product.createdAt.desc())
+                .orderBy(orderSpecifiers)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -223,6 +252,10 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
             whereClause.and(product.categories.any().eq(category));
         }
 
+        PathBuilder<?> entityPath = new PathBuilder<>(product.getType(), product.getMetadata());
+
+        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable, entityPath);
+
         List<ProductListResponse> content = jpaQueryFactory
                 .select(Projections.constructor(ProductListResponse.class,
                         product.id,
@@ -237,7 +270,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                 .leftJoin(product.user, user)
                 .leftJoin(product.images, image).on(image.imageOrder.eq(0L))
                 .where(whereClause)
-                .orderBy(product.createdAt.desc())
+                .orderBy(orderSpecifiers)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

@@ -44,6 +44,11 @@ public class AiContentService {
                 .map(Category::name)
                 .collect(Collectors.joining(", "));
 
+        if (request.condition() == null || request.weight() == null ||
+                request.quantityPerWeight() == null || request.price() == null) {
+            throw new IllegalArgumentException("필수 필드가 누락되었습니다");
+        }
+
         String koreanPrompt = String.format("""
         You are a professional copywriter specializing in marketing agricultural products in South Korea.
         Based on the information below, generate a compelling product title and description **in Korean**.

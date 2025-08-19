@@ -138,9 +138,13 @@ public class AiContentService {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode root = objectMapper.readTree(responseBody);
 
-            String responseStr = root.get("response").asText();
+            JsonNode root = objectMapper.readTree(responseBody);
+            JsonNode responseNode = root.get("response");
+            if (responseNode == null || responseNode.isNull()) {
+                throw new RuntimeException("AI 응답에 'response' 필드가 없습니다.");
+            }
+            String responseStr = responseNode.isTextual() ? responseNode.asText() : responseNode.toString();
 
             String cleanJsonStr = responseStr.trim();
             if (cleanJsonStr.startsWith("```json")) {
@@ -150,10 +154,13 @@ public class AiContentService {
                 }
             }
             cleanJsonStr = cleanJsonStr.trim();
-            JsonNode aiResponse = objectMapper.readTree(cleanJsonStr);
 
-            String title = aiResponse.get("title").asText();
-            String description = aiResponse.get("description").asText();
+            JsonNode aiResponse = objectMapper.readTree(cleanJsonStr);
+            String title = aiResponse.path("title").asText(null);
+            String description = aiResponse.path("description").asText(null);
+            if (title == null || title.isBlank() || description == null || description.isBlank()) {
+                throw new RuntimeException("AI 응답 JSON에 title/description이 없거나 비어 있습니다.");
+            }
 
             return new AiResult(title, description);
 

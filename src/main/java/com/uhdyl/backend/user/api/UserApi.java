@@ -73,7 +73,9 @@ public interface UserApi {
     )
     @ApiResponse(content = @Content(schema = @Schema(implementation = LocationResponse.class)))
     @SwaggerApiResponses(
-            success = @SwaggerApiSuccessResponse(description = "위치 조회 성공"),
+            success = @SwaggerApiSuccessResponse(
+                    response = LocationResponse.class,
+                    description = "위치 조회 성공"),
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
                     @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),

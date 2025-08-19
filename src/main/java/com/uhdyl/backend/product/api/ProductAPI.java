@@ -48,7 +48,9 @@ public interface ProductAPI {
     )
     @ApiResponse(content = @Content(schema = @Schema(implementation = AiGeneratedContentResponse.class)))
     @SwaggerApiResponses(
-            success = @SwaggerApiSuccessResponse(description = "AI 글 생성 성공"),
+            success = @SwaggerApiSuccessResponse(
+                    response = AiGeneratedContentResponse.class,
+                    description = "AI 글 생성 성공"),
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
                     @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
@@ -72,7 +74,9 @@ public interface ProductAPI {
     )
     @ApiResponse(content = @Content(schema = @Schema(implementation = ProductCreateResponse.class)))
     @SwaggerApiResponses(
-            success = @SwaggerApiSuccessResponse(description = "상품 등록 성공"),
+            success = @SwaggerApiSuccessResponse(
+                    response = ProductCreateResponse.class,
+                    description = "상품 등록 성공"),
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
                     @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
@@ -118,7 +122,9 @@ public interface ProductAPI {
     )
     @ApiResponse(content = @Content(schema = @Schema(implementation = ProductListResponse.class)))
     @SwaggerApiResponses(
-            success = @SwaggerApiSuccessResponse(description = "전체 상품 목록 조회 성공"),
+            success = @SwaggerApiSuccessResponse(
+                    responsePage = ProductListResponse.class,
+                    description = "전체 상품 목록 조회 성공"),
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
                     @SwaggerApiFailedResponse(ExceptionType.INVALID_INPUT),
@@ -141,7 +147,9 @@ public interface ProductAPI {
     )
     @ApiResponse(content = @Content(schema = @Schema(implementation = MyProductListResponse.class)))
     @SwaggerApiResponses(
-            success = @SwaggerApiSuccessResponse(description = "상품 목록 조회 성공"),
+            success = @SwaggerApiSuccessResponse(
+                    response = MyProductListResponse.class,
+                    description = "상품 목록 조회 성공"),
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
                     @SwaggerApiFailedResponse(ExceptionType.INVALID_INPUT),
@@ -164,7 +172,9 @@ public interface ProductAPI {
     )
     @ApiResponse(content = @Content(schema = @Schema(implementation = SalesStatsResponse.class)))
     @SwaggerApiResponses(
-            success = @SwaggerApiSuccessResponse(description = "판매 현황 조회 성공"),
+            success = @SwaggerApiSuccessResponse(
+                    response = SalesStatsResponse.class,
+                    description = "판매 현황 조회 성공"),
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
                     @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND)
@@ -206,7 +216,9 @@ public interface ProductAPI {
     )
     @ApiResponse(content = @Content(schema = @Schema(implementation = ProductDetailResponse.class)))
     @SwaggerApiResponses(
-            success = @SwaggerApiSuccessResponse(description = "상품 상세 조회 성공"),
+            success = @SwaggerApiSuccessResponse(
+                    response = ProductDetailResponse.class,
+                    description = "상품 상세 조회 성공"),
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
                     @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
@@ -231,7 +243,9 @@ public interface ProductAPI {
     )
     @ApiResponse(content = @Content(schema = @Schema(implementation = ProductListResponse.class)))
     @SwaggerApiResponses(
-            success = @SwaggerApiSuccessResponse(description = "상품 검색 성공"),
+            success = @SwaggerApiSuccessResponse(
+                    responsePage = ProductListResponse.class,
+                    description = "상품 검색 성공"),
             errors = {
                     @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
                     @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),

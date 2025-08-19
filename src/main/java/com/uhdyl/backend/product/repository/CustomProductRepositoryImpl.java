@@ -3,7 +3,6 @@ package com.uhdyl.backend.product.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.uhdyl.backend.global.exception.BusinessException;
@@ -41,7 +40,6 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
         List<ProductListResponse> content = jpaQueryFactory
                 .select(Projections.constructor(ProductListResponse.class,
                         product.id,
-                        product.name,
                         product.title,
                         product.price,
                         user.nickname.coalesce(user.name).coalesce(""),
@@ -52,7 +50,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                 .from(product)
                 .leftJoin(product.images, image).on(image.imageOrder.eq(0L))
                 .where(product.user.id.eq(userId))
-                .groupBy(product.id, product.name, product.title, product.price, user.nickname, user.name, user.picture, product.isSale)
+                .groupBy(product.id, product.title, product.price, user.nickname, user.name, user.picture, product.isSale)
                 .orderBy(product.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -121,7 +119,6 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
         var productInfoTuple = jpaQueryFactory
                 .select(
                         product.id,
-                        product.name,
                         product.title,
                         product.price,
                         product.description,
@@ -152,17 +149,16 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                 .fetch();
 
         return new ProductDetailResponse(
-                productInfoTuple.get(0, Long.class),
-                productInfoTuple.get(1, String.class),
-                productInfoTuple.get(2, String.class),
-                productInfoTuple.get(3, Long.class),
-                productInfoTuple.get(4, String.class),
-                productInfoTuple.get(5, String.class),
-                productInfoTuple.get(6, String.class),
-                productInfoTuple.get(7, Double.class),
+                productInfoTuple.get(0, Long.class),      // id
+                productInfoTuple.get(1, String.class),    // title
+                productInfoTuple.get(2, Long.class),      // price
+                productInfoTuple.get(3, String.class),    // description
+                productInfoTuple.get(4, String.class),    // sellerName
+                productInfoTuple.get(5, String.class),    // sellerPicture
+                productInfoTuple.get(6, Double.class),    // rating
                 images,
-                Boolean.TRUE.equals(productInfoTuple.get(8, Boolean.class)),
-                Boolean.TRUE.equals(productInfoTuple.get(9, Boolean.class))
+                Boolean.TRUE.equals(productInfoTuple.get(7, Boolean.class)), // isCompleted
+                Boolean.TRUE.equals(productInfoTuple.get(8, Boolean.class))  // isZzimed
         );
     }
 
@@ -175,7 +171,6 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
         List<ProductListResponse> content = jpaQueryFactory
                 .select(Projections.constructor(ProductListResponse.class,
                         product.id,
-                        product.name,
                         product.title,
                         product.price,
                         user.nickname.coalesce(user.name).coalesce(""),
@@ -223,7 +218,6 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
         List<ProductListResponse> content = jpaQueryFactory
                 .select(Projections.constructor(ProductListResponse.class,
                         product.id,
-                        product.name,
                         product.title,
                         product.price,
                         user.nickname.coalesce(user.name).coalesce(""),

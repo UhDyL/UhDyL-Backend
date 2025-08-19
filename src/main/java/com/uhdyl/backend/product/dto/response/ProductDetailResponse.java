@@ -4,7 +4,6 @@ import java.util.List;
 
 public record ProductDetailResponse(
         Long id,
-        String name,
         String title,
         Long price,
         String description,

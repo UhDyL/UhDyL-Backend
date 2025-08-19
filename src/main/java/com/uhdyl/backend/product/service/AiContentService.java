@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.uhdyl.backend.global.config.ai.AiProperties;
+import com.uhdyl.backend.product.domain.Category;
+import com.uhdyl.backend.product.dto.request.ProductAiGenerateRequest;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,19 +31,44 @@ public class AiContentService {
     private final AiProperties aiProperties;
 
     public record AiResult(String title, String description) {}
+    public AiResult generateContent(ProductAiGenerateRequest request) {
 
-    public AiResult generateContent(String breed, Long price, String tone, List<String> imageUrls) {
+        String toneInstruction = switch (request.tone()) {
+            case "다정하게" -> "a friendly and caring tone";
+            case "유쾌하게" -> "a witty and cheerful tone";
+            case "장사꾼스럽게" -> "a savvy merchant's tone, highlighting value-for-money";
+            default -> "a standard neutral tone";
+        };
+
+        String categoriesString = request.categories().stream()
+                .map(Category::name)
+                .collect(Collectors.joining(", "));
+
         String koreanPrompt = String.format("""
-        You are a professional copywriter for product listings.
-        Generate a product title and description in Korean based on the following information.
-        Product: %s
-        Price: %d won
-        Tone: %s
-        Title character limit: 20
-        Description character limit: 100
-        
-        Output the result in JSON format with two keys: "title" and "description". Do not include any other text.
-        """, breed, price, tone);
+        You are a professional copywriter specializing in marketing agricultural products in South Korea.
+        Based on the information below, generate a compelling product title and description **in Korean**.
+        The product is so-called 'ugly produce', which has minor cosmetic flaws but is perfectly fine to eat. Emphasize its good value and taste.
+
+        **Product Information:**
+        - Condition: %s
+        - Weight Unit: %s
+        - Quantity per Unit: %s
+        - Price: %d won
+        - Keywords: %s
+        - Desired Tone: %s
+
+        **Constraints:**
+        - Language: Korean
+        - Title character limit: 20
+        - Description character limit: 100
+        - Output Format: A single JSON object with two keys: "title" and "description". Do not include any other text or markdown formatting.
+        """,
+                request.condition(),
+                request.weight(),
+                request.quantityPerWeight(),
+                request.price(),
+                categoriesString,
+                toneInstruction);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -48,6 +76,7 @@ public class AiContentService {
         String requestBody;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
+            List<String> imageUrls = request.images();
             if (imageUrls != null && !imageUrls.isEmpty()) {
                 ArrayNode base64ImagesNode = objectMapper.createArrayNode();
                 for (String imageUrl : imageUrls) {
@@ -93,7 +122,6 @@ public class AiContentService {
         if (responseBody == null) {
             throw new RuntimeException("AI 서버 응답이 비어 있습니다");
         }
-
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();

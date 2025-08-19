@@ -47,26 +47,19 @@ public class ProductService {
         }
 
         try {
-            AiContentService.AiResult aiResult = aiContentService.generateContent(
-                    request.breed(),
-                    request.price(),
-                    request.tone(),
-                    request.images()
-            );
+            AiContentService.AiResult aiResult = aiContentService.generateContent(request);
 
             return new AiGeneratedContentResponse(
                     aiResult.title(),
                     aiResult.description(),
-                    request.breed(),
                     request.price(),
                     request.images(),
-                    request.categories(),
-                    request.tone()
+                    request.categories()
             );
 
         } catch (Exception e) {
-            log.error("AI 콘텐츠 생성 실패 - userId: {}, breed: {}, price: {}",
-                    userId, request.breed(), request.price(), e);
+            log.error("AI 콘텐츠 생성 실패 - userId: {}, price: {}",
+                    userId, request.price(), e);
             throw new BusinessException(ExceptionType.AI_GENERATION_FAILED);
         }
     }

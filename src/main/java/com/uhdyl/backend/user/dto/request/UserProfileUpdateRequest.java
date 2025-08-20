@@ -7,6 +7,9 @@ public record UserProfileUpdateRequest (
         @Schema(description = "프로필 이미지 url", example = "http://어쩌구저쩌구")
         JsonNullable<String> profileImageUrl,
 
+        @Schema(description = "프로필 이미지 publicId", example = "dummy")
+        JsonNullable<String> publicId,
+
         @Schema(description = "유저 닉네임", example = "치킨먹는고양이")
         JsonNullable<String> nickname,
 

@@ -86,7 +86,7 @@ public class UserService {
         if(request.nickname().isPresent() && userRepository.existsByNickname(request.nickname().get()))
             throw new BusinessException(ExceptionType.USER_NICKNAME_DUPLICATED);
 
-        user.updateProfile(request.profileImageUrl(), request.nickname(), request.mode());
+        user.updateProfile(request.profileImageUrl(), request.nickname(), request.mode(), request.publicId());
     }
 
     @Transactional

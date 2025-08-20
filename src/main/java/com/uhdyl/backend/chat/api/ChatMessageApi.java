@@ -8,6 +8,7 @@ import com.uhdyl.backend.global.config.swagger.SwaggerApiResponses;
 import com.uhdyl.backend.global.config.swagger.SwaggerApiSuccessResponse;
 import com.uhdyl.backend.global.exception.ExceptionType;
 import com.uhdyl.backend.global.jwt.JwtAuthentication;
+import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.global.response.ResponseBody;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -57,7 +58,7 @@ public interface ChatMessageApi {
     )
     @GetMapping("/chat/room/{roomId}/messages")
     @PreAuthorize("isAuthenticated() and hasRole('USER')")
-    public ResponseEntity<ResponseBody<Page<ChatMessageResponse>>> findChatMessages(
+    public ResponseEntity<ResponseBody<GlobalPageResponse<ChatMessageResponse>>> findChatMessages(
             @PathVariable Long roomId,
             @ParameterObject
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC, size = 10) Pageable pageable,

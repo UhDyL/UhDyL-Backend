@@ -5,6 +5,7 @@ import com.uhdyl.backend.chat.dto.request.ChatMessageRequest;
 import com.uhdyl.backend.chat.dto.response.ChatMessageResponse;
 import com.uhdyl.backend.chat.service.ChatMessageService;
 import com.uhdyl.backend.global.jwt.JwtAuthentication;
+import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.global.response.ResponseBody;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -47,13 +48,13 @@ public class ChatMessageController implements ChatMessageApi {
 
     @GetMapping("/chat/room/{roomId}/messages")
     @PreAuthorize("isAuthenticated() and hasRole('USER')")
-    public ResponseEntity<ResponseBody<Page<ChatMessageResponse>>> findChatMessages(
+    public ResponseEntity<ResponseBody<GlobalPageResponse<ChatMessageResponse>>> findChatMessages(
             @PathVariable Long roomId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC, size = 10) Pageable pageable,
             @RequestParam(required = false) LocalDateTime startDateTime
     ) {
         Page<ChatMessageResponse> response = chatMessageService.findChatMessages(roomId, pageable, startDateTime);
-        return ResponseEntity.ok(createSuccessResponse(response));
+        return ResponseEntity.ok(createSuccessResponse(GlobalPageResponse.create(response)));
     }
 
     @PostMapping("/chat/room/{roomId}")

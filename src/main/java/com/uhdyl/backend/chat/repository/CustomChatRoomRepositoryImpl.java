@@ -54,7 +54,6 @@ public class CustomChatRoomRepositoryImpl implements CustomChatRoomRepository{
                         Projections.constructor(
                                 ProductListResponse.class,
                                 qProduct.id,
-                                qProduct.name,
                                 qProduct.title,
                                 qProduct.price,
                                 qProduct.user.name,

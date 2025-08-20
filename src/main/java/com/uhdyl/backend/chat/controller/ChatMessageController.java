@@ -53,8 +53,7 @@ public class ChatMessageController implements ChatMessageApi {
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC, size = 10) Pageable pageable,
             @RequestParam(required = false) LocalDateTime startDateTime
     ) {
-        Page<ChatMessageResponse> response = chatMessageService.findChatMessages(roomId, pageable, startDateTime);
-        return ResponseEntity.ok(createSuccessResponse(GlobalPageResponse.create(response)));
+        return ResponseEntity.ok(createSuccessResponse(chatMessageService.findChatMessages(roomId, pageable, startDateTime)));
     }
 
     @PostMapping("/chat/room/{roomId}")

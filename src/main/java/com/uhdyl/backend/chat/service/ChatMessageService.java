@@ -8,6 +8,7 @@ import com.uhdyl.backend.chat.repository.ChatMessageRepository;
 import com.uhdyl.backend.chat.repository.ChatRoomRepository;
 import com.uhdyl.backend.global.exception.BusinessException;
 import com.uhdyl.backend.global.exception.ExceptionType;
+import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.user.domain.User;
 import com.uhdyl.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +57,7 @@ public class ChatMessageService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ChatMessageResponse> findChatMessages(Long roomId, Pageable pageable, LocalDateTime startDateTime){
+    public GlobalPageResponse<ChatMessageResponse> findChatMessages(Long roomId, Pageable pageable, LocalDateTime startDateTime){
         chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new BusinessException(ExceptionType.CHATROOM_NOT_EXIST));
         return chatMessageRepository.findChatMessages(roomId, pageable, startDateTime);

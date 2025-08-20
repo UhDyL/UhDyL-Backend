@@ -46,7 +46,7 @@ public interface ChatMessageApi {
     @ApiResponse(content = @Content(schema = @Schema(implementation = ChatMessageResponse.class)))
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(
-                    response = ChatMessageResponse.class,
+                    responsePage = ChatMessageResponse.class,
                     description = "채팅 메시지 페이징 조회 성공"
             ),
             errors = {

@@ -62,7 +62,8 @@ public class CustomChatRoomRepositoryImpl implements CustomChatRoomRepository{
                                 qProduct.isSale
                         ),
                         qChatMessage.message,
-                        qChatMessage.createdAt
+                        qChatMessage.createdAt,
+                        qChatRoom.tradeCompleted
                 ))
                 .from(qChatRoom)
                 .leftJoin(qProduct).on(qProduct.id.eq(qChatRoom.productId))

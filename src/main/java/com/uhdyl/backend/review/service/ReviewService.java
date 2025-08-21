@@ -55,6 +55,11 @@ public class ReviewService {
         if(!userRepository.existsById(targetUserId))
             throw new BusinessException(ExceptionType.USER_NOT_FOUND);
 
+        // TODO: userId와 productId 인덱스 만들지 생각해보기
+        //  unique 제약 조건 추가하기
+        if(reviewRepository.existsByUser_IdAndProductId(userId, request.productId()))
+            throw new BusinessException(ExceptionType.CANT_REVIEW_MORE);
+
         Review review = Review.builder()
                 .user(user)
                 .imageUrl(request.imageUrl())

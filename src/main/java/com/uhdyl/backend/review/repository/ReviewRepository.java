@@ -11,5 +11,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, CustomRev
 
     Optional<Review> findByUser_IdAndImageUrl(Long userId, String imageUrl);
 
-    boolean findByUser_IdAndProductId(Long userId, Long productId);
+    boolean existsByUser_IdAndProductId(Long userId, Long productId);
 }

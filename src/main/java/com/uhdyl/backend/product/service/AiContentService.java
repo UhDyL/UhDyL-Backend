@@ -126,7 +126,7 @@ public class AiContentService {
         }
 
         try {
-            String jsonContent = response.choices().get(0).message().content();
+            String jsonContent = response.choices().get(0).message().content().toString();
             log.info("AI content response: {}", jsonContent);
 
             JsonNode aiResponse = objectMapper.readTree(jsonContent);

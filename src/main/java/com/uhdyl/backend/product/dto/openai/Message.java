@@ -8,6 +8,7 @@ public record Message(
 ) {
     // 텍스트만 있는 간단한 메시지를 위한 생성자
     public static Message of(String role, String text) {
-        return new Message(role, List.of(new TextContentPart(text)));
+        String safe = (text == null) ? "" : text;
+        return new Message(role, List.of(new TextContentPart(safe)));
     }
 }

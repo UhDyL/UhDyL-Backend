@@ -16,4 +16,15 @@ public record AiProperties(
             baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
         }
     }
+
+    @Override
+    public String toString() {
+        String masked = apiKey == null ? null : mask(apiKey);
+        return "AiProperties[baseUrl=" + baseUrl + ", apiKey=" + masked + ", model=" + model + "]";
+    }
+    private static String mask(String s) {
+        int keep = Math.min(4, s.length());
+        int stars = Math.max(0, s.length() - keep);
+        return "*".repeat(stars) + s.substring(s.length() - keep);
+    }
 }

@@ -155,19 +155,18 @@ public class AiContentService {
      * @throws IOException 이미지 다운로드/변환 실패 시
      */
     public String createDataUriFromUrl(String imageUrl) throws IOException {
-        validateExternalImageUrl(imageUrl);
 
         byte[] imageBytes = restTemplate.getForObject(imageUrl, byte[].class);
         if (imageBytes == null || imageBytes.length == 0) {
             throw new IOException("이미지 다운로드 실패: 빈 응답");
         }
-        final int maxBytes = 5 * 1024 * 1024; // 5MB
+        final int maxBytes = 5 * 1024 * 1024;
         if (imageBytes.length > maxBytes) {
             throw new IOException("이미지 용량 초과(5MB Max): " + imageBytes.length);
         }
 
         String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-        String mimeType = detectMimeType(imageUrl); // 간단한 MIME 타입 추론
+        String mimeType = detectMimeType(imageUrl);
 
         return "data:" + mimeType + ";base64," + base64Image;
     }
@@ -182,21 +181,6 @@ public class AiContentService {
             return "image/webp";
         }
         return "image/jpeg";
-    }
-
-    private void validateExternalImageUrl(String imageUrl) {
-        try {
-            URI uri = new URI(imageUrl);
-            String host = uri.getHost();
-            if (host == null) throw new IllegalArgumentException("호스트가 없는 URL");
-
-            java.net.InetAddress addr = java.net.InetAddress.getByName(host);
-            if (addr.isAnyLocalAddress() || addr.isLoopbackAddress() || addr.isSiteLocalAddress()) {
-                throw new IllegalArgumentException("허용되지 않은 내부/사설 네트워크 접근");
-            }
-        } catch (URISyntaxException | java.net.UnknownHostException e) {
-            throw new IllegalArgumentException("유효하지 않은 이미지 URL", e);
-        }
     }
 
     private static String extractJsonOnly(String s) {

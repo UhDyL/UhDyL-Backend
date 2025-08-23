@@ -1,14 +1,7 @@
 package com.uhdyl.backend.global.config.ai;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
-@Getter
-@Setter
-@Component
-@ConfigurationProperties(prefix ="ai.server")
-public class AiProperties {
-    private String url;
+@ConfigurationProperties(prefix = "ai.openai")
+public record AiProperties(String baseUrl, String apiKey, String model) {
 }

@@ -3,7 +3,9 @@ package com.uhdyl.backend.image.controller;
 import com.uhdyl.backend.global.aop.AssignUserId;
 import com.uhdyl.backend.global.response.ResponseBody;
 import com.uhdyl.backend.image.api.ImageApi;
+import com.uhdyl.backend.image.domain.ImageType;
 import com.uhdyl.backend.image.dto.request.ImageDeleteRequest;
+import com.uhdyl.backend.image.dto.response.ImagePublicIdResponse;
 import com.uhdyl.backend.image.dto.response.ImageSavedSuccessResponse;
 import com.uhdyl.backend.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -94,6 +96,17 @@ public class ImageController implements ImageApi {
     ){
         imageService.deleteImage(request, userId);
         return ResponseEntity.ok(createSuccessResponse());
+    }
+
+    @GetMapping("/image/publicId")
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    public ResponseEntity<ResponseBody<ImagePublicIdResponse>> getPublicId(
+            Long userId,
+            @RequestParam String imageUrl,
+            @RequestParam ImageType imageType
+    ){
+        return ResponseEntity.ok(createSuccessResponse(imageService.getPublicId(userId, imageUrl, imageType)));
     }
 
 }

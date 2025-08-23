@@ -54,14 +54,16 @@ public class CustomChatRoomRepositoryImpl implements CustomChatRoomRepository{
                         Projections.constructor(
                                 ProductListResponse.class,
                                 qProduct.id,
-                                qProduct.name,
+                                qProduct.title,
                                 qProduct.price,
                                 qProduct.user.name,
+                                qProduct.user.picture,
                                 mainImageUrl,
                                 qProduct.isSale
                         ),
                         qChatMessage.message,
-                        qChatMessage.createdAt
+                        qChatMessage.createdAt,
+                        qChatRoom.tradeCompleted
                 ))
                 .from(qChatRoom)
                 .leftJoin(qProduct).on(qProduct.id.eq(qChatRoom.productId))
@@ -70,7 +72,7 @@ public class CustomChatRoomRepositoryImpl implements CustomChatRoomRepository{
                                 .and(qChatMessage.id.eq(latestMsgId))
                 )
                 .where(builder)
-                .orderBy(qChatRoom.createdAt.desc())
+                .orderBy(qChatMessage.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

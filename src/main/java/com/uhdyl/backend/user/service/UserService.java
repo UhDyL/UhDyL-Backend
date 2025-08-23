@@ -86,7 +86,7 @@ public class UserService {
         if(request.nickname().isPresent() && userRepository.existsByNickname(request.nickname().get()))
             throw new BusinessException(ExceptionType.USER_NICKNAME_DUPLICATED);
 
-        user.updateProfile(request.profileImageUrl(), request.nickname(), request.mode());
+        user.updateProfile(request.profileImageUrl(), request.nickname(), request.mode(), request.publicId());
     }
 
     @Transactional
@@ -97,7 +97,7 @@ public class UserService {
         if(!user.isBBatRegistered())
             throw new BusinessException(ExceptionType.BBAT_NOT_UPDATED);
 
-        user.updateMode("판매자");
+        user.updateMode("FARMER");
         user.updateUserToFarmer();
         JwtUserClaim claim = new JwtUserClaim(userId, user.getRole());
         return jwtHandler.createTokens(claim);

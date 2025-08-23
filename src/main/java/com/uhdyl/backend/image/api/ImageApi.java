@@ -6,7 +6,9 @@ import com.uhdyl.backend.global.config.swagger.SwaggerApiResponses;
 import com.uhdyl.backend.global.config.swagger.SwaggerApiSuccessResponse;
 import com.uhdyl.backend.global.exception.ExceptionType;
 import com.uhdyl.backend.global.response.ResponseBody;
+import com.uhdyl.backend.image.domain.ImageType;
 import com.uhdyl.backend.image.dto.request.*;
+import com.uhdyl.backend.image.dto.response.ImagePublicIdResponse;
 import com.uhdyl.backend.image.dto.response.ImageSavedSuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,10 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -174,5 +173,32 @@ public interface ImageApi {
     public ResponseEntity<ResponseBody<Void>> deleteImage(
             @RequestBody List<ImageDeleteRequest> request,
             @Parameter(hidden = true) Long userId
+    );
+
+    @Operation(
+            summary = "publicId 조회",
+            description = "이미지 삭제를 위한 publicId를 조회합니다."
+    )
+    @ApiResponse(content = @Content(schema = @Schema(implementation = ImagePublicIdResponse.class)))
+    @SwaggerApiResponses(
+            success = @SwaggerApiSuccessResponse(
+                    response = ImagePublicIdResponse.class,
+                    description = "이미지 삭제 성공"
+            ),
+            errors = {
+                    @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
+                    @SwaggerApiFailedResponse(ExceptionType.IMAGE_ACCESS_DENIED),
+                    @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
+                    @SwaggerApiFailedResponse(ExceptionType.IMAGE_ACCESS_DENIED),
+                    @SwaggerApiFailedResponse(ExceptionType.REVIEW_NOT_FOUND)
+            }
+    )
+    @GetMapping("/image/publicId")
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('USER')")
+    public ResponseEntity<ResponseBody<ImagePublicIdResponse>> getPublicId(
+            Long userId,
+            @RequestParam String imageUrl,
+            @RequestParam ImageType imageType
     );
 }

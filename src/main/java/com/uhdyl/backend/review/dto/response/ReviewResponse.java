@@ -11,16 +11,6 @@ public record ReviewResponse(
         Long rating,
         String nickName,
         String imageUrl,
+        String title,
         LocalDateTime createdAt
-){
-    public static ReviewResponse to(Review review){
-        return new ReviewResponse(
-                review.getId(),
-                review.getContent(),
-                review.getRating(),
-                review.getUser().getNickname(),
-                review.getImageUrl(),
-                review.getCreatedAt()
-        );
-    }
-}
+){}

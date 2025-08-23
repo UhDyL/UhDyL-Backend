@@ -7,8 +7,8 @@ public class RedirectUrlValidator {
     private static final Set<String> ALLOWED_PREFIXES = Set.of(
             "http://localhost:5173",
             "http://localhost:8080",
-            "exp://192.168.0.102:8081",
-            "exp://192.168.0.102:8081/--/auth/callback"
+            "exp://"
+
     );
 
     public static void validate(String uri) {

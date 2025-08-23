@@ -5,6 +5,7 @@ import com.uhdyl.backend.global.config.swagger.SwaggerApiFailedResponse;
 import com.uhdyl.backend.global.config.swagger.SwaggerApiResponses;
 import com.uhdyl.backend.global.config.swagger.SwaggerApiSuccessResponse;
 import com.uhdyl.backend.global.exception.ExceptionType;
+import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.global.response.ResponseBody;
 import com.uhdyl.backend.review.dto.request.ReviewCreateRequest;
 import com.uhdyl.backend.review.dto.response.ReviewResponse;
@@ -67,7 +68,7 @@ public interface ReviewApi {
     @AssignUserId
     @GetMapping("/review/me")
     @PreAuthorize("isAuthenticated() and hasRole('USER')")
-    public ResponseEntity<ResponseBody<Page<ReviewResponse>>> getMyReviews(
+    public ResponseEntity<ResponseBody<GlobalPageResponse<ReviewResponse>>> getMyReviews(
             @Parameter(hidden = true) Long userId,
             @ParameterObject
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
@@ -91,8 +92,9 @@ public interface ReviewApi {
     )
     @GetMapping("/review/{nickname}")
     @PreAuthorize("isAuthenticated() and hasRole('USER')")
-    public ResponseEntity<ResponseBody<Page<ReviewResponse>>> getAllReviews(
+    public ResponseEntity<ResponseBody<GlobalPageResponse<ReviewResponse>>> getAllReviews(
             @PathVariable String nickname,
+            @ParameterObject
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     );
 

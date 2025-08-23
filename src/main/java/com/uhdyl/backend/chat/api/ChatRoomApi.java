@@ -22,9 +22,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "채팅방 API", description = "채팅방 관련 API")
 public interface ChatRoomApi {
@@ -76,5 +78,28 @@ public interface ChatRoomApi {
             @Parameter(hidden = true) Long userId,
             @ParameterObject
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    );
+
+    @Operation(
+            summary = "거래 완료 표시",
+            description = "퍈매자는 직거래 후 거래 완료를 표시할 수 있습니다."
+    )
+    @SwaggerApiResponses(
+            success = @SwaggerApiSuccessResponse(
+                    description = "거래 완료 표시 성공"
+            ),
+            errors = {
+                    @SwaggerApiFailedResponse(ExceptionType.NEED_AUTHORIZED),
+                    @SwaggerApiFailedResponse(ExceptionType.USER_NOT_FOUND),
+                    @SwaggerApiFailedResponse(ExceptionType.CHATROOM_NOT_EXIST),
+                    @SwaggerApiFailedResponse(ExceptionType.CANT_CREATE_CHATROOM)
+            }
+    )
+    @PostMapping("/chat/room/complete")
+    @AssignUserId
+    @PreAuthorize("isAuthenticated() and hasRole('FARMER')")
+    public ResponseEntity<ResponseBody<Void>> completeTrade(
+            @Parameter(hidden = true) Long userId,
+            @RequestParam Long chatRoomId
     );
 }

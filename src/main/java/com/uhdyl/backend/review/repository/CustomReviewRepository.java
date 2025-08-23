@@ -7,5 +7,4 @@ import org.springframework.data.domain.Pageable;
 public interface CustomReviewRepository {
     Page<ReviewResponse> getMyReviews(Long userId, Pageable pageable);
     Page<ReviewResponse> getAllReviews(Long userId, Pageable pageable);
-    boolean existsByUserIdAndPublicId(Long userId, String publicId);
 }

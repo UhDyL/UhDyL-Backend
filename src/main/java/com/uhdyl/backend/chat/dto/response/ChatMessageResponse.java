@@ -13,7 +13,7 @@ public record ChatMessageResponse (
         LocalDateTime timestamp
 ){
     public static ChatMessageResponse to(ChatMessage message) {
-        return new ChatMessageResponse(message.getMessage(), message.getUser().getId(), message.getUser().getName(), message.getImageUrl(), message.getCreatedAt());
+        return new ChatMessageResponse(message.getMessage(), message.getUser().getId(), message.getUser().getNickname(), message.getImageUrl(), message.getCreatedAt());
     }
 
     public static List<ChatMessageResponse> to(List<ChatMessage> message) {

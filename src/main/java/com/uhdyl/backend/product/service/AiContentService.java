@@ -126,8 +126,12 @@ public class AiContentService {
         }
 
         try {
-            String jsonContent = response.choices().get(0).message().content().toString();
-            log.info("AI content response: {}", jsonContent);
+            Object contentObj = response.choices().get(0).message().content();
+            String rawContent = (contentObj instanceof String)
+                    ? (String) contentObj
+                    : contentObj.toString();
+            String jsonContent = extractJsonOnly(rawContent);
+            log.debug("AI content response (truncated): {}", jsonContent.length() > 500 ? jsonContent.substring(0,500) + "..." : jsonContent);
 
             JsonNode aiResponse = objectMapper.readTree(jsonContent);
             String title = aiResponse.path("title").asText(null);
@@ -193,5 +197,12 @@ public class AiContentService {
         } catch (URISyntaxException | java.net.UnknownHostException e) {
             throw new IllegalArgumentException("유효하지 않은 이미지 URL", e);
         }
+    }
+
+    private static String extractJsonOnly(String s) {
+        if (s == null) return "";
+        int start = s.indexOf('{');
+        int end = s.lastIndexOf('}');
+        return (start >= 0 && end > start) ? s.substring(start, end + 1) : s.trim();
     }
 }

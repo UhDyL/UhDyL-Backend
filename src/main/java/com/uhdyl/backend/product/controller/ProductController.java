@@ -47,7 +47,7 @@ public class ProductController implements ProductAPI {
     @PostMapping("/product/ai-generate")
     public ResponseEntity<ResponseBody<AiGeneratedContentResponse>> generateAiContent(
             Long userId,
-            @Valid ProductAiGenerateRequest request) {
+            @Valid @RequestBody ProductAiGenerateRequest request) {
         AiGeneratedContentResponse response = productService.generateAiContent(userId, request);
         return ResponseEntity.ok(createSuccessResponse(response));
     }
@@ -60,7 +60,7 @@ public class ProductController implements ProductAPI {
     @PostMapping("/product")
     public ResponseEntity<ResponseBody<ProductCreateResponse>> createProduct(
             Long userId,
-            @Valid ProductCreateWithAiContentRequest request) {
+            @Valid @RequestBody ProductCreateWithAiContentRequest request) {
         ProductCreateResponse response = productService.createProductWithGeneratedContent(userId, request);
         return ResponseEntity.ok(createSuccessResponse(response));
     }

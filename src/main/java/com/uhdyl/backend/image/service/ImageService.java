@@ -122,26 +122,26 @@ public class ImageService {
 
         switch (imageType){
             case USER_IMAGE -> {
-                User user = userRepository.findById(userId)
-                        .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
+                // User user = userRepository.findById(userId)
+                //        .orElseThrow(() -> new BusinessException(ExceptionType.USER_NOT_FOUND));
                 return ImagePublicIdResponse.to(user.getPublicId());
             }
 
             case PRODUCT_IMAGE -> {
-                Image image = imageRepository.findByImageUrl(imageUrl)
-                        .orElseThrow(() -> new BusinessException(ExceptionType.IMAGE_ACCESS_DENIED));
+                // Image image = imageRepository.findByImageUrl(imageUrl)
+                //        .orElseThrow(() -> new BusinessException(ExceptionType.IMAGE_ACCESS_DENIED));
                 return ImagePublicIdResponse.to(image.getPublicId());
             }
 
             case CHAT_IMAGE -> {
-                ChatMessage chatMessage = chatMessageRepository.findByUser_IdAndImageUrl(userId, imageUrl)
-                        .orElseThrow(() -> new BusinessException(ExceptionType.IMAGE_ACCESS_DENIED));
+                // ChatMessage chatMessage = chatMessageRepository.findByUser_IdAndImageUrl(userId, imageUrl)
+                //        .orElseThrow(() -> new BusinessException(ExceptionType.IMAGE_ACCESS_DENIED));
                 return ImagePublicIdResponse.to(chatMessage.getPublicId());
             }
 
             case REVIEW_IMAGE -> {
-                Review review = reviewRepository.findByUser_IdAndImageUrl(userId, imageUrl)
-                        .orElseThrow(() -> new BusinessException(ExceptionType.REVIEW_NOT_FOUND));
+                // Review review = reviewRepository.findByUser_IdAndImageUrl(userId, imageUrl)
+                //        .orElseThrow(() -> new BusinessException(ExceptionType.REVIEW_NOT_FOUND));
                 return ImagePublicIdResponse.to(review.getPublicId());
             }
         }

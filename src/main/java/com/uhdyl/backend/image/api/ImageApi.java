@@ -197,7 +197,7 @@ public interface ImageApi {
     @AssignUserId
     @PreAuthorize("isAuthenticated() and hasRole('USER')")
     public ResponseEntity<ResponseBody<ImagePublicIdResponse>> getPublicId(
-            Long userId,
+            @Parameter(hidden = true) Long userId,
             @RequestParam String imageUrl,
             @RequestParam ImageType imageType
     );

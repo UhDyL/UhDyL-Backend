@@ -93,12 +93,13 @@ public class AiContentService {
 
         if (request.images() != null && !request.images().isEmpty()) {
             for (String imageUrl : request.images()) {
-                try {
-                    String dataUri = createDataUriFromUrl(imageUrl);
-                    userMessageParts.add(new ImageUrlContentPart(new ImageUrl(dataUri)));
-                } catch (IOException e) {
-                    log.warn("image URL -> Data URI 변환 실패: {}", imageUrl, e);
-                }
+//                try {
+//                    String dataUri = createDataUriFromUrl(imageUrl);
+//                    userMessageParts.add(new ImageUrlContentPart(new ImageUrl(dataUri)));
+//                } catch (IOException e) {
+//                    log.warn("image URL -> Data URI 변환 실패: {}", imageUrl, e);
+//                }
+                userMessageParts.add(new ImageUrlContentPart(new ImageUrl(imageUrl)));
             }
         }
         messages.add(new Message("user", userMessageParts));

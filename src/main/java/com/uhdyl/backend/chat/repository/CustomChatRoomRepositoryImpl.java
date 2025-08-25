@@ -56,7 +56,7 @@ public class CustomChatRoomRepositoryImpl implements CustomChatRoomRepository{
                                 qProduct.id,
                                 qProduct.title,
                                 qProduct.price,
-                                qProduct.user.name,
+                                qProduct.user.nickname,
                                 qProduct.user.picture,
                                 mainImageUrl,
                                 qProduct.isSale

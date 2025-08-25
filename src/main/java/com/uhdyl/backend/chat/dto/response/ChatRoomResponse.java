@@ -13,7 +13,8 @@ public record ChatRoomResponse(
         String chatRoomName,
         ProductListResponse product,
         String message,
-        LocalDateTime timestamp
+        LocalDateTime timestamp,
+        boolean isTradeCompleted
 ) {
     public static ChatRoomResponse to(ChatRoom chatRoom, Product product, ChatMessage chatMessage) {
         return new ChatRoomResponse(
@@ -21,7 +22,8 @@ public record ChatRoomResponse(
                 chatRoom.getChatRoomTitle(),
                 ProductListResponse.to(product),
                 chatMessage == null ? "" : chatMessage.getMessage(),
-                chatMessage == null ? chatRoom.getCreatedAt() : chatMessage.getCreatedAt()
+                chatMessage == null ? chatRoom.getCreatedAt() : chatMessage.getCreatedAt(),
+                chatRoom.isTradeCompleted()
         );
     }
 

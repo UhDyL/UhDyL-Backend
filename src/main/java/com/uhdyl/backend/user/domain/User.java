@@ -111,13 +111,17 @@ public class User extends BaseEntity {
         this.nickname = nickname;
     }
 
-    public void updateProfile(JsonNullable<String> picture, JsonNullable<String> nickname, String mode){
+    public void updateProfile(JsonNullable<String> picture, JsonNullable<String> nickname, JsonNullable<String> mode, JsonNullable<String> publicId){
 
         if(picture.isPresent())
             this.picture = picture.get();
         if(nickname.isPresent())
             this.nickname = nickname.get();
-        this.mode = mode;
+        if(mode.isPresent())
+            this.mode = mode.get();
+        if(publicId.isPresent())
+            this.publicId = publicId.get();
+
     }
 
     public void updateUserToFarmer(){

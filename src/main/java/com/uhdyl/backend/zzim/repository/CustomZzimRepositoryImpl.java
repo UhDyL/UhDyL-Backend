@@ -35,6 +35,7 @@ public class CustomZzimRepositoryImpl implements CustomZzimRepository{
                         Projections.constructor(
                                 ZzimResponse.class,
                                 qZzim.id,
+                                qProduct.id,
                                 qProduct.title,
                                 qImage.imageUrl.min(),
                                 qProduct.price,
@@ -45,7 +46,7 @@ public class CustomZzimRepositoryImpl implements CustomZzimRepository{
                 .innerJoin(qZzim.product, qProduct)
                 .leftJoin(qProduct.images, qImage)
                 .where(builder)
-                .groupBy(qZzim.id, qProduct.title, qProduct.price, qProduct.user.name)
+                .groupBy(qZzim.id, qProduct.id, qProduct.title, qProduct.price, qProduct.user.name)
                 .orderBy(qZzim.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -76,6 +77,7 @@ public class CustomZzimRepositoryImpl implements CustomZzimRepository{
                         Projections.constructor(
                                 ZzimResponse.class,
                                 qZzim.id,
+                                qProduct.id,
                                 qProduct.title,
                                 qImage.imageUrl.min(),
                                 qProduct.price,

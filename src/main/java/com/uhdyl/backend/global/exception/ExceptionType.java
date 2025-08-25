@@ -56,6 +56,7 @@ public enum ExceptionType {
     CANT_REVIEW_MYSELF(FORBIDDEN, "R002", "자신에게 리뷰를 작성할 수 없습니다."),
     CANT_DELETE_REVIEW(FORBIDDEN, "R003", "다른 사용자의 리뷰를 삭제할 수 없습니다."),
     CANT_REVIEW_FAKE(FORBIDDEN, "R004", "거래 완료 전에 리뷰를 작성할 수 없습니다."),
+    CANT_REVIEW_MORE(FORBIDDEN, "R005", "한 상품에 2개 이상의 리뷰를 작성할 수 없습니다."),
 
     // Product
     INVALID_INPUT(BAD_REQUEST, "P001", "입력 값이 올바르지 않습니다."),

@@ -54,7 +54,6 @@ public class CustomChatRoomRepositoryImpl implements CustomChatRoomRepository{
                         Projections.constructor(
                                 ProductListResponse.class,
                                 qProduct.id,
-                                qProduct.name,
                                 qProduct.title,
                                 qProduct.price,
                                 qProduct.user.name,
@@ -63,7 +62,8 @@ public class CustomChatRoomRepositoryImpl implements CustomChatRoomRepository{
                                 qProduct.isSale
                         ),
                         qChatMessage.message,
-                        qChatMessage.createdAt
+                        qChatMessage.createdAt,
+                        qChatRoom.tradeCompleted
                 ))
                 .from(qChatRoom)
                 .leftJoin(qProduct).on(qProduct.id.eq(qChatRoom.productId))

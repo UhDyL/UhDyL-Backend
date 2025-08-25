@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.uhdyl.backend.chat.domain.ChatMessage;
 import com.uhdyl.backend.chat.domain.QChatMessage;
 import com.uhdyl.backend.chat.dto.response.ChatMessageResponse;
+import com.uhdyl.backend.global.response.GlobalPageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -18,7 +19,7 @@ public class CustomChatMessageRepositoryImpl implements CustomChatMessageReposit
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<ChatMessageResponse> findChatMessages(Long roomId, Pageable pageable, LocalDateTime startDateTime) {
+    public GlobalPageResponse<ChatMessageResponse> findChatMessages(Long roomId, Pageable pageable, LocalDateTime startDateTime) {
 
         QChatMessage qChatMessage = QChatMessage.chatMessage;
 
@@ -44,7 +45,8 @@ public class CustomChatMessageRepositoryImpl implements CustomChatMessageReposit
                 .fetchOne();
 
         List<ChatMessageResponse> response = ChatMessageResponse.to(messages);
-        return new PageImpl<>(response, pageable, total);
+        Page<ChatMessageResponse> pageResponse = new PageImpl<>(response, pageable, total != null ? total : 0);
+        return GlobalPageResponse.create(pageResponse);
     }
 
     @Override

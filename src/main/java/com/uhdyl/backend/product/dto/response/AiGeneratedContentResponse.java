@@ -6,9 +6,7 @@ import java.util.List;
 public record AiGeneratedContentResponse(
         String title,
         String description,
-        String breed,
         Long price,
         List<String> images,
-        List<Category> categories,
-        String tone
+        List<Category> categories
 ) {}

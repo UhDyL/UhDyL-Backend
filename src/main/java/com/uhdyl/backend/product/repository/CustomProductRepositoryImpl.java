@@ -245,6 +245,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
         QProduct product = QProduct.product;
         QImage image = QImage.image;
         QUser user = QUser.user;
+        QZzim zzim = QZzim.zzim;
 
         BooleanBuilder whereClause = new BooleanBuilder();
         whereClause.and(product.isSale.eq(true));
@@ -269,13 +270,16 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                         user.nickname.coalesce(user.name).coalesce(""),
                         user.picture.coalesce(""),
                         image.imageUrl,
-                        product.isSale.not()
+                        product.isSale.not(),
+                        zzim.id.count()
                 ))
                 .from(product)
                 .leftJoin(product.user, user)
                 .leftJoin(product.images, image).on(image.imageOrder.eq(0L))
+                .leftJoin(zzim).on(zzim.product.id.eq(product.id))
                 .where(whereClause)
                 .orderBy(orderSpecifiers)
+                .groupBy(product.id, product.title, product.price, user.nickname, user.name, user.picture, image.imageUrl, product.isSale, zzim.id)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

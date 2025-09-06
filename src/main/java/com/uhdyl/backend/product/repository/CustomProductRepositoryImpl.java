@@ -57,6 +57,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
         QProduct product = QProduct.product;
         QImage image = QImage.image;
         QUser user = QUser.user;
+        QZzim zzim = QZzim.zzim;
 
         PathBuilder<Product> entityPath = new PathBuilder<>(Product.class, "product");
 
@@ -70,12 +71,15 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                         user.nickname.coalesce(user.name).coalesce(""),
                         user.picture,
                         image.imageUrl.min(),
-                        product.isSale.not()
+                        product.isSale.not(),
+                        zzim.id.count()
                 ))
                 .from(product)
+                .leftJoin(product.user, user)
                 .leftJoin(product.images, image).on(image.imageOrder.eq(0L))
+                .leftJoin(zzim).on(zzim.product.id.eq(product.id))
                 .where(product.user.id.eq(userId))
-                .groupBy(product.id, product.title, product.price, user.nickname, user.name, user.picture, product.isSale)
+                .groupBy(product.id, product.title, product.price, user.nickname, user.name, user.picture, image.imageUrl, product.isSale)
                 .orderBy(orderSpecifiers)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -224,7 +228,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                 .leftJoin(zzim).on(zzim.product.id.eq(product.id))
                 .where(product.isSale.eq(true))
                 .orderBy(orderSpecifiers)
-                .groupBy(product.id, product.title, product.price, user.nickname, user.name, user.picture, image.imageUrl, product.isSale, zzim.id)
+                .groupBy(product.id, product.title, product.price, user.nickname, user.name, user.picture, image.imageUrl, product.isSale)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -279,7 +283,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                 .leftJoin(zzim).on(zzim.product.id.eq(product.id))
                 .where(whereClause)
                 .orderBy(orderSpecifiers)
-                .groupBy(product.id, product.title, product.price, user.nickname, user.name, user.picture, image.imageUrl, product.isSale, zzim.id)
+                .groupBy(product.id, product.title, product.price, user.nickname, user.name, user.picture, image.imageUrl, product.isSale)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

@@ -12,6 +12,7 @@ import com.uhdyl.backend.chat.dto.response.ChatRoomResponse;
 import com.uhdyl.backend.global.response.GlobalPageResponse;
 import com.uhdyl.backend.image.domain.QImage;
 import com.uhdyl.backend.product.domain.QProduct;
+import com.uhdyl.backend.product.dto.response.ChatRoomProductResponse;
 import com.uhdyl.backend.product.dto.response.ProductListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -52,7 +53,7 @@ public class CustomChatRoomRepositoryImpl implements CustomChatRoomRepository{
                         qChatRoom.id,
                         qChatRoom.chatRoomTitle,
                         Projections.constructor(
-                                ProductListResponse.class,
+                                ChatRoomProductResponse.class,
                                 qProduct.id,
                                 qProduct.title,
                                 qProduct.price,

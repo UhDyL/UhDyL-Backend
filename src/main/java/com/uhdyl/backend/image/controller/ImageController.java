@@ -35,8 +35,9 @@ public class ImageController implements ImageApi {
             Long userId,
             @RequestParam MultipartFile image
     ){
+        MultipartFile[] images = {image};
         return ResponseEntity.ok(createSuccessResponse(
-                imageService.uploadImage(image, "profile/" + userId + "/")
+                imageService.uploadImage(images, "profile/" + userId + "/").get(0)
         ));
     }
 
@@ -49,8 +50,9 @@ public class ImageController implements ImageApi {
             @RequestParam Long roomId,
             @RequestParam MultipartFile image
     ){
+        MultipartFile[] images = {image};
         return ResponseEntity.ok(createSuccessResponse(
-                imageService.uploadImage(image, "chat/" + roomId + "/")
+                imageService.uploadImage(images, "chat/" + roomId + "/").get(0)
         ));
     }
 
@@ -62,15 +64,9 @@ public class ImageController implements ImageApi {
     public ResponseEntity<ResponseBody<List<ImageSavedSuccessResponse>>> uploadProductImage(
             @RequestParam List<MultipartFile> images
     ){
-
-        List<ImageSavedSuccessResponse> response = new ArrayList<>();
-        for(int i = 0; i < images.size(); i++){
-            response.add(
-                    imageService.uploadImage(images.get(i), "product/" + (i + 1) + "/")
-            );
-        }
-
-        return ResponseEntity.ok(createSuccessResponse(response));
+        MultipartFile[] imageArray = new MultipartFile[images.size()];
+        images.toArray(imageArray);
+        return ResponseEntity.ok(createSuccessResponse(imageService.uploadImage(imageArray, "product/" + 1 + "/")));
     }
 
     @PostMapping("/image/review")
@@ -80,8 +76,9 @@ public class ImageController implements ImageApi {
             Long userId,
             @RequestParam MultipartFile image
     ){
+        MultipartFile[] images = {image};
         return ResponseEntity.ok(createSuccessResponse(
-                imageService.uploadImage(image, "review/" + userId + "/")
+                imageService.uploadImage(images, "review/" + userId + "/").get(0)
         ));
     }
     /**

@@ -64,10 +64,11 @@ public class ImageService {
                         )
                 );
 
-                uploadedImagesPublicId.add(result.get("public_id").toString());
+
                 if (result.get("secure_url") == null || result.get("public_id") == null)
                     throw new BusinessException(ExceptionType.IMAGE_UPLOAD_FAILED);
 
+                uploadedImagesPublicId.add(result.get("public_id").toString());
                 responses.add(ImageSavedSuccessResponse.to(result.get("secure_url").toString(), result.get("public_id").toString()));
 
             }

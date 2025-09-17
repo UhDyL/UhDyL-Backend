@@ -12,23 +12,25 @@ import com.uhdyl.backend.image.dto.request.ImageDeleteRequest;
 import com.uhdyl.backend.image.dto.response.ImagePublicIdResponse;
 import com.uhdyl.backend.image.dto.response.ImageSavedSuccessResponse;
 import com.uhdyl.backend.image.repository.ImageRepository;
-import com.uhdyl.backend.product.domain.Product;
 import com.uhdyl.backend.product.repository.ProductRepository;
 import com.uhdyl.backend.review.domain.Review;
 import com.uhdyl.backend.review.repository.ReviewRepository;
 import com.uhdyl.backend.user.domain.User;
 import com.uhdyl.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ImageService {
@@ -40,30 +42,45 @@ public class ImageService {
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
 
-    public ImageSavedSuccessResponse uploadImage(MultipartFile image, String folderPath){
+    public List<ImageSavedSuccessResponse> uploadImage(MultipartFile[] images, String folderPath){
 
-        if(image == null || image.isEmpty())
-            throw new BusinessException(ExceptionType.INVALID_IMAGE_FILE);
-
-        if(image.getSize() > 1024 * 1024 * 5)
-            throw new BusinessException(ExceptionType.IMAGE_SIZE_EXCEEDED);
+        List<String> uploadedImagesPublicId = new ArrayList<>();
+        List<ImageSavedSuccessResponse> responses = new ArrayList<>();
 
         try {
-            Map<?, ?> result = cloudinary.uploader().upload(
-                    image.getBytes(),
-                    Map.of(
-                            "folder", folderPath,
-                            "public_id", UUID.randomUUID().toString()
-                    )
-            );
+            for (MultipartFile image : images) {
 
-            if(result.get("secure_url") == null || result.get("public_id") == null)
-                throw new BusinessException(ExceptionType.IMAGE_UPLOAD_FAILED);
+                if (image == null || image.isEmpty())
+                    throw new BusinessException(ExceptionType.INVALID_IMAGE_FILE);
 
-            return ImageSavedSuccessResponse.to(result.get("secure_url").toString(), result.get("public_id").toString());
-        } catch (IOException e) {
+                if (image.getSize() > 1024 * 1024 * 5)
+                    throw new BusinessException(ExceptionType.IMAGE_SIZE_EXCEEDED);
+
+                Map<?, ?> result = cloudinary.uploader().upload(
+                        image.getBytes(),
+                        Map.of(
+                                "folder", folderPath,
+                                "public_id", UUID.randomUUID().toString()
+                        )
+                );
+
+                uploadedImagesPublicId.add(result.get("public_id").toString());
+                if (result.get("secure_url") == null || result.get("public_id") == null)
+                    throw new BusinessException(ExceptionType.IMAGE_UPLOAD_FAILED);
+
+                responses.add(ImageSavedSuccessResponse.to(result.get("secure_url").toString(), result.get("public_id").toString()));
+
+            }
+        }
+        catch (BusinessException e) {
+            rollbackImage(uploadedImagesPublicId);
+            throw e;
+        }
+        catch (Exception e) {
+            rollbackImage(uploadedImagesPublicId);
             throw new BusinessException(ExceptionType.IMAGE_UPLOAD_FAILED);
         }
+        return responses;
     }
 
     @Transactional
@@ -146,5 +163,20 @@ public class ImageService {
             }
         }
         return ImagePublicIdResponse.to("이미지가 존재하지 않습니다.");
+    }
+
+    public void rollbackImage(List<String> publicIds){
+        try{
+            for (String publicId : publicIds) {
+                try {
+                    cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+                } catch (IOException e) {
+                    log.warn("이미지 롤백에 실패했습니다. publicId : {}", publicId);
+                }
+            }
+        }
+        catch (Exception e){
+            log.warn("이미지 롤백이 일부 실패했습니다.");
+        }
     }
 }

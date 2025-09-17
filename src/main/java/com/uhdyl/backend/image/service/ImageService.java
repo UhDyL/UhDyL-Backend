@@ -24,10 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -42,6 +39,9 @@ public class ImageService {
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
 
+    private static final Set<String> ALLOWED_CONTENT_TYPES =
+            Set.of("image/jpeg", "image/png", "image/webp", "image/gif");
+
     public List<ImageSavedSuccessResponse> uploadImage(MultipartFile[] images, String folderPath){
 
         List<String> uploadedImagesPublicId = new ArrayList<>();
@@ -55,6 +55,10 @@ public class ImageService {
 
                 if (image.getSize() > 1024 * 1024 * 5)
                     throw new BusinessException(ExceptionType.IMAGE_SIZE_EXCEEDED);
+
+                String contentType = image.getContentType();
+                if (!ALLOWED_CONTENT_TYPES.contains(contentType))
+                    throw new BusinessException(ExceptionType.INVALID_IMAGE_FILE);
 
                 Map<?, ?> result = cloudinary.uploader().upload(
                         image.getBytes(),

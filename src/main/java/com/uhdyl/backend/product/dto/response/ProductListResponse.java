@@ -11,10 +11,12 @@ public record ProductListResponse(
         String sellerPicture,
         String mainImageUrl,
         boolean isCompleted,
-        Long zzimCount
-) {
+        Long zzimCount,
+        Double sellerRating,
+        Long reviewsCount
+        ) {
     @QueryProjection
-    public ProductListResponse(Long id, String title, Long price, String sellerName, String sellerPicture, String mainImageUrl, boolean isCompleted, Long zzimCount) {
+    public ProductListResponse(Long id, String title, Long price, String sellerName, String sellerPicture, String mainImageUrl, boolean isCompleted, Long zzimCount, Double sellerRating, Long reviewsCount) {
         this.id = id;
         this.title = title;
         this.price = price;
@@ -23,5 +25,7 @@ public record ProductListResponse(
         this.mainImageUrl = mainImageUrl;
         this.isCompleted = isCompleted;
         this.zzimCount = zzimCount;
+        this.sellerRating = sellerRating;
+        this.reviewsCount = reviewsCount;
     }
 }

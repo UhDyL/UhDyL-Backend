@@ -58,6 +58,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
         QImage image = QImage.image;
         QUser user = QUser.user;
         QZzim zzim = QZzim.zzim;
+        QReview review = QReview.review;
 
         PathBuilder<Product> entityPath = new PathBuilder<>(Product.class, "product");
 
@@ -72,7 +73,15 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                         user.picture,
                         image.imageUrl.min(),
                         product.isSale.not(),
-                        zzim.id.count()
+                        zzim.id.count(),
+                        JPAExpressions
+                                .select(review.rating.avg().coalesce(0.0))
+                                .from(review)
+                                .where(review.targetUserId.eq(user.id).and(review.productId.eq(product.id))),
+                        JPAExpressions
+                                .select(review.count())
+                                .from(review)
+                                .where(review.targetUserId.eq(product.user.id).and(review.productId.eq(product.id)))
                 ))
                 .from(product)
                 .leftJoin(product.user, user)
@@ -258,6 +267,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
         QImage image = QImage.image;
         QUser user = QUser.user;
         QZzim zzim = QZzim.zzim;
+        QReview review = QReview.review;
 
         BooleanBuilder whereClause = new BooleanBuilder();
         whereClause.and(product.isSale.eq(true));
@@ -283,7 +293,15 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
                         user.picture.coalesce(""),
                         image.imageUrl,
                         product.isSale.not(),
-                        zzim.id.count()
+                        zzim.id.count(),
+                        JPAExpressions
+                                .select(review.rating.avg().coalesce(0.0))
+                                .from(review)
+                                .where(review.targetUserId.eq(user.id).and(review.productId.eq(product.id))),
+                        JPAExpressions
+                                .select(review.count())
+                                .from(review)
+                                .where(review.targetUserId.eq(product.user.id).and(review.productId.eq(product.id)))
                 ))
                 .from(product)
                 .leftJoin(product.user, user)
